@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+# Flake8: noqa
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0+l5_1+8r_)%*u0h(p$nhu8-$vu@6kdnq$&dn6ony*=zg9-$tt"
+SECRET_KEY = (
+    "django-insecure-0+l5_1+8r_)%*u0h(p$nhu8-$vu@6kdnq$&dn6ony*=zg9-$tt"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "people",
 ]
 
 MIDDLEWARE = [
@@ -74,13 +77,13 @@ WSGI_APPLICATION = "myapp.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myapp_db',
-        'USER': 'root',
-        'PASSWORD': 'your_new_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mysql",
+        "USER": "root",
+        "PASSWORD": "your_new_password",
+        "HOST": "localhost",
+        "PORT": "3306",
     }
 }
 
