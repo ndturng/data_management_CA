@@ -1,8 +1,6 @@
 <h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Officer</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <label for="file">Upload Excel file:</label>
-    <input type="file" name="file">
     <button type="submit">Save</button>
 </form>

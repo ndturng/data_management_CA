@@ -1,7 +1,7 @@
 import pandas as pd
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import OfficerInfoForm
+from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
 
@@ -17,22 +17,43 @@ def officer_create(request):
         form = OfficerInfoForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect(
+                "officer_list"
+            )  # Replace with your actual list view name
+    else:
+        form = OfficerInfoForm()
 
-        if "file" in request.FILES:
+    return render(request, "officers/officer_form.html", {"form": form})
+
+
+def excel_upload(request):
+    if request.method == "POST":
+        form = ExcelUploadForm(request.POST, request.FILES)
+        if form.is_valid():
             file = request.FILES["file"]
             data = pd.read_excel(file)
 
+            # Iterate over the rows and create Officer objects
             for _, row in data.iterrows():
                 Officer.objects.create(
-                    name=row["name"],
-                    date_of_birth=row["date_of_birth"],
-                    address=row["address"],
-                    id_ca=row["id_ca"],
+                    name=row.get("name", ""),
+                    date_of_birth=(
+                        pd.to_datetime(
+                            row.get("date_of_birth", None), errors="coerce"
+                        ).date()
+                        if row.get("date_of_birth")
+                        else None
+                    ),
+                    address=row.get("address", ""),
+                    id_ca=row.get("id_ca", ""),
                 )
-            return redirect("officer_list")
+            return redirect(
+                "officer_list"
+            )  # Replace with your actual list view name
     else:
-        form = OfficerInfoForm()
-    return render(request, "officers/officer_form.html", {"form": form})
+        form = ExcelUploadForm()
+
+    return render(request, "officers/excel_upload_form.html", {"form": form})
 
 
 def officer_update(request, pk):

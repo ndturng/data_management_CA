@@ -4,4 +4,4 @@
         <li>{{ officer.name }} ({{ officer.date_of_birth }}) {{ officer.id_ca }} - <a href="{% url 'officer_update' officer.pk %}">Edit</a> | <a href="{% url 'officer_delete' officer.pk %}">Delete</a></li>
     {% endfor %}
 </ul>
-<a href="{% url 'officer_create' %}">Add New Officer</a>
+<a href="{% url 'officer_create' %}">Add New Officer</a> | <a href="{% url 'excel_upload' %}">Upload Excel File</a>
