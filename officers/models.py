@@ -9,8 +9,8 @@ class Officer(models.Model):
     date_of_birth = models.DateField(
         null=True
     )  # handle the case just the month and year
-    date_of_enlistment = models.DateField(default="unknown")
-    date_join_party = models.DateField(default="unknown")
+    date_of_enlistment = models.DateField(null=True)
+    date_join_party = models.DateField(null=True)
     home_town = models.CharField(max_length=255, default="unknown")
     current_residence = models.CharField(
         max_length=255, default="unknown"

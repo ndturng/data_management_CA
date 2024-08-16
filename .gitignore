@@ -1,2 +1,5 @@
 *cpython-310.pyc
 *venv*
+
+# migrations # check later
+officers/migrations/0001_initial.py 

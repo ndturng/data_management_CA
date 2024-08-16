@@ -82,7 +82,7 @@ DATABASES = {
         "NAME": "OFFICERS_TABLE",
         "USER": "manager",
         "PASSWORD": "manager@123",
-        "HOST": "localhost",
+        "HOST": "127.0.0.1",
         "PORT": "3306",
     }
 }
