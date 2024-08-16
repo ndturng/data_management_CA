@@ -37,5 +37,5 @@ createsuperuser:
 check:
 	  $(DJANGO_MANAGE) check
 
-# Full setup: start MySQL, apply migrations, run server
-full-setup: start-mysql migrate runserver
+# start mysql service and run the server
+start: start-mysql runserver

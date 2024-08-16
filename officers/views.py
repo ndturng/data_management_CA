@@ -5,6 +5,12 @@ from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
 
+def get_day(row, column):
+    day = row.get(column, None)
+    date_time = pd.to_datetime(day, errors="coerce").date()
+    return date_time if day else None
+
+
 def officer_list(request):
     officers = Officer.objects.all()
     return render(
@@ -37,15 +43,34 @@ def excel_upload(request):
             for _, row in data.iterrows():
                 Officer.objects.create(
                     name=row.get("name", ""),
-                    date_of_birth=(
-                        pd.to_datetime(
-                            row.get("date_of_birth", None), errors="coerce"
-                        ).date()
-                        if row.get("date_of_birth")
-                        else None
-                    ),
-                    address=row.get("address", ""),
+                    date_of_birth=get_day(row, "date_of_birth"),
+                    current_residence=row.get("current_residence", ""),
                     id_ca=row.get("id_ca", ""),
+                    id_citizen=row.get("id_citizen", ""),
+                    gender=row.get("gender", ""),
+                    date_of_enlistment=get_day(row, "date_of_enlistment"),
+                    date_join_party=get_day(row, "date_join_party"),
+                    home_town=row.get("home_town", ""),
+                    blood_type=row.get("blood_type", ""),
+                    education=row.get("education", ""),
+                    certi_of_IT=row.get("certi_of_IT", ""),
+                    certi_of_foreign_language=row.get(
+                        "certi_of_foreign_language", ""
+                    ),
+                    political_theory=row.get("political_theory", ""),
+                    military_rank=row.get("military_rank", ""),
+                    rank_type=row.get("rank_type", ""),
+                    position=row.get("position", ""),
+                    work_unit=row.get("work_unit", ""),
+                    military_type=row.get("military_type", ""),
+                    equipment_type=row.get("equipment_type", ""),
+                    size_of_shoes=row.get("size_of_shoes", ""),
+                    size_of_hat=row.get("size_of_hat", ""),
+                    size_of_clothes=row.get("size_of_clothes", ""),
+                    bank_account_BIDV=row.get("bank_account_BIDV", ""),
+                    phone_number=row.get("phone_number", ""),
+                    laudatory=row.get("laudatory", ""),
+                    punishment=row.get("punishment", ""),
                 )
             return redirect(
                 "officer_list"
