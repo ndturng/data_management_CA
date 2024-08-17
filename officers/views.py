@@ -117,3 +117,10 @@ def officer_delete(request, pk):
     return render(
         request, "officers/officer_confirm_delete.html", {"officer": officer}
     )
+
+
+def delete_all_officers(request):
+    if request.method == "POST":
+        Officer.objects.all().delete()
+        return redirect("officer_list")
+    return render(request, "officers/officer_confirm_delete_all.html")
