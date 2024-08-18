@@ -1,6 +1,8 @@
+from datetime import datetime
+
 import pandas as pd
 from django.shortcuts import get_object_or_404, redirect, render
-from datetime import datetime
+
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
@@ -9,7 +11,7 @@ def get_day(row, column):
     try:
         day = row.get(column, None)
         # print(f"Raw value for day: {day}, Type: {type(day)}")
-        
+
         if isinstance(day, str):
             # Handle string dates
             date_time = datetime.strptime(day, "%d/%m/%Y")
@@ -21,11 +23,12 @@ def get_day(row, column):
             date_time = day
         else:
             return None
-        
+
         return date_time
     except ValueError:
         print(f"Failed to parse date for {row['name']} with value: {day}")
         return None
+
 
 def officer_list(request):
     officers = Officer.objects.all()
@@ -60,9 +63,17 @@ def excel_upload(request):
                 Officer.objects.create(
                     name=row.get("Họ và tên", ""),
                     date_of_birth=get_day(row, "Ngày,tháng, năm sinh"),
-                    current_residence=row.get("Chổ ở hiện nay: Thôn ( Khu Phố)", ""), # noqa
+                    current_residence=(
+                        str(row.get("Chổ ở hiện nay: Thôn ( Khu Phố)", ""))
+                        + ", "
+                        + str(row.get("Xã (Phường)", ""))
+                        + ", "
+                        + str(row.get("Huyện (Thành Phố)", ""))
+                        + ", "
+                        + str(row.get("Tỉnh", ""))
+                    ),
                     id_ca=row.get("Số hiệu", ""),
-                    id_citizen=row.get("Số CMND", ""),
+                    id_citizen=str(row.get("Số CMND", "")).split('.')[0],
                     gender=row.get("Giới tính", ""),
                     date_of_enlistment=get_day(row, "Vào ngành"),
                     date_join_party=get_day(row, "Vào đảng"),
@@ -70,21 +81,21 @@ def excel_upload(request):
                     blood_type=row.get("Nhóm Máu", ""),
                     education=row.get("Trình độ", ""),
                     certi_of_IT=row.get("Tin học", ""),
-                    certi_of_foreign_language=row.get(
-                        "Ngoại Ngữ", ""
-                    ),
+                    certi_of_foreign_language=row.get("Ngoại Ngữ", ""),
                     political_theory=row.get("Trình độ LLCT", ""),
                     military_rank=row.get("Cấp bậc hàm", ""),
                     rank_type=row.get("Loại hàm", ""),
                     position=row.get("Chức vụ", ""),
-                    work_unit=row.get("Vị trí công tác", ""),  # noqa # Đơn vị công tác
+                    work_unit=row.get(
+                        "Vị trí công tác", ""
+                    ),  # noqa # Đơn vị công tác
                     military_type=row.get("Lực lượng", ""),
                     equipment_type=row.get("Quân trang", ""),
                     size_of_shoes=row.get("Giày", ""),
                     size_of_hat=row.get("Mũ", ""),
-                    size_of_clothes=row.get("Quần áo", ""),
+                    size_of_clothes=str(row.get("Quần áo", "")).split('.')[0],
                     bank_account_BIDV=row.get("Số tài khoản BIDV", ""),
-                    phone_number=row.get("Số Điện thoại", ""),
+                    phone_number=str(row.get("Số Điện thoại", "")).split('.')[0], # noqa
                     laudatory=row.get("Khen thưởng", ""),
                     punishment=row.get("Kỷ luật", ""),
                 )
