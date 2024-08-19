@@ -2,4 +2,4 @@
 *venv*
 
 # migrations # check later
-officers/migrations/0001_initial.py 
+officers/migrations/*.py
