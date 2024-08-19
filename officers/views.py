@@ -44,6 +44,8 @@ def officer_list(request):
     work_unit = request.GET.get("work_unit")
     blood_type = request.GET.get("blood_type")
     size_of_hat = request.GET.get("size_of_hat")
+    political_theory = request.GET.get("political_theory")
+    position = request.GET.get("position")
 
     if military_type:
         officers = officers.filter(military_type=military_type)
@@ -55,6 +57,10 @@ def officer_list(request):
         officers = officers.filter(blood_type=blood_type)
     if size_of_hat:
         officers = officers.filter(size_of_hat=size_of_hat)
+    if political_theory:
+        officers = officers.filter(political_theory=political_theory)
+    if position:
+        officers = officers.filter(position=position)
 
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
@@ -69,17 +75,24 @@ def officer_list(request):
     blood_types = sorted(
         Officer.objects.values_list("blood_type", flat=True).distinct()
     )
-    hat_sizes = sorted(
+    political_theory = sorted(
+        Officer.objects.values_list("political_theory", flat=True).distinct()
+    )
+    hat_size = sorted(
         Officer.objects.values_list("size_of_hat", flat=True).distinct()
     )
-
+    position = sorted(
+        Officer.objects.values_list("position", flat=True).distinct()
+    )
     context = {
         "officers": officers,
         "military_types": military_types,
         "military_ranks": military_ranks,
         "work_units": work_units,
         "blood_types": blood_types,
-        "hat_sizes": hat_sizes,
+        "hat_size": hat_size,
+        "political_theory": political_theory,
+        "position": position,
         "query": query,  # Pass the query back to the template
     }
     return render(request, "officers/officer_list.html", context)
