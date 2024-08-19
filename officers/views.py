@@ -31,10 +31,12 @@ def get_day(row, column):
 
 
 def officer_list(request):
-    officers = Officer.objects.all()
-    return render(
-        request, "officers/officer_list.html", {"officers": officers}
-    )  # noqa
+    query = request.GET.get('q')
+    if query:
+        officers = Officer.objects.filter(name__icontains=query)
+    else:
+        officers = Officer.objects.all()
+    return render(request, 'officers/officer_list.html', {'officers': officers}) # noqa
 
 
 def officer_create(request):
