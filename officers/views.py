@@ -37,7 +37,7 @@ def officer_list(request):
     query = request.GET.get("q")
     if query:
         officers = Officer.objects.filter(name__icontains=query)
-    
+
     # Filtering
     military_type = request.GET.get("military_type")
     military_rank = request.GET.get("military_rank")
@@ -56,18 +56,22 @@ def officer_list(request):
     if size_of_hat:
         officers = officers.filter(size_of_hat=size_of_hat)
 
-    # Get unique values for filter dropdowns
-    military_types = Officer.objects.values_list(
-        "military_type", flat=True
-    ).distinct()
-    military_ranks = Officer.objects.values_list(
-        "military_rank", flat=True
-    ).distinct()
-    work_units = Officer.objects.values_list("work_unit", flat=True).distinct()
-    blood_types = Officer.objects.values_list(
-        "blood_type", flat=True
-    ).distinct()
-    hat_sizes = Officer.objects.values_list("size_of_hat", flat=True).distinct() # noqa
+    # Get unique sorted values for filter dropdowns
+    military_types = sorted(
+        Officer.objects.values_list("military_type", flat=True).distinct()
+    )
+    military_ranks = sorted(
+        Officer.objects.values_list("military_rank", flat=True).distinct()
+    )
+    work_units = sorted(
+        Officer.objects.values_list("work_unit", flat=True).distinct()
+    )
+    blood_types = sorted(
+        Officer.objects.values_list("blood_type", flat=True).distinct()
+    )
+    hat_sizes = sorted(
+        Officer.objects.values_list("size_of_hat", flat=True).distinct()
+    )
 
     context = {
         "officers": officers,
