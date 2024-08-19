@@ -31,12 +31,54 @@ def get_day(row, column):
 
 
 def officer_list(request):
-    query = request.GET.get('q')
+    officers = Officer.objects.all()
+
+    # Search by name
+    query = request.GET.get("q")
     if query:
         officers = Officer.objects.filter(name__icontains=query)
-    else:
-        officers = Officer.objects.all()
-    return render(request, 'officers/officer_list.html', {'officers': officers}) # noqa
+    
+    # Filtering
+    military_type = request.GET.get("military_type")
+    military_rank = request.GET.get("military_rank")
+    work_unit = request.GET.get("work_unit")
+    blood_type = request.GET.get("blood_type")
+    size_of_hat = request.GET.get("size_of_hat")
+
+    if military_type:
+        officers = officers.filter(military_type=military_type)
+    if military_rank:
+        officers = officers.filter(military_rank=military_rank)
+    if work_unit:
+        officers = officers.filter(work_unit=work_unit)
+    if blood_type:
+        officers = officers.filter(blood_type=blood_type)
+    if size_of_hat:
+        officers = officers.filter(size_of_hat=size_of_hat)
+
+    # Get unique values for filter dropdowns
+    military_types = Officer.objects.values_list(
+        "military_type", flat=True
+    ).distinct()
+    military_ranks = Officer.objects.values_list(
+        "military_rank", flat=True
+    ).distinct()
+    work_units = Officer.objects.values_list("work_unit", flat=True).distinct()
+    blood_types = Officer.objects.values_list(
+        "blood_type", flat=True
+    ).distinct()
+    hat_sizes = Officer.objects.values_list("size_of_hat", flat=True).distinct() # noqa
+
+    context = {
+        "officers": officers,
+        "military_types": military_types,
+        "military_ranks": military_ranks,
+        "work_units": work_units,
+        "blood_types": blood_types,
+        "hat_sizes": hat_sizes,
+        "query": query,  # Pass the query back to the template
+    }
+    return render(request, "officers/officer_list.html", context)
 
 
 def officer_create(request):
@@ -75,7 +117,7 @@ def excel_upload(request):
                         + str(row.get("Tỉnh", ""))
                     ),
                     id_ca=row.get("Số hiệu", ""),
-                    id_citizen=str(row.get("Số CMND", "")).split('.')[0],
+                    id_citizen=str(row.get("Số CMND", "")).split(".")[0],
                     gender=row.get("Giới tính", ""),
                     date_of_enlistment=get_day(row, "Vào ngành"),
                     date_join_party=get_day(row, "Vào đảng"),
@@ -95,9 +137,11 @@ def excel_upload(request):
                     equipment_type=row.get("Quân trang", ""),
                     size_of_shoes=row.get("Giày", ""),
                     size_of_hat=row.get("Mũ", ""),
-                    size_of_clothes=str(row.get("Quần áo", "")).split('.')[0],
+                    size_of_clothes=str(row.get("Quần áo", "")).split(".")[0],
                     bank_account_BIDV=row.get("Số tài khoản BIDV", ""),
-                    phone_number=str(row.get("Số Điện thoại", "")).split('.')[0], # noqa
+                    phone_number=str(row.get("Số Điện thoại", "")).split(".")[
+                        0
+                    ],  # noqa
                     laudatory=row.get("Khen thưởng", ""),
                     punishment=row.get("Kỷ luật", ""),
                 )

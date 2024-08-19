@@ -1,10 +1,51 @@
 <h2>Officers</h2>
 
 <form method="GET" action="{% url 'officer_list' %}">
-    <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
-    <button type="submit">Search</button>
-    {% if request.GET.q %}
-        <a href="{% url 'officer_list' %}" class="button">Clear</a>
+    <input type="text" name="q" placeholder="Search by name" value="{{ query|default_if_none:'' }}">
+
+    <label for="military_type">Military Type:</label>
+    <select name="military_type">
+        <option value="">All</option>
+        {% for mt in military_types %}
+            <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="military_rank">Military Rank:</label>
+    <select name="military_rank">
+        <option value="">All</option>
+        {% for mr in military_ranks %}
+            <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="work_unit">Work Unit:</label>
+    <select name="work_unit">
+        <option value="">All</option>
+        {% for wu in work_units %}
+            <option value="{{ wu }}" {% if request.GET.work_unit == wu %}selected{% endif %}>{{ wu }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="blood_type">Blood Type:</label>
+    <select name="blood_type">
+        <option value="">All</option>
+        {% for bt in blood_types %}
+            <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_hat">Hat Size:</label>
+    <select name="size_of_hat">
+        <option value="">All</option>
+        {% for hs in hat_sizes %}
+            <option value="{{ hs }}" {% if request.GET.size_of_hat == hs %}selected{% endif %}>{{ hs }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+    {% if request.GET %}
+        <a href="{% url 'officer_list' %}" class="button">Clear Filters</a>
     {% endif %}
 </form>
 
