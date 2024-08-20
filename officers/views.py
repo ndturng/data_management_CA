@@ -12,6 +12,9 @@ def get_day(row, column):
         day = row.get(column, None)
         # print(f"Raw value for day: {day}, Type: {type(day)}")
 
+        if pd.isna(day):  # Check for NaT or NaN values
+            return None
+        
         if isinstance(day, str):
             # Handle string dates
             date_time = datetime.strptime(day, "%d/%m/%Y")
