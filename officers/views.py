@@ -64,25 +64,46 @@ def officer_list(request):
 
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
-        Officer.objects.values_list("military_type", flat=True).distinct()
+        filter(
+            None,
+            Officer.objects.values_list("military_type", flat=True).distinct(),
+        )
     )
     military_ranks = sorted(
-        Officer.objects.values_list("military_rank", flat=True).distinct()
+        filter(
+            None,
+            Officer.objects.values_list("military_rank", flat=True).distinct(),
+        )
     )
     work_units = sorted(
-        Officer.objects.values_list("work_unit", flat=True).distinct()
+        filter(
+            None, 
+            Officer.objects.values_list("work_unit", flat=True).distinct(),
+        )
     )
     blood_types = sorted(
-        Officer.objects.values_list("blood_type", flat=True).distinct()
+        filter(
+            None,
+            Officer.objects.values_list("blood_type", flat=True).distinct(),
+        )
     )
     political_theory = sorted(
-        Officer.objects.values_list("political_theory", flat=True).distinct()
+        filter(
+            None,
+            Officer.objects.values_list("political_theory", flat=True).distinct(), # noqa
+        )
     )
     hat_size = sorted(
-        Officer.objects.values_list("size_of_hat", flat=True).distinct()
+        filter(
+            None,
+            Officer.objects.values_list("size_of_hat", flat=True).distinct(),
+        )
     )
     position = sorted(
-        Officer.objects.values_list("position", flat=True).distinct()
+        filter(
+            None, 
+            Officer.objects.values_list("position", flat=True).distinct()
+        )
     )
     context = {
         "officers": officers,

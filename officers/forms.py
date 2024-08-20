@@ -35,16 +35,30 @@ class OfficerInfoForm(forms.ModelForm):
             "laudatory",
             "punishment",
         ]
+        widgets = {
+            "date_of_birth": forms.DateInput(
+                format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
+            ),
+            "date_of_enlistment": forms.DateInput(
+                format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
+            ),
+            "date_join_party": forms.DateInput(
+                format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
         self.fields["name"].label = "Họ và tên"
         self.fields["date_of_birth"].label = "Ngày sinh"
+        self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
         self.fields["id_ca"].label = "Số hiệu"
         self.fields["id_citizen"].label = "Số CMND"
         self.fields["gender"].label = "Giới tính"
         self.fields["date_of_enlistment"].label = "Ngày vào ngành"
+        self.fields["date_of_enlistment"].input_formats = ["%d-%m-%Y"]
         self.fields["date_join_party"].label = "Ngày vào Đảng"
+        self.fields["date_join_party"].input_formats = ["%d-%m-%Y"]
         self.fields["home_town"].label = "Quê quán"
         self.fields["current_residence"].label = "Chổ ở hiện nay"
         self.fields["blood_type"].label = "Nhóm máu"

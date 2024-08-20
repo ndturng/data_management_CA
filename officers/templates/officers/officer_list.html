@@ -65,17 +65,19 @@
     {% endif %}
 </form>
 
+<a href="{% url 'officer_create' %}">Add New Officer</a> | 
+<a href="{% url 'excel_upload' %}">Upload Excel File</a>
+{% if officers %}
+    | <a href="{% url 'delete_all_officers' %}">Delete All Officers</a>
+{% endif %}
+
 <ul>
     {% for officer in officers %}
-        <li>{{ officer.name }} ({{ officer.date_of_birth }}) {{ officer.id_ca }} - 
+        <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }} - 
             <a href="{% url 'officer_update' officer.pk %}">Edit</a> | 
             <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
         </li>
     {% endfor %}
 </ul>
 
-<a href="{% url 'officer_create' %}">Add New Officer</a> | 
-<a href="{% url 'excel_upload' %}">Upload Excel File</a>
-{% if officers %}
-    | <a href="{% url 'delete_all_officers' %}">Delete All Officers</a>
-{% endif %}
+
