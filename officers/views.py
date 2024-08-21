@@ -1,21 +1,21 @@
 from datetime import datetime
 
 import pandas as pd
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
-from django.contrib.auth.decorators import login_required, permission_required
 
 
 def get_day(row, column):
     try:
         day = row.get(column, None)
         # print(f"Raw value for day: {day}, Type: {type(day)}")
-        
+
         if pd.isna(day):  # Check for NaT or NaN values
             return None
-        
+
         if isinstance(day, str):
             # Handle string dates
             date_time = datetime.strptime(day, "%d/%m/%Y")
@@ -32,6 +32,7 @@ def get_day(row, column):
     except ValueError:
         print(f"Failed to parse date for {row['name']} with value: {day}")
         return None
+
 
 @login_required
 def officer_list(request):
@@ -81,7 +82,7 @@ def officer_list(request):
     )
     work_units = sorted(
         filter(
-            None, 
+            None,
             Officer.objects.values_list("work_unit", flat=True).distinct(),
         )
     )
@@ -122,6 +123,7 @@ def officer_list(request):
     }
     return render(request, "officers/officer_list.html", context)
 
+
 @login_required
 @permission_required("officers.add_officer", raise_exception=True)
 def officer_create(request):
@@ -136,6 +138,7 @@ def officer_create(request):
         form = OfficerInfoForm()
 
     return render(request, "officers/officer_form.html", {"form": form})
+
 
 @login_required
 @permission_required("officers.add_officer", raise_exception=True)
@@ -197,6 +200,7 @@ def excel_upload(request):
 
     return render(request, "officers/excel_upload_form.html", {"form": form})
 
+
 @login_required
 @permission_required("officers.change_officer", raise_exception=True)
 def officer_update(request, pk):
@@ -210,6 +214,13 @@ def officer_update(request, pk):
         form = OfficerInfoForm(instance=officer)
     return render(request, "officers/officer_form.html", {"form": form})
 
+
+@login_required
+def officer_detail(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    return render(request, "officers/officer_detail.html", {"officer": officer}) # noqa
+
+
 @login_required
 @permission_required("officers.delete_officer", raise_exception=True)
 def officer_delete(request, pk):
@@ -221,6 +232,7 @@ def officer_delete(request, pk):
         request, "officers/officer_confirm_delete.html", {"officer": officer}
     )
 
+
 @login_required
 @permission_required("officers.delete_officer", raise_exception=True)
 def delete_all_officers(request):
@@ -229,5 +241,6 @@ def delete_all_officers(request):
         return redirect("officer_list")
     return render(request, "officers/officer_confirm_delete_all.html")
 
+
 def logout_page(request):
-    return render(request, 'registration/logout.html')
+    return render(request, "registration/logout.html")

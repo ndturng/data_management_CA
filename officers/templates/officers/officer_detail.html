@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.name }} - Details</title>
+</head>
+<body>
+    <h1>Details of Officer: {{ officer.name }}</h1>
+    <p><strong>Date of Birth:</strong> {{ officer.date_of_birth|date:"d/m/Y" }}</p>
+    <p><strong>ID:</strong> {{ officer.id_ca }}</p>
+    <p><strong>Gender:</strong> {{ officer.gender }}</p>
+    <p><strong>Citizenship ID:</strong> {{ officer.id_citizen }}</p>
+    <p><strong>Enlistment Date:</strong> {{ officer.date_of_enlistment|date:"d/m/Y" }}</p>
+    <p><strong>Party Join Date:</strong> {{ officer.date_join_party|date:"d/m/Y" }}</p>
+    <p><strong>Current Residence:</strong> {{ officer.current_residence }}</p>
+    
+    <a href="{% url 'officer_update' officer.pk %}">Edit</a> |<a href="{% url 'officer_list' %}">Back to List</a>
+</body>
+</html>
