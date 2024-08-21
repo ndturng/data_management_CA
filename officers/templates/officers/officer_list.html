@@ -1,3 +1,12 @@
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}! </p>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}">Login</a>
+{% endif %}
 <h2>Officers</h2>
 
 <form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
@@ -73,9 +82,14 @@
 
 <ul>
     {% for officer in officers %}
-        <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }} - 
-            <a href="{% url 'officer_update' officer.pk %}">Edit</a> | 
+        <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+            {% if perms.officers.change_officer %}
+               - <a href="{% url 'officer_update' officer.pk %}">Edit</a> 
+            {% endif %}
+            {% if perms.officers.delete_officer %}
+                | 
             <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
+            {% endif %}
         </li>
     {% endfor %}
 </ul>

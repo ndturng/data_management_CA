@@ -5,13 +5,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 def get_day(row, column):
     try:
         day = row.get(column, None)
         # print(f"Raw value for day: {day}, Type: {type(day)}")
-
+        
         if pd.isna(day):  # Check for NaT or NaN values
             return None
         
@@ -32,7 +33,7 @@ def get_day(row, column):
         print(f"Failed to parse date for {row['name']} with value: {day}")
         return None
 
-
+@login_required
 def officer_list(request):
     officers = Officer.objects.all()
 
@@ -121,7 +122,8 @@ def officer_list(request):
     }
     return render(request, "officers/officer_list.html", context)
 
-
+@login_required
+@permission_required("officers.add_officer", raise_exception=True)
 def officer_create(request):
     if request.method == "POST":
         form = OfficerInfoForm(request.POST)
@@ -135,7 +137,8 @@ def officer_create(request):
 
     return render(request, "officers/officer_form.html", {"form": form})
 
-
+@login_required
+@permission_required("officers.add_officer", raise_exception=True)
 def excel_upload(request):
     if request.method == "POST":
         form = ExcelUploadForm(request.POST, request.FILES)
@@ -194,7 +197,8 @@ def excel_upload(request):
 
     return render(request, "officers/excel_upload_form.html", {"form": form})
 
-
+@login_required
+@permission_required("officers.change_officer", raise_exception=True)
 def officer_update(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
     if request.method == "POST":
@@ -206,7 +210,8 @@ def officer_update(request, pk):
         form = OfficerInfoForm(instance=officer)
     return render(request, "officers/officer_form.html", {"form": form})
 
-
+@login_required
+@permission_required("officers.delete_officer", raise_exception=True)
 def officer_delete(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
     if request.method == "POST":
@@ -216,9 +221,13 @@ def officer_delete(request, pk):
         request, "officers/officer_confirm_delete.html", {"officer": officer}
     )
 
-
+@login_required
+@permission_required("officers.delete_officer", raise_exception=True)
 def delete_all_officers(request):
     if request.method == "POST":
         Officer.objects.all().delete()
         return redirect("officer_list")
     return render(request, "officers/officer_confirm_delete_all.html")
+
+def logout_page(request):
+    return render(request, 'registration/logout.html')
