@@ -50,15 +50,25 @@ class OfficerInfoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
         self.fields["name"].label = "Họ và tên"
+
         self.fields["date_of_birth"].label = "Ngày sinh"
         self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
+        if not self.initial.get("date_of_birth"):
+            self.initial["date_of_birth"] = "01-01-1800"
+
+        self.fields["date_of_enlistment"].label = "Ngày vào ngành"
+        self.fields["date_of_enlistment"].input_formats = ["%d-%m-%Y"]
+        if not self.initial.get("date_of_enlistment"):
+            self.initial["date_of_enlistment"] = "01-01-1800"
+
+        self.fields["date_join_party"].label = "Ngày vào Đảng"
+        self.fields["date_join_party"].input_formats = ["%d-%m-%Y"]
+        if not self.initial.get("date_join_party"):
+            self.initial["date_join_party"] = "01-01-1800"
+
         self.fields["id_ca"].label = "Số hiệu"
         self.fields["id_citizen"].label = "Số CMND"
         self.fields["gender"].label = "Giới tính"
-        self.fields["date_of_enlistment"].label = "Ngày vào ngành"
-        self.fields["date_of_enlistment"].input_formats = ["%d-%m-%Y"]
-        self.fields["date_join_party"].label = "Ngày vào Đảng"
-        self.fields["date_join_party"].input_formats = ["%d-%m-%Y"]
         self.fields["home_town"].label = "Quê quán"
         self.fields["current_residence"].label = "Chổ ở hiện nay"
         self.fields["blood_type"].label = "Nhóm máu"
@@ -69,6 +79,8 @@ class OfficerInfoForm(forms.ModelForm):
         self.fields["military_rank"].label = "Cấp bậc hàm"
         self.fields["rank_type"].label = "Loại hàm"
         self.fields["position"].label = "Chức vụ"
+        if not self.initial.get("position"):
+            self.initial["position"] = "nan"
         self.fields["work_unit"].label = "Đơn vị công tác"
         self.fields["military_type"].label = "Lực lượng"
         self.fields["equipment_type"].label = "Quân trang"
