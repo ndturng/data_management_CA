@@ -54,6 +54,7 @@ def officer_list(request):
     political_theory = request.GET.get("political_theory")
     position = request.GET.get("position")
     year_of_birth = request.GET.get("year_of_birth")
+    year_enlistment = request.GET.get("year_enlistment")
     home_town = request.GET.get("home_town")
 
     if military_type:
@@ -72,6 +73,8 @@ def officer_list(request):
         officers = officers.filter(position=position)
     if year_of_birth:
         officers = officers.filter(date_of_birth__year=year_of_birth)
+    if year_enlistment:
+        officers = officers.filter(date_of_enlistment__year=year_enlistment)
     if home_town:
         officers = officers.filter(home_town__icontains=home_town)
 
@@ -126,6 +129,14 @@ def officer_list(request):
             .distinct()
         )
     )
+    year_enlistment = sorted(
+        filter(
+            None,
+            Officer.objects.annotate(year_enlistment=ExtractYear("date_of_enlistment")) # noqa
+            .values_list("year_enlistment", flat=True)
+            .distinct()
+        )
+    )
     home_towns = sorted(
         filter(
             None,
@@ -144,6 +155,7 @@ def officer_list(request):
         "position": position,
         "query": query,  # Pass the query back to the template
         "years_of_birth": years_of_birth,
+        "year_enlistment": year_enlistment,
         "home_towns": home_towns,
     }
     return render(request, "officers/officer_list.html", context)
