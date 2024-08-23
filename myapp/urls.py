@@ -23,7 +23,8 @@ from officers import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('officers/', include('officers.urls')),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    # path('login/', auth_views.LoginView.as_view(), name='login'), change back to this if want keep the page where it leaves # noqa
     path('logout/', auth_views.LogoutView.as_view(next_page='logout_page'), name='logout'), # noqa
     path('logout-page/', views.logout_page, name='logout_page'),
 ]

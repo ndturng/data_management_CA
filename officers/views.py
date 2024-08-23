@@ -2,11 +2,12 @@ from datetime import datetime
 
 import pandas as pd
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
-
 
 def get_day(row, column):
     try:
@@ -244,3 +245,11 @@ def delete_all_officers(request):
 
 def logout_page(request):
     return render(request, "registration/logout.html")
+
+
+class CustomLoginView(LoginView):
+    def get_success_url(self):
+        # Can set a custom URL based on user role
+        # if self.request.user.is_superuser:
+        #     return reverse("admin_dashboard")
+        return reverse("officer_list")
