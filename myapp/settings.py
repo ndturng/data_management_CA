@@ -77,6 +77,15 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/officers/'
 LOGOUT_REDIRECT_URL = '/logout-page/'
 
+# Session expire at browser close
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Session cookie age
+SESSION_COOKIE_AGE = 600
+
+# Session save every request
+SESSION_SAVE_EVERY_REQUEST = True
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
