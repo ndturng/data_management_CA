@@ -52,6 +52,14 @@
         {% endfor %}
     </select>
 
+    <label for="year_of_birth">Year of Birth:</label>
+    <select name="year_of_birth">
+        <option value="">All</option>
+        {% for year in years_of_birth %}
+            <option value="{{ year }}" {% if year == selected_year_of_birth %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+
     {% comment %} <label for="blood_type">Blood Type:</label>
     <select name="blood_type" style="flex: 1; min-width: 150px;">
         <option value="">All</option>

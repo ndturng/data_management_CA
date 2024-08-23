@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.db.models.functions import ExtractYear
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
@@ -52,6 +53,7 @@ def officer_list(request):
     size_of_hat = request.GET.get("size_of_hat")
     political_theory = request.GET.get("political_theory")
     position = request.GET.get("position")
+    year_of_birth = request.GET.get("year_of_birth")
 
     if military_type:
         officers = officers.filter(military_type=military_type)
@@ -67,6 +69,8 @@ def officer_list(request):
         officers = officers.filter(political_theory=political_theory)
     if position:
         officers = officers.filter(position=position)
+    if year_of_birth:
+        officers = officers.filter(date_of_birth__year=year_of_birth)
 
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
@@ -111,6 +115,15 @@ def officer_list(request):
             Officer.objects.values_list("position", flat=True).distinct()
         )
     )
+    years_of_birth = sorted(
+        filter(
+            None,
+            Officer.objects.annotate(year_of_birth=ExtractYear("date_of_birth")) # noqa
+            .values_list("year_of_birth", flat=True)
+            .distinct()
+        )
+    )
+
     context = {
         "officers": officers,
         "military_types": military_types,
@@ -121,6 +134,7 @@ def officer_list(request):
         "political_theory": political_theory,
         "position": position,
         "query": query,  # Pass the query back to the template
+        "years_of_birth": years_of_birth,
     }
     return render(request, "officers/officer_list.html", context)
 
