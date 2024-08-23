@@ -53,13 +53,20 @@
     </select>
 
     <label for="year_of_birth">Year of Birth:</label>
-    <select name="year_of_birth">
+    <select name="year_of_birth" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
         {% for year in years_of_birth %}
             <option value="{{ year }}" {% if year == selected_year_of_birth %}selected{% endif %}>{{ year }}</option>
         {% endfor %}
     </select>
 
+    <label for="home_town">Home Town:</label>
+    <select name="home_town" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for ht in home_towns %}
+            <option value="{{ ht }}" {% if request.GET.home_town == ht %}selected{% endif %}>{{ ht }}</option>
+        {% endfor %}
+    </select>
     {% comment %} <label for="blood_type">Blood Type:</label>
     <select name="blood_type" style="flex: 1; min-width: 150px;">
         <option value="">All</option>

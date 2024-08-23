@@ -54,6 +54,7 @@ def officer_list(request):
     political_theory = request.GET.get("political_theory")
     position = request.GET.get("position")
     year_of_birth = request.GET.get("year_of_birth")
+    home_town = request.GET.get("home_town")
 
     if military_type:
         officers = officers.filter(military_type=military_type)
@@ -71,6 +72,8 @@ def officer_list(request):
         officers = officers.filter(position=position)
     if year_of_birth:
         officers = officers.filter(date_of_birth__year=year_of_birth)
+    if home_town:
+        officers = officers.filter(home_town__icontains=home_town)
 
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
@@ -123,6 +126,12 @@ def officer_list(request):
             .distinct()
         )
     )
+    home_towns = sorted(
+        filter(
+            None,
+            Officer.objects.values_list("home_town", flat=True).distinct(),
+        )
+    )
 
     context = {
         "officers": officers,
@@ -135,6 +144,7 @@ def officer_list(request):
         "position": position,
         "query": query,  # Pass the query back to the template
         "years_of_birth": years_of_birth,
+        "home_towns": home_towns,
     }
     return render(request, "officers/officer_list.html", context)
 
