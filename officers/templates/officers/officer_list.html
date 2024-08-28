@@ -75,6 +75,23 @@
             <option value="{{ ht }}" {% if request.GET.home_town == ht %}selected{% endif %}>{{ ht }}</option>
         {% endfor %}
     </select>
+
+    <label for="education">Education:</label>
+    <select name="education" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for ed in education %}
+            <option value="{{ ed }}" {% if request.GET.education == ed %}selected{% endif %}>{{ ed }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="current_residence">Current Residence:</label>
+    <select name="current_residence" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for cr in current_residence %}
+            <option value="{{ cr }}" {% if request.GET.current_residence == cr %}selected{% endif %}>{{ cr }}</option>
+        {% endfor %}
+    </select>
+
     {% comment %} <label for="blood_type">Blood Type:</label>
     <select name="blood_type" style="flex: 1; min-width: 150px;">
         <option value="">All</option>

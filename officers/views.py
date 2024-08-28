@@ -19,7 +19,9 @@ filter_fields = {
     'political_theory': 'political_theory',
     'position': 'position',
     'year_of_birth': lambda qs, val: qs.filter(date_of_birth__year=val),  # mine # noqa
-    'year_enlistment': lambda qs, val: qs.filter(date_of_enlistment__year=val)
+    'year_enlistment': lambda qs, val: qs.filter(date_of_enlistment__year=val),
+    "education": "education",
+    "current_residence": "current_residence",
 }
 
 def get_day(row, column):
@@ -134,7 +136,18 @@ def officer_list(request):
             Officer.objects.values_list("home_town", flat=True).distinct(),
         )
     )
-
+    education = sorted(
+        filter(
+            None,
+            Officer.objects.values_list("education", flat=True).distinct(),
+        )
+    )
+    current_residence = sorted(
+        filter(
+            None,
+            Officer.objects.values_list("current_residence", flat=True).distinct(), # noqa
+        )
+    )
     context = {
         "officers": officers,
         "military_types": military_types,
@@ -148,6 +161,8 @@ def officer_list(request):
         "years_of_birth": years_of_birth,
         "year_enlistment": year_enlistment,
         "home_towns": home_towns,
+        "education": education,
+        "current_residence": current_residence,
     }
     return render(request, "officers/officer_list.html", context)
 
