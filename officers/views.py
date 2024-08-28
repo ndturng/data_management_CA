@@ -10,6 +10,18 @@ from django.db.models.functions import ExtractYear
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
+filter_fields = {
+    'military_type': 'military_type',
+    'military_rank': 'military_rank',
+    'work_unit': 'work_unit',
+    'blood_type': 'blood_type',
+    'size_of_hat': 'size_of_hat',
+    'political_theory': 'political_theory',
+    'position': 'position',
+    'year_of_birth': lambda qs, val: qs.filter(date_of_birth__year=val),  # mine # noqa
+    'year_enlistment': lambda qs, val: qs.filter(date_of_enlistment__year=val)
+}
+
 def get_day(row, column):
     try:
         day = row.get(column, None)
@@ -38,45 +50,24 @@ def get_day(row, column):
 
 @login_required
 def officer_list(request):
-    officers = Officer.objects.all()
+    officers = Officer.objects.all()  # Start with all officers
 
     # Search by name
     query = request.GET.get("q")
     if query:
         officers = Officer.objects.filter(name__icontains=query)
 
-    # Filtering
-    military_type = request.GET.get("military_type")
-    military_rank = request.GET.get("military_rank")
-    work_unit = request.GET.get("work_unit")
-    blood_type = request.GET.get("blood_type")
-    size_of_hat = request.GET.get("size_of_hat")
-    political_theory = request.GET.get("political_theory")
-    position = request.GET.get("position")
-    year_of_birth = request.GET.get("year_of_birth")
-    year_enlistment = request.GET.get("year_enlistment")
-    home_town = request.GET.get("home_town")
-
-    if military_type:
-        officers = officers.filter(military_type=military_type)
-    if military_rank:
-        officers = officers.filter(military_rank=military_rank)
-    if work_unit:
-        officers = officers.filter(work_unit=work_unit)
-    if blood_type:
-        officers = officers.filter(blood_type=blood_type)
-    if size_of_hat:
-        officers = officers.filter(size_of_hat=size_of_hat)
-    if political_theory:
-        officers = officers.filter(political_theory=political_theory)
-    if position:
-        officers = officers.filter(position=position)
-    if year_of_birth:
-        officers = officers.filter(date_of_birth__year=year_of_birth)
-    if year_enlistment:
-        officers = officers.filter(date_of_enlistment__year=year_enlistment)
-    if home_town:
-        officers = officers.filter(home_town__icontains=home_town)
+    # Loop through each field in the filter_fields dictionary
+    for field, filter_action in filter_fields.items():
+        # Get the value from the request GET parameters
+        value = request.GET.get(field)
+        if value:
+            # If the filter action is a callable (e.g., lambda), call it
+            if callable(filter_action):
+                officers = filter_action(officers, value)
+            else:
+                # Otherwise, apply a simple filter
+                officers = officers.filter(**{filter_action: value})
 
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
