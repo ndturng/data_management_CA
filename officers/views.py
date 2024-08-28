@@ -3,26 +3,29 @@ from datetime import datetime
 import pandas as pd
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView
+from django.db.models.functions import ExtractYear
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.db.models.functions import ExtractYear
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
 filter_fields = {
-    'military_type': 'military_type',
-    'military_rank': 'military_rank',
-    'work_unit': 'work_unit',
-    'blood_type': 'blood_type',
-    'size_of_hat': 'size_of_hat',
-    'political_theory': 'political_theory',
-    'position': 'position',
-    'year_of_birth': lambda qs, val: qs.filter(date_of_birth__year=val),  # mine # noqa
-    'year_enlistment': lambda qs, val: qs.filter(date_of_enlistment__year=val),
+    "military_type": "military_type",
+    "military_rank": "military_rank",
+    "work_unit": "work_unit",
+    "blood_type": "blood_type",
+    "size_of_hat": "size_of_hat",
+    "political_theory": "political_theory",
+    "position": "position",
+    "year_of_birth": lambda qs, val: qs.filter(
+        date_of_birth__year=val
+    ),  # mine # noqa
+    "year_enlistment": lambda qs, val: qs.filter(date_of_enlistment__year=val),
     "education": "education",
     "current_residence": "current_residence",
 }
+
 
 def get_day(row, column):
     try:
@@ -119,7 +122,7 @@ def officer_list(request):
             None,
             Officer.objects.annotate(year_of_birth=ExtractYear("date_of_birth")) # noqa
             .values_list("year_of_birth", flat=True)
-            .distinct()
+            .distinct(),
         )
     )
     year_enlistment = sorted(
@@ -127,7 +130,7 @@ def officer_list(request):
             None,
             Officer.objects.annotate(year_enlistment=ExtractYear("date_of_enlistment")) # noqa
             .values_list("year_enlistment", flat=True)
-            .distinct()
+            .distinct(),
         )
     )
     home_towns = sorted(
@@ -261,7 +264,9 @@ def officer_update(request, pk):
 @login_required
 def officer_detail(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
-    return render(request, "officers/officer_detail.html", {"officer": officer}) # noqa
+    return render(
+        request, "officers/officer_detail.html", {"officer": officer}
+    )
 
 
 @login_required
