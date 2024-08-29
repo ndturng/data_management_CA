@@ -6,9 +6,16 @@ class Officer(models.Model):
     id_ca = models.CharField(max_length=255, null=True, blank=True, unique=True, default="nan") 
     id_citizen = models.CharField(max_length=255, null=True, blank=True, default="nan")
     gender = models.CharField(max_length=255, null=True, blank=False)
+
     date_of_birth = models.DateField(null=True, blank=True, default="nan")  # handle the case just the month and year 
+    birth_year = models.IntegerField(null=True, blank=True, default="nan")
+
     date_of_enlistment = models.DateField(null=True, blank=True, default="nan")
+    enlistment_year = models.IntegerField(null=True, blank=True, default="nan")
+
     date_join_party = models.DateField(null=True, blank=True, default="nan")
+    join_party_year = models.IntegerField(null=True, blank=True, default="nan")
+
     home_town = models.CharField(max_length=255, null=True, blank=False)
     current_residence = models.CharField(
         max_length=255, null=True, blank=False

@@ -9,11 +9,14 @@ class OfficerInfoForm(forms.ModelForm):
         fields = [
             "name",
             "date_of_birth",
+            "birth_year",
             "id_ca",
             "id_citizen",
             "gender",
             "date_of_enlistment",
+            "enlistment_year",
             "date_join_party",
+            "join_party_year",
             "home_town",
             "current_residence",
             "blood_type",
@@ -55,16 +58,19 @@ class OfficerInfoForm(forms.ModelForm):
         self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
         if not self.initial.get("date_of_birth"):
             self.initial["date_of_birth"] = "01-01-1800"
+            self.initial["birth_year"] = "1800"
 
         self.fields["date_of_enlistment"].label = "Ngày vào ngành"
         self.fields["date_of_enlistment"].input_formats = ["%d-%m-%Y"]
         if not self.initial.get("date_of_enlistment"):
             self.initial["date_of_enlistment"] = "01-01-1800"
+            self.initial["enlistment_year"] = "1800"
 
         self.fields["date_join_party"].label = "Ngày vào Đảng"
         self.fields["date_join_party"].input_formats = ["%d-%m-%Y"]
         if not self.initial.get("date_join_party"):
             self.initial["date_join_party"] = "01-01-1800"
+            self.initial["join_party_year"] = "1800"
 
         self.fields["id_ca"].label = "Số hiệu"
         self.fields["id_citizen"].label = "Số CMND"
