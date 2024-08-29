@@ -73,7 +73,10 @@ def officer_list(request):
             else:
                 # Otherwise, apply a simple filter
                 officers = officers.filter(**{filter_action: value})
-
+        if field == "year_of_birth":
+            selected_year_of_birth = int(value) if value else None
+        if field == "year_enlistment":
+            selected_year_enlistment = int(value) if value else None
     # Get unique sorted values for filter dropdowns
     military_types = sorted(
         filter(
@@ -162,7 +165,9 @@ def officer_list(request):
         "position": position,
         "query": query,  # Pass the query back to the template
         "years_of_birth": years_of_birth,
+        "selected_year_of_birth": selected_year_of_birth,
         "year_enlistment": year_enlistment,
+        "selected_year_enlistment": selected_year_enlistment,
         "home_towns": home_towns,
         "education": education,
         "current_residence": current_residence,
@@ -200,6 +205,7 @@ def excel_upload(request):
                 Officer.objects.create(
                     name=row.get("Họ và tên", ""),
                     date_of_birth=get_day(row, "Ngày,tháng, năm sinh"),
+                    birth_year=get_day(row, "Ngày,tháng, năm sinh").year,
                     current_residence=(
                         str(row.get("Chổ ở hiện nay: Thôn ( Khu Phố)", ""))
                         + ", "
@@ -213,7 +219,9 @@ def excel_upload(request):
                     id_citizen=str(row.get("Số CMND", "")).split(".")[0],
                     gender=row.get("Giới tính", ""),
                     date_of_enlistment=get_day(row, "Vào ngành"),
+                    enlistment_year=get_day(row, "Vào ngành").year,
                     date_join_party=get_day(row, "Vào đảng"),
+                    join_party_year=get_day(row, "Vào đảng").year,
                     home_town=row.get("Quê quán", ""),
                     blood_type=row.get("Nhóm Máu", ""),
                     education=row.get("Trình độ", ""),
