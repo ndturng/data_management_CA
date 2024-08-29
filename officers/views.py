@@ -134,8 +134,8 @@ def excel_upload(request):
             data = pd.read_excel(file)
 
             # Iterate over the rows and create Officer objects
-            for _, row in data.iterrows():
-                Officer.objects.create(
+            for _, row in data.iterrows(): 
+                Officer.objects.create( # implement a shorter way to create an object # noqa
                     name=row.get("Họ và tên", ""),
                     date_of_birth=get_day(row, "Ngày,tháng, năm sinh"),
                     birth_year=get_day(row, "Ngày,tháng, năm sinh").year,
@@ -192,6 +192,7 @@ def excel_upload(request):
 @permission_required("officers.change_officer", raise_exception=True)
 def officer_update(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
+    
     if request.method == "POST":
         form = OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
@@ -199,15 +200,14 @@ def officer_update(request, pk):
             return redirect("officer_list")
     else:
         form = OfficerInfoForm(instance=officer)
+    
     return render(request, "officers/officer_form.html", {"form": form})
 
 
 @login_required
 def officer_detail(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
-    return render(
-        request, "officers/officer_detail.html", {"officer": officer}
-    )
+    return render(request, "officers/officer_detail.html", {"officer": officer}) # noqa
 
 
 @login_required
