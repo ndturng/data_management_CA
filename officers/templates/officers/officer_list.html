@@ -31,7 +31,7 @@
     <label for="position">Position:</label>
     <select name="position" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for p in position %}
+        {% for p in positions %}
             <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
         {% endfor %}
     </select>
@@ -47,7 +47,7 @@
     <label for="political_theory">Political Theory:</label>
     <select name="political_theory" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for pt in political_theory %}
+        {% for pt in political_theories %}
             <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
         {% endfor %}
     </select>
@@ -63,7 +63,7 @@
     <label for="year_enlistment">Year Enlistment:</label>
     <select name="year_enlistment" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for year in year_enlistment %}
+        {% for year in years_enlistment %}
             <option value="{{ year }}" {% if year == selected_year_enlistment %}selected{% endif %}>{{ year }}</option>
         {% endfor %}
     </select>
@@ -79,7 +79,7 @@
     <label for="education">Education:</label>
     <select name="education" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for ed in education %}
+        {% for ed in educations %}
             <option value="{{ ed }}" {% if request.GET.education == ed %}selected{% endif %}>{{ ed }}</option>
         {% endfor %}
     </select>
@@ -87,7 +87,7 @@
     <label for="current_residence">Current Residence:</label>
     <select name="current_residence" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for cr in current_residence %}
+        {% for cr in current_residences %}
             <option value="{{ cr }}" {% if request.GET.current_residence == cr %}selected{% endif %}>{{ cr }}</option>
         {% endfor %}
     </select>

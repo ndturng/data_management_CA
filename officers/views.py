@@ -3,28 +3,11 @@ from datetime import datetime
 import pandas as pd
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView
-from django.db.models.functions import ExtractYear
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
-
-filter_fields = {
-    "military_type": "military_type",
-    "military_rank": "military_rank",
-    "work_unit": "work_unit",
-    "blood_type": "blood_type",
-    "size_of_hat": "size_of_hat",
-    "political_theory": "political_theory",
-    "position": "position",
-    "year_of_birth": lambda qs, val: qs.filter(
-        date_of_birth__year=val
-    ),  # mine # noqa
-    "year_enlistment": lambda qs, val: qs.filter(date_of_enlistment__year=val),
-    "education": "education",
-    "current_residence": "current_residence",
-}
 
 
 def get_day(row, column):
@@ -55,6 +38,20 @@ def get_day(row, column):
 
 @login_required
 def officer_list(request):
+    filter_fields = {
+        "military_type": "military_type",
+        "military_rank": "military_rank",
+        "work_unit": "work_unit",
+        "blood_type": "blood_type",
+        "size_of_hat": "size_of_hat",
+        "political_theory": "political_theory",
+        "position": "position",
+        "year_of_birth": "birth_year",
+        "year_enlistment": "enlistment_year",
+        "education": "education",
+        "current_residence": "current_residence",
+        "home_town": "home_town",
+    }
     officers = Officer.objects.all()  # Start with all officers
 
     # Search by name
@@ -66,6 +63,7 @@ def officer_list(request):
     for field, filter_action in filter_fields.items():
         # Get the value from the request GET parameters
         value = request.GET.get(field)
+
         if value:
             # If the filter action is a callable (e.g., lambda), call it
             if callable(filter_action):
@@ -73,105 +71,40 @@ def officer_list(request):
             else:
                 # Otherwise, apply a simple filter
                 officers = officers.filter(**{filter_action: value})
+
         if field == "year_of_birth":
             selected_year_of_birth = int(value) if value else None
         if field == "year_enlistment":
             selected_year_enlistment = int(value) if value else None
     # Get unique sorted values for filter dropdowns
-    military_types = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("military_type", flat=True).distinct(),
-        )
-    )
-    military_ranks = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("military_rank", flat=True).distinct(),
-        )
-    )
-    work_units = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("work_unit", flat=True).distinct(),
-        )
-    )
-    blood_types = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("blood_type", flat=True).distinct(),
-        )
-    )
-    political_theory = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("political_theory", flat=True).distinct(), # noqa
-        )
-    )
-    hat_size = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("size_of_hat", flat=True).distinct(),
-        )
-    )
-    position = sorted(
-        filter(
-            None, 
-            Officer.objects.values_list("position", flat=True).distinct()
-        )
-    )
-    years_of_birth = sorted(
-        filter(
-            None,
-            Officer.objects.annotate(year_of_birth=ExtractYear("date_of_birth")) # noqa
-            .values_list("year_of_birth", flat=True)
-            .distinct(),
-        )
-    )
-    year_enlistment = sorted(
-        filter(
-            None,
-            Officer.objects.annotate(year_enlistment=ExtractYear("date_of_enlistment")) # noqa
-            .values_list("year_enlistment", flat=True)
-            .distinct(),
-        )
-    )
-    home_towns = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("home_town", flat=True).distinct(),
-        )
-    )
-    education = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("education", flat=True).distinct(),
-        )
-    )
-    current_residence = sorted(
-        filter(
-            None,
-            Officer.objects.values_list("current_residence", flat=True).distinct(), # noqa
-        )
-    )
-    context = {
-        "officers": officers,
-        "military_types": military_types,
-        "military_ranks": military_ranks,
-        "work_units": work_units,
-        "blood_types": blood_types,
-        "hat_size": hat_size,
-        "political_theory": political_theory,
-        "position": position,
-        "query": query,  # Pass the query back to the template
-        "years_of_birth": years_of_birth,
-        "selected_year_of_birth": selected_year_of_birth,
-        "year_enlistment": year_enlistment,
-        "selected_year_enlistment": selected_year_enlistment,
-        "home_towns": home_towns,
-        "education": education,
-        "current_residence": current_residence,
+    dropdown_fields = {
+        "military_types": "military_type",
+        "military_ranks": "military_rank",
+        "work_units": "work_unit",
+        "blood_types": "blood_type",
+        "political_theories": "political_theory",
+        "hat_sizes": "size_of_hat",
+        "positions": "position",
+        "years_of_birth": "birth_year",
+        "years_enlistment": "enlistment_year",
+        "home_towns": "home_town",
+        "educations": "education",
+        "current_residences": "current_residence",
     }
+
+    context = {}
+    for context_key, field in dropdown_fields.items():
+        context[context_key] = sorted(
+            filter(
+                None, Officer.objects.values_list(field, flat=True).distinct()
+            )
+        )
+
+    context["officers"] = officers
+    context["query"] = query
+    context["selected_year_of_birth"] = selected_year_of_birth
+    context["selected_year_enlistment"] = selected_year_enlistment
+
     return render(request, "officers/officer_list.html", context)
 
 
