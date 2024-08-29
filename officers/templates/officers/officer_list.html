@@ -12,6 +12,11 @@
 <form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
     <input type="text" name="q" placeholder="Search by name" value="{{ query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
 
+    <button type="submit" style="flex: 0 0 auto;">Filter</button>
+    {% if request.GET %}
+        <a href="{% url 'officer_list' %}" class="button" style="flex: 0 0 auto;">Clear Filters</a>
+    {% endif %}
+
     <label for="military_type">Military Type:</label>
     <select name="military_type" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
@@ -108,10 +113,7 @@
         {% endfor %}
     </select> {% endcomment %}
 
-    <button type="submit" style="flex: 0 0 auto;">Filter</button>
-    {% if request.GET %}
-        <a href="{% url 'officer_list' %}" class="button" style="flex: 0 0 auto;">Clear Filters</a>
-    {% endif %}
+    
 </form>
 
 <a href="{% url 'officer_create' %}">Add New Officer</a> | 
