@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
@@ -133,55 +134,126 @@ def excel_upload(request):
             file = request.FILES["file"]
             data = pd.read_excel(file)
 
+            fields_dict = {
+                "name": "Họ và tên",
+                "date_of_birth": "Ngày,tháng, năm sinh",
+                "birth_year": "Ngày,tháng, năm sinh",
+                "khu_pho": "Chổ ở hiện nay: Thôn ( Khu Phố)",
+                "phuong": "Xã (Phường)",
+                "huyen": "Huyện (Thành Phố)",
+                "tinh": "Tỉnh",
+                "id_ca": "Số hiệu",
+                "id_citizen": "Số CMND",
+                "gender": "Giới tính",
+                "date_of_enlistment": "Vào ngành",
+                "date_join_party": "Vào đảng",
+                "home_town": "Quê quán",
+                "blood_type": "Nhóm Máu",
+                "education": "Trình độ",
+                "certi_of_IT": "Tin học",
+                "certi_of_foreign_language": "Ngoại Ngữ",
+                "political_theory": "Trình độ LLCT",
+                "military_rank": "Cấp bậc hàm",
+                "rank_type": "Loại hàm",
+                "position": "Chức vụ",
+                "work_unit": "Vị trí công tác",
+                "military_type": "Lực lượng",
+                "equipment_type": "Quân trang",
+                "size_of_shoes": "Giày",
+                "size_of_hat": "Mũ",
+                "size_of_clothes": "Quần áo",
+                "bank_account_BIDV": "Số tài khoản BIDV",
+                "phone_number": "Số Điện thoại",
+                "laudatory": "Khen thưởng",
+                "punishment": "Kỷ luật",
+            }
+
+            # Add required fields here
+            required_fields = ["name", "id_ca"]
+            date_fields = ["date_of_birth", "date_of_enlistment", "date_join_party"] # noqa
+
             # Iterate over the rows and create Officer objects
-            for _, row in data.iterrows(): 
-                Officer.objects.create( # implement a shorter way to create an object # noqa
-                    name=row.get("Họ và tên", ""),
-                    date_of_birth=get_day(row, "Ngày,tháng, năm sinh"),
-                    birth_year=get_day(row, "Ngày,tháng, năm sinh").year,
+            for index, row in data.iterrows():
+                skip_row = False
+                officer_data = {}
+                row_missing_fields = {"row": index + 1, "missing_fields": []}
+
+                for field, column in fields_dict.items():
+                    if field in date_fields:
+                        officer_data[field] = get_day(row, column)
+                    else:
+                        officer_data[field] = row.get(column, "")
+
+                    # Add the empty fields to the missing_fields list
+                    if (
+                        not officer_data[field]
+                        or officer_data[field] == "nan"
+                        or pd.isna(officer_data[field])
+                    ):  # noqa
+                        row_missing_fields["missing_fields"].append(field)
+
+                        # If the field is required and empty, skip this row
+                        if field in required_fields:
+                            skip_row = True
+
+                if skip_row:
+                    messages.warning(
+                        request,
+                        f"Skipping row {row_missing_fields['row']} due to missing fields: {', '.join(row_missing_fields['missing_fields'])}",  # noqa
+                    )
+                    continue
+
+                Officer.objects.create(  # implement a shorter way to create an object # noqa
+                    name=officer_data["name"],
+                    date_of_birth=officer_data["date_of_birth"],
+                    birth_year=officer_data["date_of_birth"].year,
                     current_residence=(
-                        str(row.get("Chổ ở hiện nay: Thôn ( Khu Phố)", ""))
+                        str(officer_data["khu_pho"])
                         + ", "
-                        + str(row.get("Xã (Phường)", ""))
+                        + str(officer_data["phuong"])
                         + ", "
-                        + str(row.get("Huyện (Thành Phố)", ""))
+                        + str(officer_data["huyen"])
                         + ", "
-                        + str(row.get("Tỉnh", ""))
+                        + str(officer_data["tinh"])
                     ),
-                    id_ca=row.get("Số hiệu", ""),
-                    id_citizen=str(row.get("Số CMND", "")).split(".")[0],
-                    gender=row.get("Giới tính", ""),
-                    date_of_enlistment=get_day(row, "Vào ngành"),
-                    enlistment_year=get_day(row, "Vào ngành").year,
-                    date_join_party=get_day(row, "Vào đảng"),
-                    join_party_year=get_day(row, "Vào đảng").year,
-                    home_town=row.get("Quê quán", ""),
-                    blood_type=row.get("Nhóm Máu", ""),
-                    education=row.get("Trình độ", ""),
-                    certi_of_IT=row.get("Tin học", ""),
-                    certi_of_foreign_language=row.get("Ngoại Ngữ", ""),
-                    political_theory=row.get("Trình độ LLCT", ""),
-                    military_rank=row.get("Cấp bậc hàm", ""),
-                    rank_type=row.get("Loại hàm", ""),
-                    position=row.get("Chức vụ", ""),
-                    work_unit=row.get(
-                        "Vị trí công tác", ""
-                    ),  # noqa # Đơn vị công tác
-                    military_type=row.get("Lực lượng", ""),
-                    equipment_type=row.get("Quân trang", ""),
-                    size_of_shoes=row.get("Giày", ""),
-                    size_of_hat=row.get("Mũ", ""),
-                    size_of_clothes=str(row.get("Quần áo", "")).split(".")[0],
-                    bank_account_BIDV=row.get("Số tài khoản BIDV", ""),
-                    phone_number=str(row.get("Số Điện thoại", "")).split(".")[
+                    id_ca=officer_data["id_ca"],
+                    id_citizen=officer_data["id_citizen"],
+                    gender=officer_data["gender"],
+                    date_of_enlistment=officer_data["date_of_enlistment"],
+                    enlistment_year=officer_data[
+                        "date_of_enlistment"
+                    ].year,  # noqa
+                    date_join_party=officer_data["date_join_party"],
+                    join_party_year=officer_data["date_join_party"].year,
+                    home_town=officer_data["home_town"],
+                    blood_type=officer_data["blood_type"],
+                    education=officer_data["education"],
+                    certi_of_IT=officer_data["certi_of_IT"],
+                    certi_of_foreign_language=officer_data[
+                        "certi_of_foreign_language"
+                    ],
+                    political_theory=officer_data["political_theory"],
+                    military_rank=officer_data["military_rank"],
+                    rank_type=officer_data["rank_type"],
+                    position=officer_data["position"],
+                    work_unit=officer_data["work_unit"],
+                    military_type=officer_data["military_type"],
+                    equipment_type=officer_data["equipment_type"],
+                    size_of_shoes=officer_data["size_of_shoes"],
+                    size_of_hat=officer_data["size_of_hat"],
+                    size_of_clothes=str(officer_data["size_of_clothes"]).split(
+                        "."
+                    )[
                         0
                     ],  # noqa
-                    laudatory=row.get("Khen thưởng", ""),
-                    punishment=row.get("Kỷ luật", ""),
+                    bank_account_BIDV=officer_data["bank_account_BIDV"],
+                    phone_number=str(officer_data["phone_number"]).split(".")[
+                        0
+                    ],  # noqa
+                    laudatory=officer_data["laudatory"],
+                    punishment=officer_data["punishment"],
                 )
-            return redirect(
-                "officer_list"
-            )  # Replace with your actual list view name
+            return redirect("officer_list")  
     else:
         form = ExcelUploadForm()
 
@@ -192,7 +264,7 @@ def excel_upload(request):
 @permission_required("officers.change_officer", raise_exception=True)
 def officer_update(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
-    
+
     if request.method == "POST":
         form = OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
@@ -200,14 +272,16 @@ def officer_update(request, pk):
             return redirect("officer_list")
     else:
         form = OfficerInfoForm(instance=officer)
-    
+
     return render(request, "officers/officer_form.html", {"form": form})
 
 
 @login_required
 def officer_detail(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
-    return render(request, "officers/officer_detail.html", {"officer": officer}) # noqa
+    return render(
+        request, "officers/officer_detail.html", {"officer": officer}
+    )  # noqa
 
 
 @login_required

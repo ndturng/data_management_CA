@@ -9,6 +9,8 @@
 {% endif %}
 <h2>Officers</h2>
 
+
+
 <form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
     <input type="text" name="q" placeholder="Search by name" value="{{ query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
 
@@ -131,4 +133,11 @@
     {% endfor %}
 </ul>
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
