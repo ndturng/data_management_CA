@@ -11,13 +11,72 @@ from .forms import ExcelUploadForm, OfficerInfoForm
 from .models import Officer
 
 
+def handle_officer_data(officer_data):
+    officer_data["birth_year"] = officer_data["date_of_birth"].year
+    officer_data["enlistment_year"] = officer_data["date_of_enlistment"].year
+    officer_data["join_party_year"] = officer_data["date_join_party"].year
+
+    officer_data["current_residence"] = (
+        str(officer_data["khu_pho"])
+        + ", "
+        + str(officer_data["phuong"])
+        + ", "
+        + str(officer_data["huyen"])
+        + ", "
+        + str(officer_data["tinh"])
+    )
+
+    officer_data["phone_number"] = str(officer_data["phone_number"]).split(".")[ # noqa
+        0
+    ]
+
+    officer_data["size_of_clothes"] = str(
+        officer_data["size_of_clothes"]
+    ).split(".")[0]
+
+    # Remove the columns that are not part of the Officer model
+    del officer_data["khu_pho"]
+    del officer_data["phuong"]
+    del officer_data["huyen"]
+    del officer_data["tinh"]
+
+
+def extract_officer_data(
+    index, row, fields_dict, required_fields, date_fields
+):  # noqa
+    officer_data = {}
+    row_missing_fields = {"row": index + 1, "missing_fields": []}
+    skip_row = False
+
+    for field, column in fields_dict.items():
+        if field in date_fields:
+            officer_data[field] = get_day(row, column)
+        else:
+            officer_data[field] = row.get(column, "")
+
+        # Add the empty fields to the missing_fields list
+        if (
+            not officer_data[field]
+            or officer_data[field] == "nan"
+            or pd.isna(officer_data[field])
+        ):
+            row_missing_fields["missing_fields"].append(field)
+
+            # If the field is required and empty, skip this row
+            if field in required_fields:
+                skip_row = True
+
+    return officer_data, row_missing_fields, skip_row
+
+
 def get_day(row, column):
+    default_date = datetime(1800, 1, 1)
     try:
         day = row.get(column, None)
         # print(f"Raw value for day: {day}, Type: {type(day)}")
 
         if pd.isna(day):  # Check for NaT or NaN values
-            return None
+            return default_date
 
         if isinstance(day, str):
             # Handle string dates
@@ -29,12 +88,12 @@ def get_day(row, column):
             # If it's already a datetime object, just return it
             date_time = day
         else:
-            return None
+            return default_date
 
         return date_time
     except ValueError:
         print(f"Failed to parse date for {row['name']} with value: {day}")
-        return None
+        return default_date
 
 
 @login_required
@@ -170,31 +229,19 @@ def excel_upload(request):
 
             # Add required fields here
             required_fields = ["name", "id_ca"]
-            date_fields = ["date_of_birth", "date_of_enlistment", "date_join_party"] # noqa
+            date_fields = [
+                "date_of_birth",
+                "date_of_enlistment",
+                "date_join_party",
+            ]
 
             # Iterate over the rows and create Officer objects
             for index, row in data.iterrows():
-                skip_row = False
-                officer_data = {}
-                row_missing_fields = {"row": index + 1, "missing_fields": []}
-
-                for field, column in fields_dict.items():
-                    if field in date_fields:
-                        officer_data[field] = get_day(row, column)
-                    else:
-                        officer_data[field] = row.get(column, "")
-
-                    # Add the empty fields to the missing_fields list
-                    if (
-                        not officer_data[field]
-                        or officer_data[field] == "nan"
-                        or pd.isna(officer_data[field])
-                    ):  # noqa
-                        row_missing_fields["missing_fields"].append(field)
-
-                        # If the field is required and empty, skip this row
-                        if field in required_fields:
-                            skip_row = True
+                officer_data, row_missing_fields, skip_row = (
+                    extract_officer_data(
+                        index, row, fields_dict, required_fields, date_fields
+                    )
+                )
 
                 if skip_row:
                     messages.warning(
@@ -203,57 +250,10 @@ def excel_upload(request):
                     )
                     continue
 
-                Officer.objects.create(  # implement a shorter way to create an object # noqa
-                    name=officer_data["name"],
-                    date_of_birth=officer_data["date_of_birth"],
-                    birth_year=officer_data["date_of_birth"].year,
-                    current_residence=(
-                        str(officer_data["khu_pho"])
-                        + ", "
-                        + str(officer_data["phuong"])
-                        + ", "
-                        + str(officer_data["huyen"])
-                        + ", "
-                        + str(officer_data["tinh"])
-                    ),
-                    id_ca=officer_data["id_ca"],
-                    id_citizen=officer_data["id_citizen"],
-                    gender=officer_data["gender"],
-                    date_of_enlistment=officer_data["date_of_enlistment"],
-                    enlistment_year=officer_data[
-                        "date_of_enlistment"
-                    ].year,  # noqa
-                    date_join_party=officer_data["date_join_party"],
-                    join_party_year=officer_data["date_join_party"].year,
-                    home_town=officer_data["home_town"],
-                    blood_type=officer_data["blood_type"],
-                    education=officer_data["education"],
-                    certi_of_IT=officer_data["certi_of_IT"],
-                    certi_of_foreign_language=officer_data[
-                        "certi_of_foreign_language"
-                    ],
-                    political_theory=officer_data["political_theory"],
-                    military_rank=officer_data["military_rank"],
-                    rank_type=officer_data["rank_type"],
-                    position=officer_data["position"],
-                    work_unit=officer_data["work_unit"],
-                    military_type=officer_data["military_type"],
-                    equipment_type=officer_data["equipment_type"],
-                    size_of_shoes=officer_data["size_of_shoes"],
-                    size_of_hat=officer_data["size_of_hat"],
-                    size_of_clothes=str(officer_data["size_of_clothes"]).split(
-                        "."
-                    )[
-                        0
-                    ],  # noqa
-                    bank_account_BIDV=officer_data["bank_account_BIDV"],
-                    phone_number=str(officer_data["phone_number"]).split(".")[
-                        0
-                    ],  # noqa
-                    laudatory=officer_data["laudatory"],
-                    punishment=officer_data["punishment"],
-                )
-            return redirect("officer_list")  
+                handle_officer_data(officer_data)
+
+                Officer.objects.create(**officer_data)
+            return redirect("officer_list")
     else:
         form = ExcelUploadForm()
 
