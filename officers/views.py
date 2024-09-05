@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db import IntegrityError
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
@@ -26,7 +27,9 @@ def handle_officer_data(officer_data):
         + str(officer_data["tinh"])
     )
 
-    officer_data["phone_number"] = str(officer_data["phone_number"]).split(".")[ # noqa
+    officer_data["phone_number"] = str(officer_data["phone_number"]).split(
+        "."
+    )[  # noqa
         0
     ]
 
@@ -175,9 +178,7 @@ def officer_create(request):
         form = OfficerInfoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(
-                "officer_list"
-            )  # Replace with your actual list view name
+            return redirect("officer_list")
     else:
         form = OfficerInfoForm()
 
@@ -252,7 +253,21 @@ def excel_upload(request):
 
                 handle_officer_data(officer_data)
 
-                Officer.objects.create(**officer_data)
+                try:
+                    Officer.objects.create(**officer_data)
+                except IntegrityError as e:
+                    if 'officers_officer_id_ca' in str(e):  # Checking for the unique constraint error
+                        messages.warning(
+                            request,
+                            f"Skipping row {index + 1} due to duplicate with existing officer with name '{officer_data['name']}' and ID '{officer_data['id_ca']}'"  # noqa
+                        )
+                    else:
+                        # Log or handle unexpected IntegrityError differently
+                        messages.error(
+                            request,
+                            f"Error processing row {index + 1}: {str(e)}"
+                        )
+                    continue  # Skip to the next row
             return redirect("officer_list")
     else:
         form = ExcelUploadForm()
