@@ -122,6 +122,11 @@ def officer_list(request):
     if query:
         officers = Officer.objects.filter(name__icontains=query)
 
+    # Search by ID
+    id_ca_query = request.GET.get("id_ca")
+    if id_ca_query:
+        officers = officers.filter(id_ca__icontains=id_ca_query)
+
     # Loop through each field in the filter_fields dictionary
     for field, filter_action in filter_fields.items():
         # Get the value from the request GET parameters
@@ -165,6 +170,7 @@ def officer_list(request):
 
     context["officers"] = officers
     context["query"] = query
+    context["id_ca_query"] = id_ca_query
     context["selected_year_of_birth"] = selected_year_of_birth
     context["selected_year_enlistment"] = selected_year_enlistment
 
