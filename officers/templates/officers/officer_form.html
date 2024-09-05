@@ -1,6 +1,7 @@
 <h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Officer</h2>
 <form method="post">
     {% csrf_token %}
+    <a href="{% url 'officer_list' %}">Back to List</a>
     <button type="submit">Save</button>
     {{ form.as_p }}
 </form>
