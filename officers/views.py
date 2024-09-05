@@ -1,4 +1,5 @@
 from datetime import datetime
+import unicodedata
 
 import pandas as pd
 from django.contrib import messages
@@ -36,6 +37,9 @@ def handle_officer_data(officer_data):
     officer_data["size_of_clothes"] = str(
         officer_data["size_of_clothes"]
     ).split(".")[0]
+
+    # Normalize the name to NFC form
+    officer_data["name"] = unicodedata.normalize("NFC", officer_data["name"])
 
     # Remove the columns that are not part of the Officer model
     del officer_data["khu_pho"]
@@ -120,7 +124,8 @@ def officer_list(request):
     # Search by name
     query = request.GET.get("q")
     if query:
-        officers = Officer.objects.filter(name__icontains=query)
+        normalized_query = unicodedata.normalize('NFC', query)
+        officers = officers.filter(name__icontains=normalized_query)
 
     # Search by ID
     id_ca_query = request.GET.get("id_ca")
@@ -144,6 +149,7 @@ def officer_list(request):
             selected_year_of_birth = int(value) if value else None
         if field == "year_enlistment":
             selected_year_enlistment = int(value) if value else None
+
     # Get unique sorted values for filter dropdowns
     dropdown_fields = {
         "military_types": "military_type",
@@ -183,6 +189,10 @@ def officer_create(request):
     if request.method == "POST":
         form = OfficerInfoForm(request.POST)
         if form.is_valid():
+            # Normalize the name to NFC form
+            form.cleaned_data["name"] = unicodedata.normalize(
+                "NFC", form.cleaned_data["name"]
+            )
             form.save()
             return redirect("officer_list")
     else:
@@ -290,6 +300,10 @@ def officer_update(request, pk):
     if request.method == "POST":
         form = OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
+            # Normalize the name to NFC form
+            form.cleaned_data["name"] = unicodedata.normalize(
+                "NFC", form.cleaned_data["name"]
+            )
             form.save()
             return redirect("officer_list")
     else:
