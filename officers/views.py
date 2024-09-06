@@ -1,15 +1,16 @@
-from datetime import datetime
 import unicodedata
+from datetime import datetime
 
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from .forms import ExcelUploadForm, OfficerInfoForm
+from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
 from .models import Officer
 
 
@@ -119,6 +120,7 @@ def officer_list(request):
         "current_residence": "current_residence",
         "home_town": "home_town",
     }
+
     officers = Officer.objects.all()  # Start with all officers
 
     # Search by name
@@ -130,13 +132,13 @@ def officer_list(request):
     # Search by ID
     id_ca_query = request.GET.get("id_ca")
     if id_ca_query:
+        # Trim the whitespace
+        id_ca_query = id_ca_query.strip()
         officers = officers.filter(id_ca__icontains=id_ca_query)
 
-    # Loop through each field in the filter_fields dictionary
+    # Apply filters
     for field, filter_action in filter_fields.items():
-        # Get the value from the request GET parameters
         value = request.GET.get(field)
-
         if value:
             # If the filter action is a callable (e.g., lambda), call it
             if callable(filter_action):
@@ -180,6 +182,46 @@ def officer_list(request):
     context["selected_year_of_birth"] = selected_year_of_birth
     context["selected_year_enlistment"] = selected_year_enlistment
 
+    # Handle export functionality
+    if request.method == "POST" and "export" in request.POST:
+        form = OfficerExportForm(request.POST)
+        if form.is_valid():
+            selected_officers = form.cleaned_data["officers"]
+            selected_fields = form.cleaned_data["fields"]
+
+            # Filter officers based on selected IDs
+            officers_to_export = officers.filter(pk__in=selected_officers)
+
+            # Retrieve data for selected officers and fields
+            officers_data = []
+            for idx, officer in enumerate(officers_to_export, start=1):
+                row = {
+                    "STT": idx,
+                }
+                for field in selected_fields:
+                    row[field] = getattr(officer, field)
+
+                officers_data.append(row)
+
+            # Create a DataFrame with the selected fields
+            df = pd.DataFrame(officers_data, columns=["STT"] + selected_fields)
+
+            # Prepare the response as an Excel file
+            response = HttpResponse(
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            response["Content-Disposition"] = (
+                "attachment; filename=officers.xlsx"
+            )
+
+            with pd.ExcelWriter(response, engine="openpyxl") as writer:
+                df.to_excel(writer, index=False, sheet_name="Officers")
+
+            return response
+    else:
+        form = OfficerExportForm(initial={"officers": officers})
+
+    context["form"] = form
     return render(request, "officers/officer_list.html", context)
 
 

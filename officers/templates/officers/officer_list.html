@@ -126,14 +126,47 @@
     | <a href="{% url 'delete_all_officers' %}">Delete All Officers</a>
 {% endif %}
 
-<ul>
-    {% for officer in officers %}
-        <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
-            - <a href="{% url 'officer_detail' officer.pk %}">View</a> | 
-            <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
+<!-- Checkbox to toggle between officer list and export form -->
+<label>
+    <input type="checkbox" id="toggleExportForm" onclick="toggleView()"> Show Export Form
+</label>
+
+<!-- Officer List and Filter Form -->
+<div id="officerList" style="display: block;">
+
+    <ul>
+        {% for officer in officers %}
+            <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+                - <a href="{% url 'officer_detail' officer.pk %}">View</a> | 
+                <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Export Form -->
+<div id="exportForm" style="display: none;">
+    <form method="post" action="{% url 'officer_list' %}">
+        {% csrf_token %}
+        <h3>Select Officers and Fields to Export:</h3>
+
+        <div>
+            <strong>Select Officers:</strong><br>
+            {% for officer in officers %}
+                <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                <label for="officer_{{ officer.pk }}">{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}</label>
+                <br>
+            {% endfor %}
+        </div>
+
+        <div>
+            <strong>Select Fields:</strong><br>
+            {{ form.fields }}
+        </div>
+
+        <button type="submit" name="export">Export Selected Officers</button>
+    </form>
+</div>
 
 {% if messages %}
     {% for message in messages %}
@@ -143,3 +176,18 @@
     {% endfor %}
 {% endif %}
 
+<script>
+    function toggleView() {
+        var isChecked = document.getElementById('toggleExportForm').checked;
+        var officerList = document.getElementById('officerList');
+        var exportForm = document.getElementById('exportForm');
+
+        if (isChecked) {
+            officerList.style.display = 'none';
+            exportForm.style.display = 'block';
+        } else {
+            officerList.style.display = 'block';
+            exportForm.style.display = 'none';
+        }
+    }
+</script>

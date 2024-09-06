@@ -101,3 +101,35 @@ class OfficerInfoForm(forms.ModelForm):
 
 class ExcelUploadForm(forms.Form):
     file = forms.FileField(label="Upload Excel file")
+
+
+class OfficerExportForm(forms.Form):
+    officers = forms.ModelMultipleChoiceField(
+        queryset=Officer.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    fields = forms.MultipleChoiceField(
+        choices=[],  # Initialize with an empty list; choices will be set dynamically
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Get the field choices dynamically with labels from OfficerInfoForm
+        self.fields['fields'].choices = self.get_field_choices()
+
+    def get_field_choices(self):
+        # Map the fields from Officer model to their corresponding labels in OfficerInfoForm
+        form = OfficerInfoForm()  # Initialize OfficerInfoForm to access its fields
+        field_choices = []
+
+        for field_name in Officer._meta.fields:
+            # Get the field's label from OfficerInfoForm if available
+            label = form.fields[field_name.name].label if field_name.name in form.fields else field_name.verbose_name
+            field_choices.append((field_name.name, label))
+
+        return field_choices
