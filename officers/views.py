@@ -34,7 +34,7 @@ def handle_officer_data(officer_data):
     )[  # noqa
         0
     ]
-
+    officer_data["id_citizen"] = str(officer_data["id_citizen"]).split(".")[0]
     officer_data["size_of_clothes"] = str(
         officer_data["size_of_clothes"]
     ).split(".")[0]
