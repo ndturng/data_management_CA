@@ -10,24 +10,14 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from officers.constants import GENERAL_INFO_FIELDS
+
 from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
 from .models import Officer
 
 
 def handle_officer_data(officer_data):
     officer_data["birth_year"] = officer_data["date_of_birth"].year
-    officer_data["enlistment_year"] = officer_data["date_of_enlistment"].year
-    officer_data["join_party_year"] = officer_data["date_join_party"].year
-
-    officer_data["current_residence"] = (
-        str(officer_data["khu_pho"])
-        + ", "
-        + str(officer_data["phuong"])
-        + ", "
-        + str(officer_data["huyen"])
-        + ", "
-        + str(officer_data["tinh"])
-    )
 
     officer_data["phone_number"] = str(officer_data["phone_number"]).split(
         "."
@@ -40,13 +30,12 @@ def handle_officer_data(officer_data):
     ).split(".")[0]
 
     # Normalize the name to NFC form
-    officer_data["name"] = unicodedata.normalize("NFC", officer_data["name"])
-
-    # Remove the columns that are not part of the Officer model
-    del officer_data["khu_pho"]
-    del officer_data["phuong"]
-    del officer_data["huyen"]
-    del officer_data["tinh"]
+    officer_data["birth_name"] = unicodedata.normalize(
+        "NFC", officer_data["birth_name"]
+    )
+    officer_data["current_name"] = unicodedata.normalize(
+        "NFC", officer_data["current_name"]
+    )
 
 
 def extract_officer_data(
@@ -100,7 +89,7 @@ def get_day(row, column):
 
         return date_time
     except ValueError:
-        print(f"Failed to parse date for {row['name']} with value: {day}")
+        print(f"Failed to parse date for {row['birth_name']} with value: {day}")
         return default_date
 
 
@@ -115,10 +104,9 @@ def officer_list(request):
         "political_theory": "political_theory",
         "position": "position",
         "year_of_birth": "birth_year",
-        "year_enlistment": "enlistment_year",
         "education": "education",
         "current_residence": "current_residence",
-        "home_town": "home_town",
+        "birth_place": "birth_place",
     }
 
     officers = Officer.objects.all()  # Start with all officers
@@ -126,7 +114,7 @@ def officer_list(request):
     # Search by name
     query = request.GET.get("q")
     if query:
-        normalized_query = unicodedata.normalize('NFC', query)
+        normalized_query = unicodedata.normalize("NFC", query)
         officers = officers.filter(name__icontains=normalized_query)
 
     # Search by ID
@@ -149,8 +137,6 @@ def officer_list(request):
 
         if field == "year_of_birth":
             selected_year_of_birth = int(value) if value else None
-        if field == "year_enlistment":
-            selected_year_enlistment = int(value) if value else None
 
     # Get unique sorted values for filter dropdowns
     dropdown_fields = {
@@ -162,8 +148,7 @@ def officer_list(request):
         "hat_sizes": "size_of_hat",
         "positions": "position",
         "years_of_birth": "birth_year",
-        "years_enlistment": "enlistment_year",
-        "home_towns": "home_town",
+        "birth_places": "birth_place",
         "educations": "education",
         "current_residences": "current_residence",
     }
@@ -180,7 +165,6 @@ def officer_list(request):
     context["query"] = query
     context["id_ca_query"] = id_ca_query
     context["selected_year_of_birth"] = selected_year_of_birth
-    context["selected_year_enlistment"] = selected_year_enlistment
 
     # Handle export functionality
     if request.method == "POST" and "export" in request.POST:
@@ -191,6 +175,10 @@ def officer_list(request):
 
             # Filter officers based on selected IDs
             officers_to_export = officers.filter(pk__in=selected_officers)
+            
+            if not officers_to_export:
+                messages.warning(request, "No officers selected for export.")
+                return redirect("officer_list")
 
             # Retrieve data for selected officers and fields
             officers_data = []
@@ -232,8 +220,11 @@ def officer_create(request):
         form = OfficerInfoForm(request.POST)
         if form.is_valid():
             # Normalize the name to NFC form
-            form.cleaned_data["name"] = unicodedata.normalize(
-                "NFC", form.cleaned_data["name"]
+            form.cleaned_data["birth_name"] = unicodedata.normalize(
+                "NFC", form.cleaned_data["birth_name"]
+            )
+            form.cleaned_data["current_name"] = unicodedata.normalize(
+                "NFC", form.cleaned_data["current_name"]
             )
             form.save()
             return redirect("officer_list")
@@ -252,53 +243,22 @@ def excel_upload(request):
             file = request.FILES["file"]
             data = pd.read_excel(file)
 
-            fields_dict = {
-                "name": "Họ và tên",
-                "date_of_birth": "Ngày,tháng, năm sinh",
-                "birth_year": "Ngày,tháng, năm sinh",
-                "khu_pho": "Chổ ở hiện nay: Thôn ( Khu Phố)",
-                "phuong": "Xã (Phường)",
-                "huyen": "Huyện (Thành Phố)",
-                "tinh": "Tỉnh",
-                "id_ca": "Số hiệu",
-                "id_citizen": "Số CMND",
-                "gender": "Giới tính",
-                "date_of_enlistment": "Vào ngành",
-                "date_join_party": "Vào đảng",
-                "home_town": "Quê quán",
-                "blood_type": "Nhóm Máu",
-                "education": "Trình độ",
-                "certi_of_IT": "Tin học",
-                "certi_of_foreign_language": "Ngoại Ngữ",
-                "political_theory": "Trình độ LLCT",
-                "military_rank": "Cấp bậc hàm",
-                "rank_type": "Loại hàm",
-                "position": "Chức vụ",
-                "work_unit": "Vị trí công tác",
-                "military_type": "Lực lượng",
-                "equipment_type": "Quân trang",
-                "size_of_shoes": "Giày",
-                "size_of_hat": "Mũ",
-                "size_of_clothes": "Quần áo",
-                "bank_account_BIDV": "Số tài khoản BIDV",
-                "phone_number": "Số Điện thoại",
-                "laudatory": "Khen thưởng",
-                "punishment": "Kỷ luật",
-            }
-
             # Add required fields here
-            required_fields = ["name", "id_ca"]
+            required_fields = ["birth_name", "id_ca"]
             date_fields = [
                 "date_of_birth",
-                "date_of_enlistment",
-                "date_join_party",
+                "date_update",
             ]
 
             # Iterate over the rows and create Officer objects
             for index, row in data.iterrows():
                 officer_data, row_missing_fields, skip_row = (
                     extract_officer_data(
-                        index, row, fields_dict, required_fields, date_fields
+                        index,
+                        row,
+                        GENERAL_INFO_FIELDS,
+                        required_fields,
+                        date_fields,
                     )
                 )
 
@@ -315,10 +275,10 @@ def excel_upload(request):
                     Officer.objects.create(**officer_data)
                 except IntegrityError as e:
                     # Check for specific IntegrityError messages
-                    if "officers_officer_id_ca" in str(e):
+                    if "officers_officer.id_ca" in str(e):
                         messages.warning(
                             request,
-                            f"Skipping row {index + 1} due to duplicate with existing officer with name '{officer_data['name']}' and ID '{officer_data['id_ca']}'",  # noqa
+                            f"Skipping row {index + 1} due to duplicate with existing officer '{officer_data['birth_name']}' with ID '{officer_data['id_ca']}'",  # noqa
                         )
                     else:
                         # Log or handle unexpected IntegrityError differently
@@ -343,8 +303,8 @@ def officer_update(request, pk):
         form = OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
             # Normalize the name to NFC form
-            form.cleaned_data["name"] = unicodedata.normalize(
-                "NFC", form.cleaned_data["name"]
+            form.cleaned_data["birth_name"] = unicodedata.normalize(
+                "NFC", form.cleaned_data["birth_name"]
             )
             form.save()
             return redirect("officer_list")

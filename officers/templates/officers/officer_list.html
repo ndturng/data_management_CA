@@ -69,19 +69,11 @@
         {% endfor %}
     </select>
 
-    <label for="year_enlistment">Year Enlistment:</label>
-    <select name="year_enlistment" style="flex: 1; min-width: 150px;">
+    <label for="birth_place">Home Town:</label>
+    <select name="birth_place" style="flex: 1; min-width: 150px;">
         <option value="">All</option>
-        {% for year in years_enlistment %}
-            <option value="{{ year }}" {% if year == selected_year_enlistment %}selected{% endif %}>{{ year }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="home_town">Home Town:</label>
-    <select name="home_town" style="flex: 1; min-width: 150px;">
-        <option value="">All</option>
-        {% for ht in home_towns %}
-            <option value="{{ ht }}" {% if request.GET.home_town == ht %}selected{% endif %}>{{ ht }}</option>
+        {% for bp in birth_places %}
+            <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
         {% endfor %}
     </select>
 
@@ -126,6 +118,15 @@
     | <a href="{% url 'delete_all_officers' %}">Delete All Officers</a>
 {% endif %}
 
+<!-- Display messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
 <!-- Checkbox to toggle between officer list and export form -->
 <label>
     <input type="checkbox" id="toggleExportForm" onclick="toggleView()"> Show Export Form
@@ -136,7 +137,7 @@
 
     <ul>
         {% for officer in officers %}
-            <li>{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+            <li>{{ officer.birth_name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
                 - <a href="{% url 'officer_detail' officer.pk %}">View</a> | 
                 <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
             </li>
@@ -154,7 +155,7 @@
             <strong>Select Officers:</strong><br>
             {% for officer in officers %}
                 <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
-                <label for="officer_{{ officer.pk }}">{{ officer.name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}</label>
+                <label for="officer_{{ officer.pk }}">{{ officer.birth_name }} ({{ officer.id_ca }})</label>
                 <br>
             {% endfor %}
         </div>
@@ -168,13 +169,7 @@
     </form>
 </div>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
+
 
 <script>
     function toggleView() {

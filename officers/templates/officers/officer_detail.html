@@ -6,17 +6,13 @@
     <title>{{ officer.name }} - Details</title>
 </head>
 <body>
-    <h1>Details of Officer: {{ officer.name }}</h1>
-    <p><strong>Date of Birth:</strong> {{ officer.date_of_birth|date:"d/m/Y" }}</p>
-    <p><strong>Birth Year:</strong> {{ officer.birth_year }}</p>
-    <p><strong>ID:</strong> {{ officer.id_ca }}</p>
-    <p><strong>Gender:</strong> {{ officer.gender }}</p>
-    <p><strong>Citizenship ID:</strong> {{ officer.id_citizen }}</p>
-    <p><strong>Enlistment Date:</strong> {{ officer.date_of_enlistment|date:"d/m/Y" }}</p>
-    <p><strong>Enlistment Year:</strong> {{ officer.enlistment_year }}</p>
-    <p><strong>Party Join Date:</strong> {{ officer.date_join_party|date:"d/m/Y" }}</p>
-    <p><strong>Party Join Year:</strong> {{ officer.join_party_year }}</p>
-    <p><strong>Current Residence:</strong> {{ officer.current_residence }}</p>
+    <h1>Thông tin: {{ officer.birth_name }}</h1>
+    <p><strong>Ngày sinh:</strong> {{ officer.date_of_birth|date:"d/m/Y" }}</p>
+    <p><strong>Số hiệu:</strong> {{ officer.id_ca }}</p>
+    <p><strong>Giới tính</strong> {{ officer.gender }}</p>
+    <p><strong>Số CCCD:</strong> {{ officer.id_citizen }}</p>
+
+    <p><strong>Chỗ ở hiện nay:</strong> {{ officer.current_residence }}</p>
     
     <a href="{% url 'officer_update' officer.pk %}">Edit</a> |<a href="{% url 'officer_list' %}">Back to List</a>
 </body>
