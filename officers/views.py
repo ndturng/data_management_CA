@@ -175,7 +175,7 @@ def officer_list(request):
 
             # Filter officers based on selected IDs
             officers_to_export = officers.filter(pk__in=selected_officers)
-            
+
             if not officers_to_export:
                 messages.warning(request, "No officers selected for export.")
                 return redirect("officer_list")
@@ -240,53 +240,60 @@ def excel_upload(request):
     if request.method == "POST":
         form = ExcelUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES["file"]
-            data = pd.read_excel(file)
-
-            # Add required fields here
-            required_fields = ["birth_name", "id_ca"]
-            date_fields = [
-                "date_of_birth",
-                "date_update",
-            ]
-
-            # Iterate over the rows and create Officer objects
-            for index, row in data.iterrows():
-                officer_data, row_missing_fields, skip_row = (
-                    extract_officer_data(
-                        index,
-                        row,
-                        GENERAL_INFO_FIELDS,
-                        required_fields,
-                        date_fields,
-                    )
-                )
-
-                if skip_row:
-                    messages.warning(
-                        request,
-                        f"Skipping row {row_missing_fields['row']} due to missing fields: {', '.join(row_missing_fields['missing_fields'])}",  # noqa
-                    )
-                    continue
-
-                handle_officer_data(officer_data)
-
+            files = request.FILES.getlist("files")
+            print(len(files))
+            for file in files:
                 try:
-                    Officer.objects.create(**officer_data)
-                except IntegrityError as e:
-                    # Check for specific IntegrityError messages
-                    if "officers_officer.id_ca" in str(e):
-                        messages.warning(
-                            request,
-                            f"Skipping row {index + 1} due to duplicate with existing officer '{officer_data['birth_name']}' with ID '{officer_data['id_ca']}'",  # noqa
+                    data = pd.read_excel(file)
+
+                    # Add required fields here
+                    required_fields = ["birth_name", "id_ca"]
+                    date_fields = [
+                        "date_of_birth",
+                        "date_update",
+                    ]
+
+                    # Iterate over the rows and create Officer objects
+                    for index, row in data.iterrows():
+                        officer_data, row_missing_fields, skip_row = (
+                            extract_officer_data(
+                                index,
+                                row,
+                                GENERAL_INFO_FIELDS,
+                                required_fields,
+                                date_fields,
+                            )
                         )
-                    else:
-                        # Log or handle unexpected IntegrityError differently
-                        messages.error(
-                            request,
-                            f"Error processing row {index + 1}: {str(e)}",
-                        )
-                    continue  # Skip to the next row
+
+                        if skip_row:
+                            messages.warning(
+                                request,
+                                f"Skipping row {row_missing_fields['row']} due to missing fields: {', '.join(row_missing_fields['missing_fields'])}",  # noqa
+                            )
+                            continue
+
+                        handle_officer_data(officer_data)
+
+                        try:
+                            Officer.objects.create(**officer_data)
+                        except IntegrityError as e:
+                            # Check for specific IntegrityError messages
+                            if "officers_officer.id_ca" in str(e):
+                                messages.warning(
+                                    request,
+                                    f"Skipping row {index + 1} due to duplicate with existing officer '{officer_data['birth_name']}' with ID '{officer_data['id_ca']}'",  # noqa
+                                )
+                            else:
+                                # Log or handle unexpected IntegrityError differently
+                                messages.error(
+                                    request,
+                                    f"Error processing row {index + 1}: {str(e)}",
+                                )
+                            continue  # Skip to the next row
+                except Exception as e:
+                    messages.error(
+                        request, f"Error processing file {file.name}: {e}"
+                    )
             return redirect("officer_list")
     else:
         form = ExcelUploadForm()

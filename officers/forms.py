@@ -56,10 +56,29 @@ class OfficerInfoForm(forms.ModelForm):
             cleaned_data[field] = self.clean_month_year(field)
         return cleaned_data
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
 
 class ExcelUploadForm(forms.Form):
-    file = forms.FileField(label="Upload Excel file")
-
+    files = MultipleFileField(
+        label="Select files",
+        required=True,
+        help_text="Select one or more Excel files to upload.",
+    )
 
 class OfficerExportForm(forms.Form):
     officers = forms.ModelMultipleChoiceField(
