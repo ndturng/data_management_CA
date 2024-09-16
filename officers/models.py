@@ -198,3 +198,11 @@ class Officer(models.Model):
 
     def __str__(self):
         return self.birth_name
+
+class Title(models.Model): # Chức danh
+    officer = models.ForeignKey(Officer, on_delete=models.CASCADE, related_name="titles")
+    appointed_date = models.DateField(null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.title

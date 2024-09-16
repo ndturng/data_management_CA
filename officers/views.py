@@ -13,7 +13,7 @@ from django.urls import reverse
 from officers.constants import GENERAL_INFO_FIELDS
 
 from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
-from .models import Officer
+from .models import Officer, Title
 
 
 def handle_officer_data(officer_data):
@@ -244,7 +244,7 @@ def excel_upload(request):
             print(len(files))
             for file in files:
                 try:
-                    data = pd.read_excel(file)
+                    data = pd.read_excel(file, "Thông tin chung")
 
                     # Add required fields here
                     required_fields = ["birth_name", "id_ca"]
@@ -275,7 +275,7 @@ def excel_upload(request):
                         handle_officer_data(officer_data)
 
                         try:
-                            Officer.objects.create(**officer_data)
+                            officer = Officer.objects.create(**officer_data)
                         except IntegrityError as e:
                             # Check for specific IntegrityError messages
                             if "officers_officer.id_ca" in str(e):
@@ -290,6 +290,22 @@ def excel_upload(request):
                                     f"Error processing row {index + 1}: {str(e)}",
                                 )
                             continue  # Skip to the next row
+
+                        title_df = pd.read_excel(file, "Chức danh")
+                        for _, title_row in title_df.iterrows():
+                            appointed_date = get_day(title_row, "Ngày bổ nhiệm")
+                            title = title_row.get("Chức danh", "")
+                            try:
+                                Title.objects.create(
+                                    officer=officer,
+                                    appointed_date=appointed_date,
+                                    title=title,    
+                                )
+                            except IntegrityError as e:
+                                messages.error(
+                                    request,
+                                    f"Error processing title for officer {officer.birth_name}: {e}",
+                                )
                 except Exception as e:
                     messages.error(
                         request, f"Error processing file {file.name}: {e}"
@@ -360,3 +376,11 @@ class CustomLoginView(LoginView):
         # if self.request.user.is_superuser:
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
+
+
+@login_required
+def officer_title(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    titles = officer.titles.all()
+    context = {"officer": officer, "titles": titles}
+    return render(request, "officers/officer_title.html", context)
