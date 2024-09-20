@@ -51,6 +51,11 @@ GENERAL_INFO_FIELDS = {
     "date_update": "Ngày cập nhật",
 }
 
+GENERAL_INFO_ADDED_FIELDS = {
+    "next_salary_coefficient": "Hệ số lương tiếp theo",
+    "next_salary_decision_year": "Năm quyết định lương tiếp theo",
+}
+
 GENERAL_INFO_DATE_FIELDS = [
     "month_join_group",
     "month_join_party",
@@ -59,3 +64,52 @@ GENERAL_INFO_DATE_FIELDS = [
     "month_join_CA",
 ]
 
+RANK_SCALE = {
+    "Hạ sĩ": 3.2,
+    "Trung sĩ": 3.5,
+    "Thượng sĩ": 3.8,
+    "Thiếu úy": 4.2,
+    "Trung úy": 4.6,
+    "Thượng úy": 5.0,
+    "Đại úy": 5.4,
+    "Thiếu tá": 6.0,
+    "Trung tá": 6.6,
+    "Thượng tá": 7.3,
+    "Đại tá": 8.0,
+    "Thiếu tướng": 8.6,
+    "Trung tướng": 9.2,
+    "Thượng tướng": 9.8,
+    "Đại tướng": 10.4,
+}
+
+SALARY_SCALE = {
+    3.2: ("Hạ sĩ", 3.5, 1),
+    3.5: ("Trung sĩ", 3.8, 1),
+    3.8: ("Thượng sĩ", 4.2, 2),
+    4.2: ("Thiếu úy", 4.6, 2),
+    4.6: ("Trung úy", 5.0, 3),
+    5.0: ("Thượng úy", 5.4, 3),
+    5.4: ("Đại úy", 6.0, 4),
+    6.0: ("Thiếu tá", 6.6, 4),
+    6.6: ("Trung tá", 7.3, 4),
+    7.3: ("Thượng tá", 8.0, 4),
+    8.0: ("Đại tá", 8.6, 4),
+    8.6: ("Thiếu tướng", 9.2, 4),
+    9.2: ("Trung tướng", 9.8, 4),
+    9.8: ("Thượng tướng", 10.4, 4),
+    10.4: ("Đại tướng", 11.0, 4),
+}
+
+PERIOD_INCREASE_CEILING_SALARY = 4
+SALARY_AFTER_CEILING = {
+    5.0: (5.35, 5.7),
+    5.4: (5.8, 6.2),
+    6.0: (6.4, 6.8),
+    6.6: (7.0, 7.4),
+    7.3: (7.7, 8.1),
+    8.0: (8.4, 8.6),
+    8.6: (9.2, 9.2),
+    9.2: (9.8, 9.8),
+    9.8: (10.4, 10.4),
+    10.4: (11.0, 11.0),
+}

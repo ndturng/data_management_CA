@@ -16,28 +16,6 @@ from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
 from .models import Officer, Title
 
 
-def handle_officer_data(officer_data):
-    officer_data["birth_year"] = officer_data["date_of_birth"].year
-
-    officer_data["phone_number"] = str(officer_data["phone_number"]).split(
-        "."
-    )[  # noqa
-        0
-    ]
-    officer_data["id_citizen"] = str(officer_data["id_citizen"]).split(".")[0]
-    officer_data["size_of_clothes"] = str(
-        officer_data["size_of_clothes"]
-    ).split(".")[0]
-
-    # Normalize the name to NFC form
-    officer_data["birth_name"] = unicodedata.normalize(
-        "NFC", officer_data["birth_name"]
-    )
-    officer_data["current_name"] = unicodedata.normalize(
-        "NFC", officer_data["current_name"]
-    )
-
-
 def extract_officer_data(
     index, row, fields_dict, required_fields, date_fields
 ):  # noqa
@@ -219,13 +197,6 @@ def officer_create(request):
     if request.method == "POST":
         form = OfficerInfoForm(request.POST)
         if form.is_valid():
-            # Normalize the name to NFC form
-            form.cleaned_data["birth_name"] = unicodedata.normalize(
-                "NFC", form.cleaned_data["birth_name"]
-            )
-            form.cleaned_data["current_name"] = unicodedata.normalize(
-                "NFC", form.cleaned_data["current_name"]
-            )
             form.save()
             return redirect("officer_list")
     else:
@@ -272,8 +243,6 @@ def excel_upload(request):
                             )
                             continue
 
-                        handle_officer_data(officer_data)
-
                         try:
                             officer = Officer.objects.create(**officer_data)
                         except IntegrityError as e:
@@ -299,7 +268,7 @@ def excel_upload(request):
                                 Title.objects.create(
                                     officer=officer,
                                     appointed_date=appointed_date,
-                                    title=title,    
+                                    title=title,
                                 )
                             except IntegrityError as e:
                                 messages.error(
@@ -325,10 +294,6 @@ def officer_update(request, pk):
     if request.method == "POST":
         form = OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
-            # Normalize the name to NFC form
-            form.cleaned_data["birth_name"] = unicodedata.normalize(
-                "NFC", form.cleaned_data["birth_name"]
-            )
             form.save()
             return redirect("officer_list")
     else:

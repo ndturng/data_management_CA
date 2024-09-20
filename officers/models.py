@@ -1,4 +1,8 @@
+import unicodedata
+
 from django.db import models
+
+from officers.utils import cal_next_rank
 
 
 # flake8: noqa
@@ -18,9 +22,7 @@ class Officer(models.Model):
         max_length=255, null=True, blank=True, default="nan"
     )
     # Chỗ ở hiện nay
-    current_residence = models.CharField(
-        max_length=255, null=True, blank=False
-    )
+    current_residence = models.CharField(max_length=255, null=True, blank=False)
     # Dân tộc
     folk = models.CharField(
         max_length=255, null=True, blank=True, default="nan"
@@ -36,17 +38,13 @@ class Officer(models.Model):
     birth_year = models.IntegerField(null=True, blank=True, default=1800)
 
     # Tháng năm vào Đoàn
-    month_join_group = models.CharField(
-        max_length=7, null=True, blank=True
-    )
+    month_join_group = models.CharField(max_length=7, null=True, blank=True)
     # Đoàn thể
     group = models.CharField(
         max_length=255, null=True, blank=True, default="nan"
     )
     # Tháng năm vào Đảng
-    month_join_party = models.CharField(
-        max_length=7, null=True, blank=True
-    )
+    month_join_party = models.CharField(max_length=7, null=True, blank=True)
     # Tháng năm chính thức
     month_join_party_official = models.CharField(
         max_length=7, null=True, blank=True
@@ -60,13 +58,9 @@ class Officer(models.Model):
         max_length=255, null=True, blank=True, default="nan"
     )
     # Tháng năm tuyển dụng
-    month_recruit = models.CharField(
-        max_length=7, null=True, blank=True
-    )
+    month_recruit = models.CharField(max_length=7, null=True, blank=True)
     # Tháng năm vào CA
-    month_join_CA = models.CharField(
-        max_length=7, null=True, blank=True
-    )
+    month_join_CA = models.CharField(max_length=7, null=True, blank=True)
     # Đơn vị tuyển
     recruit_unit = models.CharField(
         max_length=255, null=True, blank=True, default="nan"
@@ -95,7 +89,15 @@ class Officer(models.Model):
     )
     # Năm quyết định lương
     salary_decision_year = models.IntegerField(
-        null=True, blank=True, default="nan"
+        null=True, blank=True, default=1800
+    )
+    # Hệ số lương tiếp theo
+    next_salary_coefficient = models.FloatField(
+        null=True, blank=True, default=4.6
+    )
+    # Năm quyết định lương tiếp theo
+    next_salary_decision_year = models.IntegerField(
+        null=True, blank=True, default=1800
     )
     # Đơn vị công tác
     work_unit = models.CharField(
@@ -196,11 +198,45 @@ class Officer(models.Model):
     # Ngày cập nhật
     date_update = models.DateField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        """
+        Override the save method to normalize and calculate the additional fields before saving the object
+        """
+        # Extract birth year from date of birth
+        if self.date_of_birth:
+            self.birth_year = self.date_of_birth.year
+
+        # Normalize name fields to NFC
+        if self.birth_name:
+            self.birth_name = unicodedata.normalize("NFC", self.birth_name)
+        if self.current_name:
+            self.current_name = unicodedata.normalize("NFC", self.current_name)
+
+        # Calculate next salary coefficient and decision year
+        if self.salary_coefficient and self.salary_decision_year:
+            self.next_salary_coefficient, self.next_salary_decision_year = (
+                cal_next_rank(
+                    self.salary_coefficient, self.salary_decision_year
+                )
+            )
+
+        if self.phone_number:
+            self.phone_number = str(self.phone_number).split(".")[0]
+        if self.id_citizen:
+            self.id_citizen = str(self.id_citizen).split(".")[0]
+        if self.size_of_clothes:
+            self.size_of_clothes = str(self.size_of_clothes).split(".")[0]
+
+        super(Officer, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.birth_name
 
-class Title(models.Model): # Chức danh
-    officer = models.ForeignKey(Officer, on_delete=models.CASCADE, related_name="titles")
+
+class Title(models.Model):  # Chức danh
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="titles"
+    )
     appointed_date = models.DateField(null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
 

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django import forms
 
-from .constants import GENERAL_INFO_DATE_FIELDS, GENERAL_INFO_FIELDS
+from .constants import GENERAL_INFO_ADDED_FIELDS, GENERAL_INFO_DATE_FIELDS, GENERAL_INFO_FIELDS
 from .models import Officer
 
 
@@ -10,6 +10,7 @@ class OfficerInfoForm(forms.ModelForm):
     class Meta:
         model = Officer
         fields = [key for key in GENERAL_INFO_FIELDS.keys()]
+        fields += [key for key in GENERAL_INFO_ADDED_FIELDS.keys()]
         widgets = {
             "date_of_birth": forms.DateInput(
                 format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
@@ -23,7 +24,9 @@ class OfficerInfoForm(forms.ModelForm):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
         for key, value in GENERAL_INFO_FIELDS.items():
             self.fields[key].label = value
-
+        for key, value in GENERAL_INFO_ADDED_FIELDS.items():
+            self.fields[key].label = value
+            
         # add placeholders for GENERAL_INFO_DATE_FIELDS
         for field in GENERAL_INFO_DATE_FIELDS:
             self.fields[field].widget.attrs["placeholder"] = "mm/yyyy"
