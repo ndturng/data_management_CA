@@ -13,7 +13,7 @@ from django.urls import reverse
 from officers.constants import GENERAL_INFO_FIELDS
 
 from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
-from .models import Officer, Title
+from .models import Officer, PositionPlan, Title
 
 
 def extract_officer_data(
@@ -275,6 +275,22 @@ def excel_upload(request):
                                     request,
                                     f"Error processing title for officer {officer.birth_name}: {e}",
                                 )
+                        
+                        position_plan_df = pd.read_excel(file, "Quy hoạch")
+                        for _, position_plan_row in position_plan_df.iterrows():
+                            period = position_plan_row.get("Giai đoạn", "")
+                            position = position_plan_row.get("Quy hoạch", "")
+                            try:
+                                PositionPlan.objects.create(
+                                    officer=officer,
+                                    period=period,
+                                    position=position,
+                                )
+                            except IntegrityError as e:
+                                messages.error(
+                                    request,
+                                    f"Error processing position plan for officer {officer.birth_name}: {e}",
+                                )
                 except Exception as e:
                     messages.error(
                         request, f"Error processing file {file.name}: {e}"
@@ -349,3 +365,11 @@ def officer_title(request, pk):
     titles = officer.titles.all()
     context = {"officer": officer, "titles": titles}
     return render(request, "officers/officer_title.html", context)
+
+
+@login_required
+def officer_position_plan(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    position_plans = officer.position_plans.all()
+    context = {"officer": officer, "position_plans": position_plans}
+    return render(request, "officers/officer_position_plan.html", context)

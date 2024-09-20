@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Quy hoạch </title>
+
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Thông tin quy hoạch:</h1>
+
+    <!-- Display Officer Position Plan -->
+    <ul>
+        {% for position_plan in position_plans %}
+            <li>
+                <strong>Giai đoạn</strong>: {{ position_plan.period }} - <strong>Quy hoạch</strong>: {{ position_plan.position }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
+</body>
+</html>

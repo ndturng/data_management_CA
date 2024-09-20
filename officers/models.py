@@ -242,3 +242,11 @@ class Title(models.Model):  # Chức danh
 
     def __str__(self):
         return self.title
+
+class PositionPlan(models.Model):  # Quy hoạch
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="position_plans"
+    )
+    period = models.CharField(max_length=11, null=True, blank=True)
+    position = models.CharField(max_length=255, null=True, blank=True)
+

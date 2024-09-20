@@ -20,6 +20,7 @@
     <p><strong>Năm quyết định lương tiếp theo:</strong> {{ officer.next_salary_decision_year }}</p>
 
     <a href="{% url 'officer_title' officer.pk %}">Chức danh</a> <br>
+    <a href="{% url 'officer_position_plan' officer.pk %}">Quy hoạch</a> <br>
     <a href="{% url 'officer_update' officer.pk %}">Edit</a> |<a href="{% url 'officer_list' %}">Back to List</a>
 </body>
 </html>
