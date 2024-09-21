@@ -1,5 +1,4 @@
 import unicodedata
-from datetime import datetime
 
 import pandas as pd
 from django.contrib import messages
@@ -10,65 +9,12 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from officers.constants import GENERAL_INFO_FIELDS
+from officers.config import SHEET_TO_MODEL_FIELDS
+from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
+from officers.utils import create_officer_related_objects, extract_officer_data
 
 from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
-from .models import Officer, PositionPlan, Title
-
-
-def extract_officer_data(
-    index, row, fields_dict, required_fields, date_fields
-):  # noqa
-    officer_data = {}
-    row_missing_fields = {"row": index + 1, "missing_fields": []}
-    skip_row = False
-
-    for field, column in fields_dict.items():
-        if field in date_fields:
-            officer_data[field] = get_day(row, column)
-        else:
-            officer_data[field] = row.get(column, "")
-
-        # Add the empty fields to the missing_fields list
-        if (
-            not officer_data[field]
-            or officer_data[field] == "nan"
-            or pd.isna(officer_data[field])
-        ):
-            row_missing_fields["missing_fields"].append(field)
-
-            # If the field is required and empty, skip this row
-            if field in required_fields:
-                skip_row = True
-
-    return officer_data, row_missing_fields, skip_row
-
-
-def get_day(row, column):
-    default_date = datetime(1800, 1, 1)
-    try:
-        day = row.get(column, None)
-        # print(f"Raw value for day: {day}, Type: {type(day)}")
-
-        if pd.isna(day):  # Check for NaT or NaN values
-            return default_date
-
-        if isinstance(day, str):
-            # Handle string dates
-            date_time = datetime.strptime(day, "%d/%m/%Y")
-        elif isinstance(day, pd.Timestamp):
-            # If it's a pandas Timestamp, we can convert it directly
-            date_time = day.to_pydatetime()
-        elif isinstance(day, datetime):
-            # If it's already a datetime object, just return it
-            date_time = day
-        else:
-            return default_date
-
-        return date_time
-    except ValueError:
-        print(f"Failed to parse date for {row['birth_name']} with value: {day}")
-        return default_date
+from .models import Officer
 
 
 @login_required
@@ -212,17 +158,10 @@ def excel_upload(request):
         form = ExcelUploadForm(request.POST, request.FILES)
         if form.is_valid():
             files = request.FILES.getlist("files")
-            print(len(files))
+
             for file in files:
                 try:
                     data = pd.read_excel(file, "Thông tin chung")
-
-                    # Add required fields here
-                    required_fields = ["birth_name", "id_ca"]
-                    date_fields = [
-                        "date_of_birth",
-                        "date_update",
-                    ]
 
                     # Iterate over the rows and create Officer objects
                     for index, row in data.iterrows():
@@ -231,8 +170,7 @@ def excel_upload(request):
                                 index,
                                 row,
                                 GENERAL_INFO_FIELDS,
-                                required_fields,
-                                date_fields,
+                                REQUIRED_FIELDS,
                             )
                         )
 
@@ -246,51 +184,31 @@ def excel_upload(request):
                         try:
                             officer = Officer.objects.create(**officer_data)
                         except IntegrityError as e:
-                            # Check for specific IntegrityError messages
                             if "officers_officer.id_ca" in str(e):
                                 messages.warning(
                                     request,
                                     f"Skipping row {index + 1} due to duplicate with existing officer '{officer_data['birth_name']}' with ID '{officer_data['id_ca']}'",  # noqa
                                 )
                             else:
-                                # Log or handle unexpected IntegrityError differently
                                 messages.error(
                                     request,
                                     f"Error processing row {index + 1}: {str(e)}",
                                 )
-                            continue  # Skip to the next row
-
-                        title_df = pd.read_excel(file, "Chức danh")
-                        for _, title_row in title_df.iterrows():
-                            appointed_date = get_day(title_row, "Ngày bổ nhiệm")
-                            title = title_row.get("Chức danh", "")
-                            try:
-                                Title.objects.create(
-                                    officer=officer,
-                                    appointed_date=appointed_date,
-                                    title=title,
-                                )
-                            except IntegrityError as e:
-                                messages.error(
-                                    request,
-                                    f"Error processing title for officer {officer.birth_name}: {e}",
-                                )
+                            continue
                         
-                        position_plan_df = pd.read_excel(file, "Quy hoạch")
-                        for _, position_plan_row in position_plan_df.iterrows():
-                            period = position_plan_row.get("Giai đoạn", "")
-                            position = position_plan_row.get("Quy hoạch", "")
-                            try:
-                                PositionPlan.objects.create(
-                                    officer=officer,
-                                    period=period,
-                                    position=position,
-                                )
-                            except IntegrityError as e:
-                                messages.error(
-                                    request,
-                                    f"Error processing position plan for officer {officer.birth_name}: {e}",
-                                )
+                        # Create related objects for the officer
+                        for sheet_name, config in SHEET_TO_MODEL_FIELDS.items():
+                            model_class = config.model_class
+                            fields = config.fields
+                            create_officer_related_objects(
+                                request=request,
+                                officer=officer,
+                                file=file,
+                                sheet_name=sheet_name,
+                                model_class=model_class,
+                                fields=fields,
+                                error_message_prefix=f"Error processing {sheet_name.lower()}",
+                            )
                 except Exception as e:
                     messages.error(
                         request, f"Error processing file {file.name}: {e}"

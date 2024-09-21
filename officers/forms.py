@@ -2,7 +2,11 @@ from datetime import datetime
 
 from django import forms
 
-from .constants import GENERAL_INFO_ADDED_FIELDS, GENERAL_INFO_DATE_FIELDS, GENERAL_INFO_FIELDS
+from .constants import (
+    GENERAL_INFO_ADDED_FIELDS,
+    GENERAL_INFO_FIELDS,
+    GENERAL_INFO_MONTH_FIELDS,
+)
 from .models import Officer
 
 
@@ -26,9 +30,9 @@ class OfficerInfoForm(forms.ModelForm):
             self.fields[key].label = value
         for key, value in GENERAL_INFO_ADDED_FIELDS.items():
             self.fields[key].label = value
-            
+
         # add placeholders for GENERAL_INFO_DATE_FIELDS
-        for field in GENERAL_INFO_DATE_FIELDS:
+        for field in GENERAL_INFO_MONTH_FIELDS:
             self.fields[field].widget.attrs["placeholder"] = "mm/yyyy"
 
         self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
@@ -55,9 +59,10 @@ class OfficerInfoForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        for field in GENERAL_INFO_DATE_FIELDS:
+        for field in GENERAL_INFO_MONTH_FIELDS:
             cleaned_data[field] = self.clean_month_year(field)
         return cleaned_data
+
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -76,12 +81,14 @@ class MultipleFileField(forms.FileField):
             result = [single_file_clean(data, initial)]
         return result
 
+
 class ExcelUploadForm(forms.Form):
     files = MultipleFileField(
         label="Select files",
         required=True,
         help_text="Select one or more Excel files to upload.",
     )
+
 
 class OfficerExportForm(forms.Form):
     officers = forms.ModelMultipleChoiceField(
@@ -104,7 +111,9 @@ class OfficerExportForm(forms.Form):
 
     def get_field_choices(self):
         # Map the fields from Officer model to their corresponding labels in OfficerInfoForm
-        form = OfficerInfoForm()  # Initialize OfficerInfoForm to access its fields
+        form = (
+            OfficerInfoForm()
+        )  # Initialize OfficerInfoForm to access its fields
         field_choices = []
 
         for field_name in Officer._meta.fields:

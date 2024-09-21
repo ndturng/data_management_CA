@@ -1,3 +1,9 @@
+REQUIRED_FIELDS = [
+    "birth_name",
+    "id_ca",
+]
+
+# Thông tin chung
 GENERAL_INFO_FIELDS = {
     "id_ca": "Số hiệu - Số hồ sơ",
     "birth_name": "Họ và tên khai sinh",
@@ -56,13 +62,26 @@ GENERAL_INFO_ADDED_FIELDS = {
     "next_salary_decision_year": "Năm quyết định lương tiếp theo",
 }
 
-GENERAL_INFO_DATE_FIELDS = [
+
+GENERAL_INFO_MONTH_FIELDS = [
     "month_join_group",
     "month_join_party",
     "month_join_party_official",
     "month_recruit",
     "month_join_CA",
 ]
+# Chức danh
+TITLE_FIELDS = {
+    "appointed_date": "Ngày bổ nhiệm",  # change to date_appointed
+    "title": "Chức danh",
+}
+
+# Quy hoạch
+POSITION_PLAN_FIELDS = {
+    "period": "Giai đoạn",
+    "position": "Quy hoạch",
+}
+
 
 RANK_SCALE = {
     "Hạ sĩ": 3.2,
