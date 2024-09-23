@@ -18,6 +18,14 @@
     <p><strong>Năm quyết định lương:</strong> {{ officer.salary_decision_year }}</p>
     <p><strong>Hệ số lương tiếp theo:</strong> {{ officer.next_salary_coefficient }}</p>
     <p><strong>Năm quyết định lương tiếp theo:</strong> {{ officer.next_salary_decision_year }}</p>
+    <p><strong>Kỷ luật:</strong>
+        <ul>
+            {% for discipline in disciplines %}
+                <li>
+                    <strong>Thời gian</strong>: {{ discipline.time }} - <strong>Hình thức</strong>: {{ discipline.form }} - <strong>Nội dung</strong>: {{ discipline.content }}
+                </li>
+            {% endfor %}
+        </ul>
 
     <a href="{% url 'officer_title' officer.pk %}">Chức danh</a> <br>
     <a href="{% url 'officer_position_plan' officer.pk %}">Quy hoạch</a> <br>

@@ -239,9 +239,11 @@ def officer_update(request, pk):
 @login_required
 def officer_detail(request, pk):
     officer = get_object_or_404(Officer, pk=pk)
+    disciplines = officer.disciplines.all()
+    context = {"officer": officer, "disciplines": disciplines}
     return render(
-        request, "officers/officer_detail.html", {"officer": officer}
-    )  # noqa
+        request, "officers/officer_detail.html", context
+    )
 
 
 @login_required
