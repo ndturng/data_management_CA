@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import numpy as np
 import pandas as pd
 from django.contrib import messages
 from django.db import IntegrityError
@@ -73,6 +74,9 @@ def create_officer_related_objects(
     """
     try:
         df = pd.read_excel(file, sheet_name)
+        df.replace(" ", np.nan, inplace=True)
+        df = df.dropna(how="all")
+        
         for index, row in df.iterrows():
             officer_related_data, _, _ = extract_officer_data(
                 index, row, fields, []

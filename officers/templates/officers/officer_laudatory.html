@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Khen thưởng </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Khen thưởng:</h1>
+
+    <!-- Display Officer Laudatory -->
+    <ul>
+        {% for laudatory in laudatories %}
+            <li>
+                <strong>Thời gian</strong>: {{ laudatory.time }} - <strong>Hình thức</strong>: {{ laudatory.form }} - <strong>Nội dung</strong>: {{ laudatory.content }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>

@@ -243,6 +243,7 @@ class Title(models.Model):  # Chức danh
     def __str__(self):
         return self.title
 
+
 class PositionPlan(models.Model):  # Quy hoạch
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="position_plans"
@@ -250,3 +251,77 @@ class PositionPlan(models.Model):  # Quy hoạch
     period = models.CharField(max_length=11, null=True, blank=True)
     position = models.CharField(max_length=255, null=True, blank=True)
 
+
+class LearningPath(models.Model):  # Đào tạo
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="learning_paths"
+    )
+    period = models.CharField(max_length=11, null=True, blank=True)
+    learning_content = models.CharField(max_length=255, null=True, blank=True)
+
+
+class WorkProcess(models.Model):  # Quá trình công tác
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="work_processes"
+    )
+    period = models.CharField(max_length=11, null=True, blank=True)
+    work_content = models.CharField(max_length=255, null=True, blank=True)
+
+class SalaryProcess(models.Model):  # Quá trình lương
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="salary_processes"
+    )
+    time = models.IntegerField(null=True, blank=True)
+    mil_rank = models.CharField(max_length=255, null=True, blank=True)
+    salary_coefficient = models.FloatField(null=True, blank=True)
+
+class Laudatory(models.Model):  # Khen thưởng
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="laudatories"
+    )
+    time = models.IntegerField(null=True, blank=True)
+    form = models.CharField(max_length=255, null=True, blank=True)
+    content = models.CharField(max_length=255, null=True, blank=True)
+
+class Discipline(models.Model):  # Kỷ luật
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="disciplines"
+    )
+    time = models.IntegerField(null=True, blank=True)
+    form = models.CharField(max_length=255, null=True, blank=True)
+    content = models.CharField(max_length=255, null=True, blank=True)
+
+class Relative(models.Model):  # Thân nhân
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="relatives"
+    )
+    relationship = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    birth_year = models.IntegerField(null=True, blank=True)
+    job = models.CharField(max_length=255, null=True, blank=True)
+    current_residence = models.CharField(max_length=255, null=True, blank=True)
+
+class Abroad(models.Model):  # Ra nước ngoài
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="abroads"
+    )
+    time = models.IntegerField(null=True, blank=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
+    purpose = models.CharField(max_length=255, null=True, blank=True)
+
+class ArmyJoinHistory(models.Model):  # Tham gia quân đội
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="army_join_histories"
+    )
+    period = models.CharField(max_length=11, null=True, blank=True)
+    unit = models.CharField(max_length=255, null=True, blank=True)
+    form = models.CharField(max_length=255, null=True, blank=True)
+
+class Health(models.Model):  # Sức khoẻ
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="healths"
+    )
+    weight = models.IntegerField(null=True, blank=True)
+    height = models.IntegerField(null=True, blank=True)
+    medical_history = models.CharField(max_length=255, null=True, blank=True)
+    other = models.CharField(max_length=255, null=True, blank=True)

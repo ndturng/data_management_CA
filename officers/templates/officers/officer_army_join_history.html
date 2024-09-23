@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Tham gia quân đội </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Tham gia quân đội:</h1>
+    
+    <!-- Display Officer Army Join History -->
+    <ul>
+        {% for army_join in army_join_histories %}
+            <li>
+                <strong>Thời gian</strong>: {{ army_join.period }} - <strong>Đơn vị</strong>: {{army_join.unit}} - <strong>Hình thức</strong>: {{ army_join.form }} 
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>

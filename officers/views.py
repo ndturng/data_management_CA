@@ -291,3 +291,66 @@ def officer_position_plan(request, pk):
     position_plans = officer.position_plans.all()
     context = {"officer": officer, "position_plans": position_plans}
     return render(request, "officers/officer_position_plan.html", context)
+
+@login_required
+def officer_learning_path(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    learning_paths = officer.learning_paths.all()
+    context = {"officer": officer, "learning_paths": learning_paths}
+    return render(request, "officers/officer_learning_path.html", context)
+
+@login_required
+def officer_work_process(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    work_processes = officer.work_processes.all()
+    context = {"officer": officer, "work_processes": work_processes}
+    return render(request, "officers/officer_work_process.html", context)
+
+@login_required
+def officer_salary_process(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    salary_processes = officer.salary_processes.all()
+    context = {"officer": officer, "salary_processes": salary_processes}
+    return render(request, "officers/officer_salary_process.html", context)
+
+@login_required
+def officer_laudatory(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    laudatories = officer.laudatories.all()
+    context = {"officer": officer, "laudatories": laudatories}
+    return render(request, "officers/officer_laudatory.html", context)
+
+@login_required
+def officer_discipline(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    disciplines = officer.disciplines.all()
+    context = {"officer": officer, "disciplines": disciplines}
+    return render(request, "officers/officer_discipline.html", context)
+
+@login_required
+def officer_relative(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    relatives = officer.relatives.all()
+    context = {"officer": officer, "relatives": relatives}
+    return render(request, "officers/officer_relative.html", context)
+
+@login_required
+def officer_abroad(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    abroads = officer.abroads.all()
+    context = {"officer": officer, "abroads": abroads}
+    return render(request, "officers/officer_abroad.html", context)
+
+@login_required
+def officer_army_join_history(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    army_join_histories = officer.army_join_histories.all()
+    context = {"officer": officer, "army_join_histories": army_join_histories}
+    return render(request, "officers/officer_army_join_history.html", context)
+
+@login_required
+def officer_health(request, pk):
+    officer = get_object_or_404(Officer, pk=pk)
+    healths = officer.healths.all()
+    context = {"officer": officer, "healths": healths}
+    return render(request, "officers/officer_health.html", context)

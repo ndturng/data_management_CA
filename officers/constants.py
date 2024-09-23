@@ -62,7 +62,6 @@ GENERAL_INFO_ADDED_FIELDS = {
     "next_salary_decision_year": "Năm quyết định lương tiếp theo",
 }
 
-
 GENERAL_INFO_MONTH_FIELDS = [
     "month_join_group",
     "month_join_party",
@@ -70,6 +69,8 @@ GENERAL_INFO_MONTH_FIELDS = [
     "month_recruit",
     "month_join_CA",
 ]
+
+
 # Chức danh
 TITLE_FIELDS = {
     "appointed_date": "Ngày bổ nhiệm",  # change to date_appointed
@@ -82,6 +83,69 @@ POSITION_PLAN_FIELDS = {
     "position": "Quy hoạch",
 }
 
+# Đào tạo
+LEARNING_PATH_FIELDS = {
+    "period": "Giai đoạn",
+    "learning_content": "Đào tạo",
+}
+
+# Quá trình công tác
+WORK_PROCESS_FIELDS = {
+    "period": "Giai đoạn",
+    "work_content": "Công tác",
+}
+
+# Quá trình lương
+SALARY_PROCESS_FIELDS = {
+    "time": "Thời gian",
+    "mil_rank": "Cấp bậc hàm",
+    "salary_coefficient": "Hệ số lương",
+}
+
+# Khen thưởng
+LAUDATORY_FIELDS = {
+    "time": "Thời gian",
+    "form": "Hình thức",
+    "content": "Nội dung",
+}
+
+# Kỷ luật
+DISCIPLINE_FIELDS = {
+    "time": "Thời gian",
+    "form": "Hình thức",
+    "content": "Nội dung",
+}
+
+# Thân nhân
+RELATIVE_FIELDS = {
+    "relationship": "Thân nhân",
+    "name": "Họ và tên",
+    "birth_year": "Năm sinh",
+    "job": "Nghề nghiệp",
+    "current_residence": "Chỗ ở hiện nay",
+}
+
+# Ra nước ngoài
+ABROAD_FIELDS = {
+    "time": "Thời gian",
+    "country": "Địa điểm",
+    "purpose": "Mục đích",
+}
+
+# Tham gia quân đội
+ARMY_JOIN_HISTORY_FIELDS = {
+    "period": "Giai đoạn",
+    "unit": "Đơn vị",
+    "form": "Hình thức",
+}
+
+# Sức khoẻ
+HEALTH_FIELDS = {
+    "weight": "Cân nặng (kg)",
+    "height": "Chiều cao (cm)",
+    "medical_history": "Lịch sử bệnh",
+    "other": "Khác",
+}
 
 RANK_SCALE = {
     "Hạ sĩ": 3.2,
@@ -102,7 +166,8 @@ RANK_SCALE = {
 }
 
 SALARY_SCALE = {
-    3.2: ("Hạ sĩ", 3.5, 1),
+    # salary_coefficient: (military_rank, next_salary_coefficient, promotion_year)
+    3.2: ("Hạ sĩ", 3.5, 1),  
     3.5: ("Trung sĩ", 3.8, 1),
     3.8: ("Thượng sĩ", 4.2, 2),
     4.2: ("Thiếu úy", 4.6, 2),
@@ -119,6 +184,7 @@ SALARY_SCALE = {
     10.4: ("Đại tướng", 11.0, 4),
 }
 
+# Chu kỳ tăng lương sau khi đạt mức lương tối đa
 PERIOD_INCREASE_CEILING_SALARY = 4
 SALARY_AFTER_CEILING = {
     5.0: (5.35, 5.7),

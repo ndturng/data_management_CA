@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Kỷ luật </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Kỷ luật:</h1>
+    
+    <!-- Display Officer Discipline -->
+    <ul>
+        {% for discipline in disciplines %}
+            <li>
+                <strong>Thời gian</strong>: {{ discipline.time }} - <strong>Hình thức</strong>: {{ discipline.form }} - <strong>Nội dung</strong>: {{ discipline.content }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
