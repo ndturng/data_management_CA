@@ -2,19 +2,15 @@ from datetime import datetime
 
 from django import forms
 
-from .constants import (
-    GENERAL_INFO_ADDED_FIELDS,
-    GENERAL_INFO_FIELDS,
-    GENERAL_INFO_MONTH_FIELDS,
-)
-from .models import Officer
+from . import constants as c
+from . import models as m
 
 
 class OfficerInfoForm(forms.ModelForm):
     class Meta:
-        model = Officer
-        fields = [key for key in GENERAL_INFO_FIELDS.keys()]
-        fields += [key for key in GENERAL_INFO_ADDED_FIELDS.keys()]
+        model = m.Officer
+        fields = [key for key in c.GENERAL_INFO_FIELDS.keys()]
+        fields += [key for key in c.GENERAL_INFO_ADDED_FIELDS.keys()]
         widgets = {
             "date_of_birth": forms.DateInput(
                 format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
@@ -26,13 +22,13 @@ class OfficerInfoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
-        for key, value in GENERAL_INFO_FIELDS.items():
+        for key, value in c.GENERAL_INFO_FIELDS.items():
             self.fields[key].label = value
-        for key, value in GENERAL_INFO_ADDED_FIELDS.items():
+        for key, value in c.GENERAL_INFO_ADDED_FIELDS.items():
             self.fields[key].label = value
 
         # add placeholders for GENERAL_INFO_DATE_FIELDS
-        for field in GENERAL_INFO_MONTH_FIELDS:
+        for field in c.GENERAL_INFO_MONTH_FIELDS:
             self.fields[field].widget.attrs["placeholder"] = "mm/yyyy"
 
         self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
@@ -59,7 +55,7 @@ class OfficerInfoForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        for field in GENERAL_INFO_MONTH_FIELDS:
+        for field in c.GENERAL_INFO_MONTH_FIELDS:
             cleaned_data[field] = self.clean_month_year(field)
         return cleaned_data
 
@@ -92,7 +88,7 @@ class ExcelUploadForm(forms.Form):
 
 class OfficerExportForm(forms.Form):
     officers = forms.ModelMultipleChoiceField(
-        queryset=Officer.objects.all(),
+        queryset=m.Officer.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
@@ -116,7 +112,7 @@ class OfficerExportForm(forms.Form):
         )  # Initialize OfficerInfoForm to access its fields
         field_choices = []
 
-        for field_name in Officer._meta.fields:
+        for field_name in m.Officer._meta.fields:
             # Get the field's label from OfficerInfoForm if available
             label = (
                 form.fields[field_name.name].label
@@ -126,3 +122,26 @@ class OfficerExportForm(forms.Form):
             field_choices.append((field_name.name, label))
 
         return field_choices
+
+
+class TitleForm(forms.ModelForm):
+    class Meta:
+        model = m.Title
+        fields = ["title", "appointed_date"]
+        widgets = {
+            "appointed_date": forms.DateInput(
+                format="%d/%m/%Y", 
+                attrs={"placeholder": "ví dụ: 15/05/2025"}
+            ),
+            "title": forms.TextInput(attrs={"placeholder": "Nhập vào chức danh"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(TitleForm, self).__init__(*args, **kwargs)
+        for key, value in c.TITLE_FIELDS.items():
+            self.fields[key].label = value
+            self.fields[key].required = True
+
+            if "date" in key:
+                self.fields[key].input_formats = ["%d/%m/%Y"]
+                

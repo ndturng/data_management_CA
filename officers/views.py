@@ -13,8 +13,8 @@ from officers.config import SHEET_TO_MODEL_FIELDS
 from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
 from officers.utils import create_officer_related_objects, extract_officer_data
 
-from .forms import ExcelUploadForm, OfficerExportForm, OfficerInfoForm
-from .models import Officer
+from . import forms as f
+from . import models as m
 
 
 @login_required
@@ -33,7 +33,7 @@ def officer_list(request):
         "birth_place": "birth_place",
     }
 
-    officers = Officer.objects.all()  # Start with all officers
+    officers = m.Officer.objects.all()  # Start with all officers
 
     # Search by name
     query = request.GET.get("q")
@@ -81,7 +81,7 @@ def officer_list(request):
     for context_key, field in dropdown_fields.items():
         context[context_key] = sorted(
             filter(
-                None, Officer.objects.values_list(field, flat=True).distinct()
+                None, m.Officer.objects.values_list(field, flat=True).distinct()
             )
         )
 
@@ -92,7 +92,7 @@ def officer_list(request):
 
     # Handle export functionality
     if request.method == "POST" and "export" in request.POST:
-        form = OfficerExportForm(request.POST)
+        form = f.OfficerExportForm(request.POST)
         if form.is_valid():
             selected_officers = form.cleaned_data["officers"]
             selected_fields = form.cleaned_data["fields"]
@@ -131,7 +131,7 @@ def officer_list(request):
 
             return response
     else:
-        form = OfficerExportForm(initial={"officers": officers})
+        form = f.OfficerExportForm(initial={"officers": officers})
 
     context["form"] = form
     return render(request, "officers/officer_list.html", context)
@@ -141,12 +141,12 @@ def officer_list(request):
 @permission_required("officers.add_officer", raise_exception=True)
 def officer_create(request):
     if request.method == "POST":
-        form = OfficerInfoForm(request.POST)
+        form = f.OfficerInfoForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("officer_list")
     else:
-        form = OfficerInfoForm()
+        form = f.OfficerInfoForm()
 
     return render(request, "officers/officer_form.html", {"form": form})
 
@@ -155,7 +155,7 @@ def officer_create(request):
 @permission_required("officers.add_officer", raise_exception=True)
 def excel_upload(request):
     if request.method == "POST":
-        form = ExcelUploadForm(request.POST, request.FILES)
+        form = f.ExcelUploadForm(request.POST, request.FILES)
         if form.is_valid():
             files = request.FILES.getlist("files")
 
@@ -182,7 +182,7 @@ def excel_upload(request):
                             continue
 
                         try:
-                            officer = Officer.objects.create(**officer_data)
+                            officer = m.Officer.objects.create(**officer_data)
                         except IntegrityError as e:
                             if "officers_officer.id_ca" in str(e):
                                 messages.warning(
@@ -195,7 +195,7 @@ def excel_upload(request):
                                     f"Error processing row {index + 1}: {str(e)}",
                                 )
                             continue
-                        
+
                         # Create related objects for the officer
                         for sheet_name, config in SHEET_TO_MODEL_FIELDS.items():
                             model_class = config.model_class
@@ -215,7 +215,7 @@ def excel_upload(request):
                     )
             return redirect("officer_list")
     else:
-        form = ExcelUploadForm()
+        form = f.ExcelUploadForm()
 
     return render(request, "officers/excel_upload_form.html", {"form": form})
 
@@ -223,33 +223,31 @@ def excel_upload(request):
 @login_required
 @permission_required("officers.change_officer", raise_exception=True)
 def officer_update(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
 
     if request.method == "POST":
-        form = OfficerInfoForm(request.POST, instance=officer)
+        form = f.OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
             form.save()
             return redirect("officer_list")
     else:
-        form = OfficerInfoForm(instance=officer)
+        form = f.OfficerInfoForm(instance=officer)
 
     return render(request, "officers/officer_form.html", {"form": form})
 
 
 @login_required
 def officer_detail(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     disciplines = officer.disciplines.all()
     context = {"officer": officer, "disciplines": disciplines}
-    return render(
-        request, "officers/officer_detail.html", context
-    )
+    return render(request, "officers/officer_detail.html", context)
 
 
 @login_required
 @permission_required("officers.delete_officer", raise_exception=True)
 def officer_delete(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     if request.method == "POST":
         officer.delete()
         return redirect("officer_list")
@@ -262,7 +260,7 @@ def officer_delete(request, pk):
 @permission_required("officers.delete_officer", raise_exception=True)
 def delete_all_officers(request):
     if request.method == "POST":
-        Officer.objects.all().delete()
+        m.Officer.objects.all().delete()
         return redirect("officer_list")
     return render(request, "officers/officer_confirm_delete_all.html")
 
@@ -280,79 +278,145 @@ class CustomLoginView(LoginView):
 
 
 @login_required
-def officer_title(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+def officer_title_view(request, pk):
+    officer = get_object_or_404(m.Officer, pk=pk)
     titles = officer.titles.all()
-    context = {"officer": officer, "titles": titles}
-    return render(request, "officers/officer_title.html", context)
+
+    context = {
+        "officer": officer,
+        "titles": titles,
+    }
+
+    return render(request, "officers/officer_title_view.html", context)
+
+
+@login_required
+@permission_required("officers.adjust_officer_title", raise_exception=True)
+def officer_title_manage(request, pk, title_id=None):
+    officer = get_object_or_404(m.Officer, pk=pk)
+    titles = officer.titles.all()
+    # If title_id is provided, editing an existing title
+    if title_id:
+        title = get_object_or_404(m.Title, id=title_id, officer=officer)
+        form = f.TitleForm(instance=title)
+    else:
+        title = None
+        form = f.TitleForm()
+
+    if request.method == "POST":
+        if title:
+            form = f.TitleForm(request.POST, instance=title)
+        else:
+            form = f.TitleForm(request.POST)
+
+        if form.is_valid():
+            new_title = form.save(commit=False)
+            new_title.officer = officer  # Link the title to the officer
+            new_title.save()
+            return redirect("officer_title_view", pk=officer.pk)
+
+    context = {
+        "officer": officer,
+        "form": form,
+        "titles": titles,
+        "edit_title_id": title_id,
+    }
+
+    return render(request, "officers/officer_title_manage.html", context)
+
+
+@login_required
+@permission_required("officers.delete_officer_title", raise_exception=True)
+def delete_title(request, pk, title_id):
+    officer = get_object_or_404(m.Officer, pk=pk)
+    title = get_object_or_404(m.Title, id=title_id, officer=officer)
+
+    if request.method == "POST":
+        title.delete()
+        return redirect("officer_title_view", pk=officer.pk)
+
+    return render(
+        request,
+        "officers/confirm_delete.html",
+        {"officer": officer, "title": title},
+    )
 
 
 @login_required
 def officer_position_plan(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     position_plans = officer.position_plans.all()
     context = {"officer": officer, "position_plans": position_plans}
     return render(request, "officers/officer_position_plan.html", context)
 
+
 @login_required
 def officer_learning_path(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     learning_paths = officer.learning_paths.all()
     context = {"officer": officer, "learning_paths": learning_paths}
     return render(request, "officers/officer_learning_path.html", context)
 
+
 @login_required
 def officer_work_process(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     work_processes = officer.work_processes.all()
     context = {"officer": officer, "work_processes": work_processes}
     return render(request, "officers/officer_work_process.html", context)
 
+
 @login_required
 def officer_salary_process(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     salary_processes = officer.salary_processes.all()
     context = {"officer": officer, "salary_processes": salary_processes}
     return render(request, "officers/officer_salary_process.html", context)
 
+
 @login_required
 def officer_laudatory(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     laudatories = officer.laudatories.all()
     context = {"officer": officer, "laudatories": laudatories}
     return render(request, "officers/officer_laudatory.html", context)
 
+
 @login_required
 def officer_discipline(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     disciplines = officer.disciplines.all()
     context = {"officer": officer, "disciplines": disciplines}
     return render(request, "officers/officer_discipline.html", context)
 
+
 @login_required
 def officer_relative(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     relatives = officer.relatives.all()
     context = {"officer": officer, "relatives": relatives}
     return render(request, "officers/officer_relative.html", context)
 
+
 @login_required
 def officer_abroad(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     abroads = officer.abroads.all()
     context = {"officer": officer, "abroads": abroads}
     return render(request, "officers/officer_abroad.html", context)
 
+
 @login_required
 def officer_army_join_history(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     army_join_histories = officer.army_join_histories.all()
     context = {"officer": officer, "army_join_histories": army_join_histories}
     return render(request, "officers/officer_army_join_history.html", context)
 
+
 @login_required
 def officer_health(request, pk):
-    officer = get_object_or_404(Officer, pk=pk)
+    officer = get_object_or_404(m.Officer, pk=pk)
     healths = officer.healths.all()
     context = {"officer": officer, "healths": healths}
     return render(request, "officers/officer_health.html", context)

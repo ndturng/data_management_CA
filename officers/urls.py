@@ -10,7 +10,12 @@ urlpatterns = [
     path("<int:pk>/edit/", views.officer_update, name="officer_update"),
     path("<int:pk>/delete/", views.officer_delete, name="officer_delete"),
     path("delete-all/", views.delete_all_officers, name="delete_all_officers"),
-    path("<int:pk>/title", views.officer_title, name="officer_title"),
+    
+    path('<int:pk>/titles/', views.officer_title_view, name='officer_title_view'),
+    path('<int:pk>/titles/manage/', views.officer_title_manage, name='officer_title_add'),
+    path('<int:pk>/titles/manage/<int:title_id>/', views.officer_title_manage, name='officer_title_edit'),
+    path('officer/<int:pk>/titles/<int:title_id>/delete/', views.delete_title, name='delete_title'),
+
     path("<int:pk>/position-plan", views.officer_position_plan, name="officer_position_plan"),
     path("<int:pk>/learning-path", views.officer_learning_path, name="officer_learning_path"),
     path("<int:pk>/work-process", views.officer_work_process, name="officer_work_process"),
