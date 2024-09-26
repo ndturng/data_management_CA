@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django import forms
 
+from officers.classes import RelatedBaseForm
+
 from . import constants as c
 from . import models as m
 
@@ -124,24 +126,9 @@ class OfficerExportForm(forms.Form):
         return field_choices
 
 
-class TitleForm(forms.ModelForm):
+class TitleForm(RelatedBaseForm):
     class Meta:
         model = m.Title
-        fields = ["title", "appointed_date"]
-        widgets = {
-            "appointed_date": forms.DateInput(
-                format="%d/%m/%Y", 
-                attrs={"placeholder": "ví dụ: 15/05/2025"}
-            ),
-            "title": forms.TextInput(attrs={"placeholder": "Nhập vào chức danh"}),
-        }
+        field_config = c.TITLE_FIELDS
+        fields = list(field_config.keys())
 
-    def __init__(self, *args, **kwargs):
-        super(TitleForm, self).__init__(*args, **kwargs)
-        for key, value in c.TITLE_FIELDS.items():
-            self.fields[key].label = value
-            self.fields[key].required = True
-
-            if "date" in key:
-                self.fields[key].input_formats = ["%d/%m/%Y"]
-                

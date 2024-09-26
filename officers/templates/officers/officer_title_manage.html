@@ -16,8 +16,8 @@
     <ul>
         {% for title in titles %}
             <li>
-                <strong>Chức danh</strong>: {{ title.title }} - 
                 <strong>Ngày bổ nhiệm</strong>: {{ title.appointed_date|date:"d/m/Y" }}
+                <strong>Chức danh</strong>: {{ title.title }} - 
                 
                 <!-- Edit Button -->
                 <a href="{% url 'officer_title_edit' officer.pk title.id %}">Edit</a> <!-- Link to Edit View -->
