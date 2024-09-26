@@ -278,7 +278,7 @@ class CustomLoginView(LoginView):
 
 
 @login_required
-def officer_title_view(request, pk):
+def officer_title(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
     titles = officer.titles.all()
 
@@ -287,7 +287,7 @@ def officer_title_view(request, pk):
         "titles": titles,
     }
 
-    return render(request, "officers/officer_title_view.html", context)
+    return render(request, "officers/officer_title.html", context)
 
 
 @login_required
