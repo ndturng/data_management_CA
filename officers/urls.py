@@ -10,6 +10,7 @@ urlpatterns = [
     path("<int:pk>/edit/", views.officer_update, name="officer_update"),
     path("<int:pk>/delete/", views.officer_delete, name="officer_delete"),
     path("delete-all/", views.delete_all_officers, name="delete_all_officers"),
+    # Chức danh            
     path("<int:pk>/titles/", views.officer_title, name="officer_title_view"),
     path(
         "<int:pk>/titles/manage/",
@@ -26,11 +27,28 @@ urlpatterns = [
         views.delete_title,
         name="delete_title",
     ),
+    # Quy hoạch
     path(
         "<int:pk>/position-plan",
         views.officer_position_plan,
-        name="officer_position_plan",
+        name="position_plan",
     ),
+    path(
+        "<int:pk>/position-plan/manage/",
+        views.officer_position_plan_manage,
+        name="position_plan_add",
+    ),
+    path(
+        "<int:pk>/position-plan/manage/<int:position_plan_id>/",
+        views.officer_position_plan_manage,
+        name="position_plan_edit",
+    ),
+    path(
+        "officer/<int:pk>/position-plan/<int:position_plan_id>/delete/",
+        views.delete_position_plan,
+        name="delete_position_plan",
+    ),
+
     path(
         "<int:pk>/learning-path",
         views.officer_learning_path,

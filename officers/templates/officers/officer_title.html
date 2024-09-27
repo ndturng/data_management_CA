@@ -1,43 +1,53 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ officer.birth_name }} - Chức danh</title>
-    <script>
-        // JavaScript confirmation before deleting
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete this title?");
-        }
-    </script>
-</head>
-<body>
-    <h1>{{ officer.birth_name }} - Thông tin chức danh:</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Chức danh</title>
 
-    <!-- Display Officer Titles -->
-    <ul>
-        {% for title in titles %}
+        <script type="module">
+            import { confirmDelete } from "{% static 'js/utils.js' %}";
+            window.confirmDelete = confirmDelete;
+        </script>
+    </head>
+    <body>
+        <h1>{{ officer.birth_name }} - Thông tin chức danh:</h1>
+        <ul>
+            {% for title in titles %}
             <li>
-                <strong>Ngày bổ nhiệm</strong>: {{ title.appointed_date|date:"d/m/Y" }}
-                <strong>Chức danh</strong>: {{ title.title }} - 
-                
+                <strong>Ngày bổ nhiệm:</strong>
+                {{ title.appointed_date|date:"d/m/Y" }}
+                <strong>Chức danh:</strong>
+                {{ title.title }} -
+
                 <!-- Edit Button -->
-                <a href="{% url 'officer_title_edit' officer.pk title.id %}">Edit</a> <!-- Link to Edit View -->
+                <a href="{% url 'officer_title_edit' officer.pk title.id %}">
+                    Edit
+                </a>
+
                 <!-- Delete Button with confirmation -->
-                <form method="POST" action="{% url 'delete_title' officer.pk title.id %}" style="display:inline;" onsubmit="return confirmDelete();">
+                <form
+                    method="POST"
+                    action="{% url 'delete_title' officer.pk title.id %}"
+                    style="display: inline"
+                    onsubmit="return confirmDelete();"
+                >
                     {% csrf_token %}
-                    <button type="submit" style="color:red;">Delete</button>
+                    <button type="submit" style="color: red">Delete</button>
                 </form>
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
 
-    <!-- Add New Title Button -->
-    <a href="{% url 'officer_title_add' officer.pk %}">
-        <button>Add New Title</button>
-    </a>
+        <!-- Add New Title Button -->
+        <a href="{% url 'officer_title_add' officer.pk %}">
+            <button>Add New Title</button>
+        </a>
 
-    <!-- Link to Officer Details Page -->
-    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
-</body>
+        <!-- Link to Officer Details Page -->
+        <a href="{% url 'officer_detail' officer.pk %}">
+            Back to Officer Details
+        </a>
+    </body>
 </html>

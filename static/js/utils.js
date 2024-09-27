@@ -1,3 +1,3 @@
 export function confirmDelete() {
-    return confirm("Are you sure you want to delete this title?");
+    return confirm("Are you sure you want to delete this?");
 }

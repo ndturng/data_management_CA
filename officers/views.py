@@ -276,7 +276,7 @@ class CustomLoginView(LoginView):
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
 
-
+########################################################
 @login_required
 def officer_title(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
@@ -341,7 +341,7 @@ def delete_title(request, pk, title_id):
         {"officer": officer, "title": title},
     )
 
-
+########################################################
 @login_required
 def officer_position_plan(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
@@ -350,6 +350,64 @@ def officer_position_plan(request, pk):
     return render(request, "officers/officer_position_plan.html", context)
 
 
+@login_required
+@permission_required("officers.adjust_position_plan", raise_exception=True)
+def officer_position_plan_manage(request, pk, position_plan_id=None):
+    officer = get_object_or_404(m.Officer, pk=pk)
+    position_plans = officer.position_plans.all()
+
+    if position_plan_id:
+        position_plan = get_object_or_404(
+            m.PositionPlan, id=position_plan_id, officer=officer
+        )
+        form = f.PositionPlanForm(instance=position_plan)
+    else:
+        position_plan = None
+        form = f.PositionPlanForm()
+
+    if request.method == "POST":
+        if position_plan:
+            form = f.PositionPlanForm(request.POST, instance=position_plan)
+        else:
+            form = f.PositionPlanForm(request.POST)
+
+        if form.is_valid():
+            new_position_plan = form.save(commit=False)
+            new_position_plan.officer = officer
+            new_position_plan.save()
+            return redirect("position_plan", pk=officer.pk)
+
+    context = {
+        "officer": officer,
+        "form": form,
+        "position_plans": position_plans,
+        "edit_position_plan_id": position_plan_id,
+    }
+
+    return render(request, "officers/position_plan_manage.html", context)
+
+
+@login_required
+@permission_required(
+    "officers.delete_officer_position_plan", raise_exception=True
+)
+def delete_position_plan(request, pk, position_plan_id):
+    officer = get_object_or_404(m.Officer, pk=pk)
+    position_plan = get_object_or_404(
+        m.PositionPlan, id=position_plan_id, officer=officer
+    )
+
+    if request.method == "POST":
+        position_plan.delete()
+        return redirect("position_plan", pk=officer.pk)
+
+    return render(
+        request,
+        "officers/confirm_delete.html",
+        {"officer": officer, "position_plan": position_plan},
+    )
+
+########################################################
 @login_required
 def officer_learning_path(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
