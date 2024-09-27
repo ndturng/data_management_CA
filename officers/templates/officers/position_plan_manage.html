@@ -21,17 +21,17 @@
                 <strong>Quy hoạch:</strong>
                 {{ position_plan.position }}
                 
-                <!-- Edit Button -->
+                <!-- Update Button -->
                 <a
-                    href="{% url 'position_plan_edit' officer.pk position_plan.id %}"
+                    href="{% url 'url_position_plan_update' officer.pk position_plan.id %}"
                 >
-                    Edit
+                    Update
                 </a>
 
                 <!-- Delete Button with confirmation -->
                 <form
                     method="POST"
-                    action="{% url 'delete_position_plan' officer.pk position_plan.id %}"
+                    action="{% url 'url_position_plan_delete' officer.pk position_plan.id %}"
                     style="display: inline"
                     onsubmit="return confirmDelete();"
                 >
@@ -41,18 +41,18 @@
             </li>
             {% endfor %}
         </ul>
-        <!-- Add New Position Plan Button -->
-        <a href="{% url 'position_plan_add' officer.pk %}">
-            <button>Add New Position Plan</button>
+        <!-- Create New Position Plan Button -->
+        <a href="{% url 'url_position_plan_create' officer.pk %}">
+            <button>Create New Position Plan</button>
         </a>
 
         <a href="{% url 'officer_detail' officer.pk %}">
             Back to Officer Details
         </a>
 
-        <!-- Add or Edit Position Plan Form -->
+        <!-- Create or Edit Position Plan Form -->
         <h1>
-            {% if edit_position_plan_id %}Edit Position Plan{% else %}Add
+            {% if edit_position_plan_id %}Edit Position Plan{% else %}Create
             Position Plan{% endif %}
         </h1>
 

@@ -21,15 +21,15 @@
                 <strong>Chức danh:</strong>
                 {{ title.title }} -
 
-                <!-- Edit Button -->
-                <a href="{% url 'officer_title_edit' officer.pk title.id %}">
-                    Edit
+                <!-- Update Button -->
+                <a href="{% url 'url_title_update' officer.pk title.id %}">
+                    Update
                 </a>
 
                 <!-- Delete Button with confirmation -->
                 <form
                     method="POST"
-                    action="{% url 'delete_title' officer.pk title.id %}"
+                    action="{% url 'url_title_delete' officer.pk title.id %}"
                     style="display: inline"
                     onsubmit="return confirmDelete();"
                 >
@@ -40,9 +40,9 @@
             {% endfor %}
         </ul>
 
-        <!-- Add New Title Button -->
-        <a href="{% url 'officer_title_add' officer.pk %}">
-            <button>Add New Title</button>
+        <!-- Create New Title Button -->
+        <a href="{% url 'url_title_create' officer.pk %}">
+            <button>Create New Title</button>
         </a>
 
         <!-- Link to Officer Details Page -->

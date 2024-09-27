@@ -3,11 +3,16 @@ import unicodedata
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
 from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
@@ -276,136 +281,147 @@ class CustomLoginView(LoginView):
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
 
-########################################################
-@login_required
-def officer_title(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    titles = officer.titles.all()
-
-    context = {
-        "officer": officer,
-        "titles": titles,
-    }
-
-    return render(request, "officers/officer_title.html", context)
-
-
-@login_required
-@permission_required("officers.adjust_officer_title", raise_exception=True)
-def officer_title_manage(request, pk, title_id=None):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    titles = officer.titles.all()
-    # If title_id is provided, editing an existing title
-    if title_id:
-        title = get_object_or_404(m.Title, id=title_id, officer=officer)
-        form = f.TitleForm(instance=title)
-    else:
-        title = None
-        form = f.TitleForm()
-
-    if request.method == "POST":
-        if title:
-            form = f.TitleForm(request.POST, instance=title)
-        else:
-            form = f.TitleForm(request.POST)
-
-        if form.is_valid():
-            new_title = form.save(commit=False)
-            new_title.officer = officer  # Link the title to the officer
-            new_title.save()
-            return redirect("officer_title_view", pk=officer.pk)
-
-    context = {
-        "officer": officer,
-        "form": form,
-        "titles": titles,
-        "edit_title_id": title_id,
-    }
-
-    return render(request, "officers/officer_title_manage.html", context)
-
-
-@login_required
-@permission_required("officers.delete_officer_title", raise_exception=True)
-def delete_title(request, pk, title_id):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    title = get_object_or_404(m.Title, id=title_id, officer=officer)
-
-    if request.method == "POST":
-        title.delete()
-        return redirect("officer_title_view", pk=officer.pk)
-
-    return render(
-        request,
-        "officers/confirm_delete.html",
-        {"officer": officer, "title": title},
-    )
 
 ########################################################
-@login_required
-def officer_position_plan(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    position_plans = officer.position_plans.all()
-    context = {"officer": officer, "position_plans": position_plans}
-    return render(request, "officers/officer_position_plan.html", context)
+# Officer Titles
 
 
-@login_required
-@permission_required("officers.adjust_position_plan", raise_exception=True)
-def officer_position_plan_manage(request, pk, position_plan_id=None):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    position_plans = officer.position_plans.all()
+# Mixin for Officer Title views
+class TitleMixin:
+    def get_officer(self):
+        return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
 
-    if position_plan_id:
-        position_plan = get_object_or_404(
-            m.PositionPlan, id=position_plan_id, officer=officer
+    def get_object(self):
+        return get_object_or_404(
+            m.Title, pk=self.kwargs["title_pk"], officer=self.get_officer()
         )
-        form = f.PositionPlanForm(instance=position_plan)
-    else:
-        position_plan = None
-        form = f.PositionPlanForm()
 
-    if request.method == "POST":
-        if position_plan:
-            form = f.PositionPlanForm(request.POST, instance=position_plan)
-        else:
-            form = f.PositionPlanForm(request.POST)
+    def get_success_url(self):
+        return reverse_lazy("url_title_view", kwargs={"pk": self.kwargs["pk"]})
 
-        if form.is_valid():
-            new_position_plan = form.save(commit=False)
-            new_position_plan.officer = officer
-            new_position_plan.save()
-            return redirect("position_plan", pk=officer.pk)
-
-    context = {
-        "officer": officer,
-        "form": form,
-        "position_plans": position_plans,
-        "edit_position_plan_id": position_plan_id,
-    }
-
-    return render(request, "officers/position_plan_manage.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        officer = self.get_officer()
+        context["officer"] = officer
+        context["titles"] = officer.titles.all()
+        return context
 
 
-@login_required
-@permission_required(
-    "officers.delete_officer_position_plan", raise_exception=True
-)
-def delete_position_plan(request, pk, position_plan_id):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    position_plan = get_object_or_404(
-        m.PositionPlan, id=position_plan_id, officer=officer
-    )
+# Title View
+class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
+    model = m.Title
+    template_name = "officers/officer_title.html"
+    context_object_name = "titles"
 
-    if request.method == "POST":
-        position_plan.delete()
-        return redirect("position_plan", pk=officer.pk)
+    def get_queryset(self):
+        return self.get_officer().titles.all()
 
-    return render(
-        request,
-        "officers/confirm_delete.html",
-        {"officer": officer, "position_plan": position_plan},
-    )
+
+# Create Title
+class TitleCreateView(
+    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, CreateView
+):
+    model = m.Title
+    form_class = f.TitleForm
+    template_name = "officers/officer_title_manage.html"
+    permission_required = "officers.adjust_officer_title"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+
+
+# Update Title
+class TitleUpdateView(
+    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, UpdateView
+):
+    model = m.Title
+    form_class = f.TitleForm
+    template_name = "officers/officer_title_manage.html"
+    permission_required = "officers.adjust_officer_title"
+
+
+# Delete Title
+class TitleDeleteView(
+    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, DeleteView
+):
+    model = m.Title
+    template_name = "officers/confirm_delete.html"
+    permission_required = "officers.delete_officer_title"
+
+
+########################################################
+# Officer Position Plans
+
+
+# Mixin for Officer Position Plan views
+class PositionPlanMixin:
+    def get_officer(self):
+        return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
+
+    def get_object(self):
+        return get_object_or_404(
+            m.PositionPlan,
+            pk=self.kwargs["position_plan_pk"],
+            officer=self.get_officer(),
+        )
+
+    def get_success_url(self):
+        return reverse_lazy("url_position_plan", kwargs={"pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        officer = self.get_officer()
+        context["officer"] = officer
+        context["position_plans"] = officer.position_plans.all()
+        return context
+
+
+# Position Plan View
+class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
+    model = m.PositionPlan
+    template_name = "officers/position_plan.html"
+    context_object_name = "position_plans"
+
+    def get_queryset(self):
+        return self.get_officer().position_plans.all()
+
+
+# Create Position Plan
+class PositionPlanCreateView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    PositionPlanMixin,
+    CreateView,
+):
+    model = m.PositionPlan
+    form_class = f.PositionPlanForm
+    template_name = "officers/position_plan_manage.html"
+    permission_required = "officers.adjust_position_plan"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+
+
+# Update Position Plan
+class PositionPlanUpdateView(
+    LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, UpdateView
+):
+    model = m.PositionPlan
+    form_class = f.PositionPlanForm
+    template_name = "officers/position_plan_manage.html"
+    permission_required = "officers.adjust_position_plan"
+
+
+# Delete Position Plan
+class PositionPlanDeleteView(
+    LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, DeleteView
+):
+    model = m.PositionPlan
+    template_name = "officers/confirm_delete.html"
+    permission_required = "officers.delete_officer_position_plan"
+
 
 ########################################################
 @login_required
