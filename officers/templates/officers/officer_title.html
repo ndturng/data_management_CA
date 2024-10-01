@@ -1,10 +1,13 @@
 {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>{{ officer.birth_name }} - Chức danh</title>
+        {% tailwind_css %}
 
         <script type="module">
             import { confirmDelete } from "{% static 'js/utils.js' %}";
@@ -12,7 +15,7 @@
         </script>
     </head>
     <body>
-        <h1>{{ officer.birth_name }} - Thông tin chức danh:</h1>
+        <h1 class="text-center text-4xl font-semibold mt-5">{{ officer.birth_name }} - Thông tin chức danh:</h1>
         <ul>
             {% for title in titles %}
             <li>
@@ -51,3 +54,6 @@
         </a>
     </body>
 </html>
+
+
+  
