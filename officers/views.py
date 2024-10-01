@@ -281,35 +281,52 @@ class CustomLoginView(LoginView):
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
 
-
 ########################################################
-# Officer Titles
+# Officer Related Mixin
+class OfficerRelatedMixin:
+    model = None  # Will be set in the view
+    pk_url_kwarg = None  # Will be set in the view
+    view_url = None  # Will be set in the view
+    related_context_fields = []
 
-
-# Mixin for Officer Title views
-class TitleMixin:
     def get_officer(self):
         return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
 
     def get_object(self):
+        # Dynamically get the object based on the model and primary key
         return get_object_or_404(
-            m.Title, pk=self.kwargs["title_pk"], officer=self.get_officer()
+            self.model,
+            pk=self.kwargs[self.pk_url_kwarg],
+            officer=self.get_officer()
         )
 
     def get_success_url(self):
-        return reverse_lazy("url_title_view", kwargs={"pk": self.kwargs["pk"]})
+        # Dynamically construct the URL to return to the officer's related list
+        return reverse_lazy(self.view_url, kwargs={"pk": self.kwargs["pk"]})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         officer = self.get_officer()
         context["officer"] = officer
-        context["titles"] = officer.titles.all()
+
+        for field in self.related_context_fields:
+            context[field] = getattr(officer, field).all()
         return context
+
+
+########################################################
+# Officer Titles
+
+# Title Mixin
+class TitleMixin(OfficerRelatedMixin):
+    model = m.Title
+    form_class = f.TitleForm
+    view_url = "url_title_view"
+    related_context_fields = ["titles"]
 
 
 # Title View
 class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
-    model = m.Title
     template_name = "officers/officer_title.html"
     context_object_name = "titles"
 
@@ -321,8 +338,6 @@ class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
 class TitleCreateView(
     LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, CreateView
 ):
-    model = m.Title
-    form_class = f.TitleForm
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
@@ -335,51 +350,35 @@ class TitleCreateView(
 class TitleUpdateView(
     LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, UpdateView
 ):
-    model = m.Title
-    form_class = f.TitleForm
+    pk_url_kwarg = "title_pk"
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
 
 # Delete Title
 class TitleDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
 ):
     model = m.Title
-    template_name = "officers/confirm_delete.html"
+    pk_url_kwarg = "title_pk"
+    view_url = "url_title_view"
+    related_context_fields = ["titles"]
     permission_required = "officers.delete_officer_title"
 
 
 ########################################################
 # Officer Position Plans
 
-
-# Mixin for Officer Position Plan views
-class PositionPlanMixin:
-    def get_officer(self):
-        return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
-
-    def get_object(self):
-        return get_object_or_404(
-            m.PositionPlan,
-            pk=self.kwargs["position_plan_pk"],
-            officer=self.get_officer(),
-        )
-
-    def get_success_url(self):
-        return reverse_lazy("url_position_plan", kwargs={"pk": self.kwargs["pk"]})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        officer = self.get_officer()
-        context["officer"] = officer
-        context["position_plans"] = officer.position_plans.all()
-        return context
+# Position Plan Mixin
+class PositionPlanMixin(OfficerRelatedMixin):
+    model = m.PositionPlan
+    form_class = f.PositionPlanForm
+    view_url = "url_position_plan"
+    related_context_fields = ["position_plans"]
 
 
 # Position Plan View
 class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
-    model = m.PositionPlan
     template_name = "officers/position_plan.html"
     context_object_name = "position_plans"
 
@@ -394,8 +393,6 @@ class PositionPlanCreateView(
     PositionPlanMixin,
     CreateView,
 ):
-    model = m.PositionPlan
-    form_class = f.PositionPlanForm
     template_name = "officers/position_plan_manage.html"
     permission_required = "officers.adjust_position_plan"
 
@@ -408,18 +405,19 @@ class PositionPlanCreateView(
 class PositionPlanUpdateView(
     LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, UpdateView
 ):
-    model = m.PositionPlan
-    form_class = f.PositionPlanForm
+    pk_url_kwarg = "position_plan_pk"
     template_name = "officers/position_plan_manage.html"
     permission_required = "officers.adjust_position_plan"
 
 
 # Delete Position Plan
 class PositionPlanDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
 ):
     model = m.PositionPlan
-    template_name = "officers/confirm_delete.html"
+    pk_url_kwarg = "position_plan_pk"
+    view_url = "url_position_plan"
+    related_context_fields = ["position_plans"]
     permission_required = "officers.delete_officer_position_plan"
 
 
