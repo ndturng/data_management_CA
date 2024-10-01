@@ -281,9 +281,10 @@ class CustomLoginView(LoginView):
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
 
+
 ########################################################
 # Officer Related Mixin
-class OfficerRelatedMixin:
+class OfficerRelatedMixin(LoginRequiredMixin):
     model = None  # Will be set in the view
     pk_url_kwarg = None  # Will be set in the view
     view_url = None  # Will be set in the view
@@ -297,7 +298,7 @@ class OfficerRelatedMixin:
         return get_object_or_404(
             self.model,
             pk=self.kwargs[self.pk_url_kwarg],
-            officer=self.get_officer()
+            officer=self.get_officer(),
         )
 
     def get_success_url(self):
@@ -317,6 +318,7 @@ class OfficerRelatedMixin:
 ########################################################
 # Officer Titles
 
+
 # Title Mixin
 class TitleMixin(OfficerRelatedMixin):
     model = m.Title
@@ -326,7 +328,7 @@ class TitleMixin(OfficerRelatedMixin):
 
 
 # Title View
-class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
+class TitleListView(TitleMixin, ListView):
     template_name = "officers/officer_title.html"
     context_object_name = "titles"
 
@@ -335,9 +337,7 @@ class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
 
 
 # Create Title
-class TitleCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, CreateView
-):
+class TitleCreateView(PermissionRequiredMixin, TitleMixin, CreateView):
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
@@ -347,18 +347,14 @@ class TitleCreateView(
 
 
 # Update Title
-class TitleUpdateView(
-    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, UpdateView
-):
+class TitleUpdateView(PermissionRequiredMixin, TitleMixin, UpdateView):
     pk_url_kwarg = "title_pk"
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
 
 # Delete Title
-class TitleDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
-):
+class TitleDeleteView(PermissionRequiredMixin, OfficerRelatedMixin, DeleteView):
     model = m.Title
     pk_url_kwarg = "title_pk"
     view_url = "url_title_view"
@@ -369,6 +365,7 @@ class TitleDeleteView(
 ########################################################
 # Officer Position Plans
 
+
 # Position Plan Mixin
 class PositionPlanMixin(OfficerRelatedMixin):
     model = m.PositionPlan
@@ -378,7 +375,7 @@ class PositionPlanMixin(OfficerRelatedMixin):
 
 
 # Position Plan View
-class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
+class PositionPlanListView(PositionPlanMixin, ListView):
     template_name = "officers/position_plan.html"
     context_object_name = "position_plans"
 
@@ -388,7 +385,6 @@ class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
 
 # Create Position Plan
 class PositionPlanCreateView(
-    LoginRequiredMixin,
     PermissionRequiredMixin,
     PositionPlanMixin,
     CreateView,
@@ -403,7 +399,7 @@ class PositionPlanCreateView(
 
 # Update Position Plan
 class PositionPlanUpdateView(
-    LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, UpdateView
+    PermissionRequiredMixin, PositionPlanMixin, UpdateView
 ):
     pk_url_kwarg = "position_plan_pk"
     template_name = "officers/position_plan_manage.html"
@@ -412,7 +408,7 @@ class PositionPlanUpdateView(
 
 # Delete Position Plan
 class PositionPlanDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
 ):
     model = m.PositionPlan
     pk_url_kwarg = "position_plan_pk"
