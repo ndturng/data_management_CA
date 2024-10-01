@@ -288,7 +288,7 @@ class OfficerRelatedMixin(LoginRequiredMixin):
     model = None  # Will be set in the view
     pk_url_kwarg = None  # Will be set in the view
     view_url = None  # Will be set in the view
-    related_context_fields = []
+    related_context_field: str = None
 
     def get_officer(self):
         return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
@@ -309,9 +309,21 @@ class OfficerRelatedMixin(LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         officer = self.get_officer()
         context["officer"] = officer
+        context[self.related_context_field] = getattr(
+            officer, self.related_context_field
+        ).all()
 
-        for field in self.related_context_fields:
-            context[field] = getattr(officer, field).all()
+        # Add the object ID to the context if editing (if the object exists)
+        try:
+            singular_field = (
+                self.related_context_field[:-1]
+                if self.related_context_field.endswith("s")
+                else self.related_context_field
+            )
+            context[f"edit_{singular_field}_id"] = self.object.id
+        except AttributeError:
+            pass
+
         return context
 
 
@@ -324,7 +336,7 @@ class TitleMixin(OfficerRelatedMixin):
     model = m.Title
     form_class = f.TitleForm
     view_url = "url_title_view"
-    related_context_fields = ["titles"]
+    related_context_field = "titles"
 
 
 # Title View
@@ -358,7 +370,7 @@ class TitleDeleteView(PermissionRequiredMixin, OfficerRelatedMixin, DeleteView):
     model = m.Title
     pk_url_kwarg = "title_pk"
     view_url = "url_title_view"
-    related_context_fields = ["titles"]
+    related_context_field = "titles"
     permission_required = "officers.delete_officer_title"
 
 
@@ -371,7 +383,7 @@ class PositionPlanMixin(OfficerRelatedMixin):
     model = m.PositionPlan
     form_class = f.PositionPlanForm
     view_url = "url_position_plan"
-    related_context_fields = ["position_plans"]
+    related_context_field = "position_plans"
 
 
 # Position Plan View
@@ -413,7 +425,7 @@ class PositionPlanDeleteView(
     model = m.PositionPlan
     pk_url_kwarg = "position_plan_pk"
     view_url = "url_position_plan"
-    related_context_fields = ["position_plans"]
+    related_context_field = "position_plans"
     permission_required = "officers.delete_officer_position_plan"
 
 
