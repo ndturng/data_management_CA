@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Thân nhân </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Thân nhân:</h1>
+    
+    <!-- Display Officer Relatives -->
+    <ul>
+        {% for relative in relatives %}
+            <li>
+                <strong>{{ relative.relationship }}</strong>: {{ relative.name }} - <strong>Sinh năm</strong>: {{ relative.birth_year }} - <strong>Nghề nghiệp</strong>: {{ relative.job }} - <strong>Chỗ ở hiện nay</strong>: {{ relative.current_residence }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>

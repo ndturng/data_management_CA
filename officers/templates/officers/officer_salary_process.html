@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Quá trình lương </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Quá trình lương:</h1>
+
+    <!-- Display Officer Salary Process -->
+    <ul>
+        {% for salary_process in salary_processes %}
+            <li>
+                <strong>Thời gian</strong>: {{ salary_process.time }} - <strong>Cấp bậc hàm</strong>: {{ salary_process.mil_rank }} - <strong>Hệ số lương</strong>: {{ salary_process.salary_coefficient }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>

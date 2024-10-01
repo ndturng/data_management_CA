@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Quá trình công tác </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Thông tin quá trình công tác:</h1>
+
+    <!-- Display Officer Work Process -->
+    <ul>
+        {% for work_process in work_processes %}
+            <li>
+                <strong>Giai đoạn</strong>: {{ work_process.period }} - <strong>Công tác</strong>: {{ work_process.work_content }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>

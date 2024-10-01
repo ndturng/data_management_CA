@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Đào tạo </title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Thông tin đào tạo:</h1>
+
+    <!-- Display Officer Learning Path -->
+    <ul>
+        {% for learning_path in learning_paths %}
+            <li>
+                <strong>Giai đoạn</strong>: {{ learning_path.period }} - <strong>Đào tạo</strong>: {{ learning_path.learning_content }}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
+</body>
+</html>

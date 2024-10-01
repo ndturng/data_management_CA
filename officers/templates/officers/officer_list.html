@@ -1,7 +1,188 @@
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}! </p>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}">Login</a>
+{% endif %}
 <h2>Officers</h2>
-<ul>
-    {% for officer in officers %}
-        <li>{{ officer.name }} ({{ officer.date_of_birth }}) {{ officer.id_ca }} - <a href="{% url 'officer_update' officer.pk %}">Edit</a> | <a href="{% url 'officer_delete' officer.pk %}">Delete</a></li>
+
+
+
+<form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+    <input type="text" name="q" placeholder="Search by name" value="{{ query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+
+    <input type="text" name="id_ca" placeholder="Search by ID" value="{{ id_ca_query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+
+    <button type="submit" style="flex: 0 0 auto;">Filter</button>
+    {% if request.GET %}
+        <a href="{% url 'officer_list' %}" class="button" style="flex: 0 0 auto;">Clear Filters</a>
+    {% endif %}
+
+    <label for="military_type">Military Type:</label>
+    <select name="military_type" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for mt in military_types %}
+            <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="military_rank">Military Rank:</label>
+    <select name="military_rank" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for mr in military_ranks %}
+            <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="position">Position:</label>
+    <select name="position" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for p in positions %}
+            <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="work_unit">Work Unit:</label>
+    <select name="work_unit" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for wu in work_units %}
+            <option value="{{ wu }}" {% if request.GET.work_unit == wu %}selected{% endif %}>{{ wu }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="political_theory">Political Theory:</label>
+    <select name="political_theory" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for pt in political_theories %}
+            <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="year_of_birth">Year of Birth:</label>
+    <select name="year_of_birth" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for year in years_of_birth %}
+            <option value="{{ year }}" {% if year == selected_year_of_birth %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="birth_place">Home Town:</label>
+    <select name="birth_place" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for bp in birth_places %}
+            <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="education">Education:</label>
+    <select name="education" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for ed in educations %}
+            <option value="{{ ed }}" {% if request.GET.education == ed %}selected{% endif %}>{{ ed }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="current_residence">Current Residence:</label>
+    <select name="current_residence" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for cr in current_residences %}
+            <option value="{{ cr }}" {% if request.GET.current_residence == cr %}selected{% endif %}>{{ cr }}</option>
+        {% endfor %}
+    </select>
+
+    {% comment %} <label for="blood_type">Blood Type:</label>
+    <select name="blood_type" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for bt in blood_types %}
+            <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
+        {% endfor %}
+    </select> {% endcomment %}
+
+    {% comment %} <label for="size_of_hat">Hat Size:</label>
+    <select name="size_of_hat" style="flex: 1; min-width: 150px;">
+        <option value="">All</option>
+        {% for hs in hat_size %}
+            <option value="{{ hs }}" {% if request.GET.size_of_hat == hs %}selected{% endif %}>{{ hs }}</option>
+        {% endfor %}
+    </select> {% endcomment %}
+
+    
+</form>
+
+<a href="{% url 'officer_create' %}">Add New Officer</a> | 
+<a href="{% url 'excel_upload' %}">Upload Excel File</a>
+{% if officers %}
+    | <a href="{% url 'delete_all_officers' %}">Delete All Officers</a>
+{% endif %}
+
+<!-- Display messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
     {% endfor %}
-</ul>
-<a href="{% url 'officer_create' %}">Add New Officer</a> | <a href="{% url 'excel_upload' %}">Upload Excel File</a>
+{% endif %}
+
+<!-- Checkbox to toggle between officer list and export form -->
+<label>
+    <input type="checkbox" id="toggleExportForm" onclick="toggleView()"> Show Export Form
+</label>
+
+<!-- Officer List and Filter Form -->
+<div id="officerList" style="display: block;">
+
+    <ul>
+        {% for officer in officers %}
+            <li>{{ officer.birth_name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+                - <a href="{% url 'officer_detail' officer.pk %}">View</a> | 
+                <a href="{% url 'officer_delete' officer.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Export Form -->
+<div id="exportForm" style="display: none;">
+    <form method="post" action="{% url 'officer_list' %}">
+        {% csrf_token %}
+        <h3>Select Officers and Fields to Export:</h3>
+
+        <div>
+            <strong>Select Officers:</strong><br>
+            {% for officer in officers %}
+                <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                <label for="officer_{{ officer.pk }}">{{ officer.birth_name }} ({{ officer.id_ca }})</label>
+                <br>
+            {% endfor %}
+        </div>
+
+        <div>
+            <strong>Select Fields:</strong><br>
+            {{ form.fields }}
+        </div>
+
+        <button type="submit" name="export">Export Selected Officers</button>
+    </form>
+</div>
+
+
+
+<script>
+    function toggleView() {
+        var isChecked = document.getElementById('toggleExportForm').checked;
+        var officerList = document.getElementById('officerList');
+        var exportForm = document.getElementById('exportForm');
+
+        if (isChecked) {
+            officerList.style.display = 'none';
+            exportForm.style.display = 'block';
+        } else {
+            officerList.style.display = 'block';
+            exportForm.style.display = 'none';
+        }
+    }
+</script>

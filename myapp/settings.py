@@ -72,6 +72,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "myapp.wsgi.application"
 
+# Login URL
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/officers/'
+LOGOUT_REDIRECT_URL = '/logout-page/'
+
+# Session expire at browser close
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Session cookie age
+SESSION_COOKIE_AGE = 600
+
+# Session save every request
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -79,10 +92,10 @@ WSGI_APPLICATION = "myapp.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "mysql",
-        "USER": "root",
-        "PASSWORD": "your_new_password",
-        "HOST": "localhost",
+        "NAME": "OFFICERS_TABLE",
+        "USER": "manager",
+        "PASSWORD": "manager@123",
+        "HOST": "127.0.0.1",
         "PORT": "3306",
     }
 }
@@ -92,18 +105,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    # },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    # },
 ]
 
 
@@ -123,7 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFILES_DIRS = [BASE_DIR / 'static'] 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

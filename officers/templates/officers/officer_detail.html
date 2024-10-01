@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Details</title>
+</head>
+<body>
+    <h1>Thông tin: {{ officer.birth_name }}</h1>
+    <p><strong>Ngày sinh:</strong> {{ officer.date_of_birth|date:"d/m/Y" }}</p>
+    <p><strong>Số hiệu:</strong> {{ officer.id_ca }}</p>
+    <p><strong>Giới tính</strong> {{ officer.gender }}</p>
+    <p><strong>Số CCCD:</strong> {{ officer.id_citizen }}</p>
+
+    <p><strong>Chỗ ở hiện nay:</strong> {{ officer.current_residence }}</p>
+
+    <p><strong>Hệ số lương:</strong> {{ officer.salary_coefficient }}</p>
+    <p><strong>Năm quyết định lương:</strong> {{ officer.salary_decision_year }}</p>
+    <p><strong>Hệ số lương tiếp theo:</strong> {{ officer.next_salary_coefficient }}</p>
+    <p><strong>Năm quyết định lương tiếp theo:</strong> {{ officer.next_salary_decision_year }}</p>
+    <p><strong>Kỷ luật:</strong>
+        <ul>
+            {% for discipline in disciplines %}
+                <li>
+                    <strong>Thời gian</strong>: {{ discipline.time }} - <strong>Hình thức</strong>: {{ discipline.form }} - <strong>Nội dung</strong>: {{ discipline.content }}
+                </li>
+            {% endfor %}
+        </ul>
+
+    <a href="{% url 'url_title_view' officer.pk %}">Chức danh</a> <br>
+    <a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a> <br>
+    <a href="{% url 'officer_learning_path' officer.pk %}">Đào tạo</a> <br>
+    <a href="{% url 'officer_work_process' officer.pk %}">Quá trình công tác</a> <br>
+    <a href="{% url 'officer_salary_process' officer.pk %}">Quá trình lương</a> <br>
+    <a href="{% url 'officer_laudatory' officer.pk %}">Khen thưởng</a> <br>
+    <a href="{% url 'officer_discipline' officer.pk %}">Kỷ luật</a> <br>
+    <a href="{% url 'officer_relative' officer.pk %}">Thân nhân</a> <br>
+    <a href="{% url 'officer_abroad' officer.pk %}">Ra nước ngoài</a> <br>
+    <a href="{% url 'officer_army_join_history' officer.pk %}">Tham gia quân đội</a> <br>
+    <a href="{% url 'officer_health' officer.pk %}">Sức khoẻ</a> <br>
+    
+    <a href="{% url 'officer_update' officer.pk %}">Edit</a> |<a href="{% url 'officer_list' %}">Back to List</a>
+</body>
+</html>

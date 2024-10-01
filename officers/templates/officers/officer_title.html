@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Chức danh</title>
+
+        <script type="module">
+            import { confirmDelete } from "{% static 'js/utils.js' %}";
+            window.confirmDelete = confirmDelete;
+        </script>
+    </head>
+    <body>
+        <h1>{{ officer.birth_name }} - Thông tin chức danh:</h1>
+        <ul>
+            {% for title in titles %}
+            <li>
+                <strong>Ngày bổ nhiệm:</strong>
+                {{ title.appointed_date|date:"d/m/Y" }}
+                <strong>Chức danh:</strong>
+                {{ title.title }} -
+
+                <!-- Update Button -->
+                <a href="{% url 'url_title_update' officer.pk title.id %}">
+                    Update
+                </a>
+
+                <!-- Delete Button with confirmation -->
+                <form
+                    method="POST"
+                    action="{% url 'url_title_delete' officer.pk title.id %}"
+                    style="display: inline"
+                    onsubmit="return confirmDelete();"
+                >
+                    {% csrf_token %}
+                    <button type="submit" style="color: red">Delete</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Create New Title Button -->
+        <a href="{% url 'url_title_create' officer.pk %}">
+            <button>Create New Title</button>
+        </a>
+
+        <!-- Link to Officer Details Page -->
+        <a href="{% url 'officer_detail' officer.pk %}">
+            Back to Officer Details
+        </a>
+    </body>
+</html>

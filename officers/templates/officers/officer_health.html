@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ officer.birth_name }} - Sức khoẻ</title>
+</head>
+<body>
+    <h1>{{ officer.birth_name }} - Sức khoẻ:</h1>
+    
+    <!-- Display Officer Health -->
+    <ul>
+        {% for health in healths %}
+            <li>
+                <strong>Cân nặng</strong>: {{ health.weight }} Kg - <strong>Chiều cao</strong>: {{ health.height }} cm - <strong>Lịch sử bệnh</strong>: {{ health.medical_history }} - <strong>Khác</strong>: {{ health.other }}  
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
