@@ -52,5 +52,18 @@
             Back to Officer Details
         </a>
 
+        <!-- Create or Update Laudatory Form -->
+        <h1>
+            {% if edit_laudatory_id %}Update Laudatory{% else %}Create Laudatory
+            {% endif %}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">
+                {% if edit_laudatory_id %}Update{% else %}Create
+                {% endif %}
+            </button>
+        </form>
     </body>
 </html>

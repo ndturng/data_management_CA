@@ -155,3 +155,9 @@ class SalaryProcessForm(RelatedBaseForm):
         model = m.SalaryProcess
         field_config = c.SALARY_PROCESS_FIELDS
         fields = list(field_config.keys())
+
+class LaudatoryForm(RelatedBaseForm):
+    class Meta:
+        model = m.Laudatory
+        field_config = c.LAUDATORY_FIELDS
+        fields = list(field_config.keys())

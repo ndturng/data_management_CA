@@ -121,9 +121,28 @@ urlpatterns = [
         name="url_salary_process_delete",
     ),
     ############################################################
+    # Quá trình khen thưởng
     path(
-        "<int:pk>/laudatory", views.officer_laudatory, name="officer_laudatory"
+        "<int:pk>/laudatory", 
+        views.LaudatoryListView.as_view(),
+        name="url_laudatory"
     ),
+    path(
+        "<int:pk>/laudatory/create",
+        views.LaudatoryCreateView.as_view(),
+        name="url_laudatory_create"
+    ),
+    path(
+        "<int:pk>/laudatory/update/<int:laudatory_pk>",
+        views.LaudatoryUpdateView.as_view(),
+        name="url_laudatory_update"
+    ),
+    path(
+        "<int:pk>/laudatory/delete/<int:laudatory_pk>",
+        views.LaudatoryDeleteView.as_view(),
+        name="url_laudatory_delete"
+    ),
+    ############################################################
     path(
         "<int:pk>/discipline",
         views.officer_discipline,

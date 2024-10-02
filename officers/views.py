@@ -315,7 +315,9 @@ class OfficerRelatedMixin(LoginRequiredMixin):
 
         # Add the object ID to the context if editing (if the object exists)
         try:
-            if self.related_context_field.endswith("es"):
+            if self.related_context_field.endswith("ies"):
+                singular_field = self.related_context_field[:-3] + "y"
+            elif self.related_context_field.endswith("es"):
                 singular_field = self.related_context_field[:-2]
             elif self.related_context_field.endswith("s"):
                 singular_field = self.related_context_field[:-1]
@@ -597,13 +599,61 @@ class SalaryProcessDeleteView(
 
 
 ########################################################
+# Officer Laudatories
 
-@login_required
-def officer_laudatory(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    laudatories = officer.laudatories.all()
-    context = {"officer": officer, "laudatories": laudatories}
-    return render(request, "officers/officer_laudatory.html", context)
+
+# Laudatory Mixin
+class LaudatoryMixin(OfficerRelatedMixin):
+    model = m.Laudatory
+    form_class = f.LaudatoryForm
+    view_url = "url_laudatory"
+    related_context_field = "laudatories"
+
+
+# Laudatory View
+class LaudatoryListView(LaudatoryMixin, ListView):
+    template_name = "officers/officer_laudatory.html"
+    context_object_name = "laudatories"
+
+    def get_queryset(self):
+        return self.get_officer().laudatories.all()
+    
+
+# Create Laudatory
+class LaudatoryCreateView(
+    PermissionRequiredMixin,
+    LaudatoryMixin,
+    CreateView,
+):
+    template_name = "officers/laudatory_manage.html"
+    permission_required = "officers.adjust_laudatory"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Laudatory
+class LaudatoryUpdateView(
+    PermissionRequiredMixin, LaudatoryMixin, UpdateView
+):
+    pk_url_kwarg = "laudatory_pk"
+    template_name = "officers/laudatory_manage.html"
+    permission_required = "officers.adjust_laudatory"
+
+    
+# Delete Laudatory
+class LaudatoryDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Laudatory
+    pk_url_kwarg = "laudatory_pk"
+    view_url = "url_laudatory"
+    related_context_field = "laudatories"
+    permission_required = "officers.delete_officer_laudatory"
+
+
+########################################################
 
 
 @login_required
