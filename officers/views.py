@@ -315,11 +315,13 @@ class OfficerRelatedMixin(LoginRequiredMixin):
 
         # Add the object ID to the context if editing (if the object exists)
         try:
-            singular_field = (
-                self.related_context_field[:-1]
-                if self.related_context_field.endswith("s")
-                else self.related_context_field
-            )
+            if self.related_context_field.endswith("es"):
+                singular_field = self.related_context_field[:-2]
+            elif self.related_context_field.endswith("s"):
+                singular_field = self.related_context_field[:-1]
+            else:
+                singular_field = self.related_context_field
+                
             context[f"edit_{singular_field}_id"] = self.object.id
         except AttributeError:
             pass
@@ -484,12 +486,62 @@ class LearningPathDeleteView(
     permission_required = "officers.delete_officer_learning_path"
 
 
-@login_required
-def officer_work_process(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    work_processes = officer.work_processes.all()
-    context = {"officer": officer, "work_processes": work_processes}
-    return render(request, "officers/officer_work_process.html", context)
+########################################################
+# Officer Work Processes
+
+
+# Work Process Mixin
+class WorkProcessMixin(OfficerRelatedMixin):
+    model = m.WorkProcess
+    form_class = f.WorkProcessForm
+    view_url = "url_work_process"
+    related_context_field = "work_processes"
+
+
+# Work Process View
+class WorkProcessListView(WorkProcessMixin, ListView):
+    template_name = "officers/officer_work_process.html"
+    context_object_name = "work_processes"
+
+    def get_queryset(self):
+        return self.get_officer().work_processes.all()
+    
+
+# Create Work Process
+class WorkProcessCreateView(
+    PermissionRequiredMixin,
+    WorkProcessMixin,
+    CreateView,
+):
+    template_name = "officers/work_process_manage.html"
+    permission_required = "officers.adjust_work_process"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Work Process
+class WorkProcessUpdateView(
+    PermissionRequiredMixin, WorkProcessMixin, UpdateView
+):
+    pk_url_kwarg = "work_process_pk"
+    template_name = "officers/work_process_manage.html"
+    permission_required = "officers.adjust_work_process"
+
+
+# Delete Work Process
+class WorkProcessDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.WorkProcess
+    pk_url_kwarg = "work_process_pk"
+    view_url = "url_work_process"
+    related_context_field = "work_processes"
+    permission_required = "officers.delete_officer_work_process"
+
+
+########################################################
 
 
 @login_required

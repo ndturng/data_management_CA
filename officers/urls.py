@@ -77,10 +77,26 @@ urlpatterns = [
         name="url_learning_path_delete",
     ),
     ############################################################
+    # Quá trình công tác
     path(
         "<int:pk>/work-process",
-        views.officer_work_process,
-        name="officer_work_process",
+        views.WorkProcessListView.as_view(),
+        name="url_work_process",
+    ),
+    path(
+        "<int:pk>/work-process/create",
+        views.WorkProcessCreateView.as_view(),
+        name="url_work_process_create",
+    ),
+    path(
+        "<int:pk>/work-process/update/<int:work_process_pk>",
+        views.WorkProcessUpdateView.as_view(),
+        name="url_work_process_update",
+    ),
+    path(
+        "<int:pk>/work-process/delete/<int:work_process_pk>",
+        views.WorkProcessDeleteView.as_view(),
+        name="url_work_process_delete",
     ),
     path(
         "<int:pk>/salary-process",

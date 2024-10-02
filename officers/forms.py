@@ -143,3 +143,9 @@ class LearningPathForm(RelatedBaseForm):
         model = m.LearningPath
         field_config = c.LEARNING_PATH_FIELDS
         fields = list(field_config.keys())
+
+class WorkProcessForm(RelatedBaseForm):
+    class Meta:
+        model = m.WorkProcess
+        field_config = c.WORK_PROCESS_FIELDS
+        fields = list(field_config.keys())

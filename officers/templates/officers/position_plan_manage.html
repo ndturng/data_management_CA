@@ -60,8 +60,8 @@
             {% csrf_token %} {{ form.as_p }}
 
             <button type="submit">
-                {% if edit_position_plan_id %}Update Position Plan{% else %}Save
-                Position Plan{% endif %}
+                {% if edit_position_plan_id %}Update{% else %}Create
+                {% endif %}
             </button>
         </form>
     </body>

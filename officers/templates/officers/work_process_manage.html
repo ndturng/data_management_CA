@@ -50,5 +50,19 @@
             Back to Officer Details
         </a>
 
+        <!-- Create or Update Work Process Form -->
+        <h1>
+            {% if edit_work_process_id %}Update Work Process{% else %}Create
+            Work Process{% endif %}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %} {{ form.as_p }}
+
+            <button type="submit">
+                {% if edit_work_process_id %}Update{% else %}Create
+                {% endif %}
+            </button>
+        </form>
     </body>
 </html>
