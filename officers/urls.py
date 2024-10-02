@@ -187,7 +187,28 @@ urlpatterns = [
         name="url_relative_delete",
     ),
     ############################################################
-    path("<int:pk>/abroad", views.officer_abroad, name="officer_abroad"),
+    # Ra nước ngoài
+    path(
+        "<int:pk>/abroad",
+        views.AbroadListView.as_view(),
+        name="url_abroad",
+    ),
+    path(
+        "<int:pk>/abroad/create",
+        views.AbroadCreateView.as_view(),
+        name="url_abroad_create",
+    ),
+    path(
+        "<int:pk>/abroad/update/<int:abroad_pk>",
+        views.AbroadUpdateView.as_view(),
+        name="url_abroad_update",
+    ),
+    path(
+        "<int:pk>/abroad/delete/<int:abroad_pk>",
+        views.AbroadDeleteView.as_view(),
+        name="url_abroad_delete",
+    ),
+    ############################################################
     path(
         "<int:pk>/army-join-history",
         views.officer_army_join_history,

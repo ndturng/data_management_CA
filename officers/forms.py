@@ -173,3 +173,9 @@ class RelativeForm(RelatedBaseForm):
         model = m.Relative
         field_config = c.RELATIVE_FIELDS
         fields = list(field_config.keys())
+
+class AbroadForm(RelatedBaseForm):
+    class Meta:
+        model = m.Abroad
+        field_config = c.ABROAD_FIELDS
+        fields = list(field_config.keys())

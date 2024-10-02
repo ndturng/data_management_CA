@@ -770,14 +770,61 @@ class RelativeDeleteView(
 
 
 ########################################################
+# Officer Abroads
 
 
-@login_required
-def officer_abroad(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    abroads = officer.abroads.all()
-    context = {"officer": officer, "abroads": abroads}
-    return render(request, "officers/officer_abroad.html", context)
+# Abroad Mixin
+class AbroadMixin(OfficerRelatedMixin):
+    model = m.Abroad
+    form_class = f.AbroadForm
+    view_url = "url_abroad"
+    related_context_field = "abroads"
+
+
+# Abroad View
+class AbroadListView(AbroadMixin, ListView):
+    template_name = "officers/officer_abroad.html"
+    context_object_name = "abroads"
+
+    def get_queryset(self):
+        return self.get_officer().abroads.all()
+    
+
+# Create Abroad
+class AbroadCreateView(
+    PermissionRequiredMixin,
+    AbroadMixin,
+    CreateView,
+):
+    template_name = "officers/abroad_manage.html"
+    permission_required = "officers.adjust_abroad"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Abroad
+class AbroadUpdateView(
+    PermissionRequiredMixin, AbroadMixin, UpdateView
+):
+    pk_url_kwarg = "abroad_pk"
+    template_name = "officers/abroad_manage.html"
+    permission_required = "officers.adjust_abroad"
+
+
+# Delete Abroad
+class AbroadDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Abroad
+    pk_url_kwarg = "abroad_pk"
+    view_url = "url_abroad"
+    related_context_field = "abroads"
+    permission_required = "officers.delete_officer_abroad"
+
+
+########################################################
 
 
 @login_required
