@@ -121,7 +121,7 @@ urlpatterns = [
         name="url_salary_process_delete",
     ),
     ############################################################
-    # Quá trình khen thưởng
+    # Khen thưởng
     path(
         "<int:pk>/laudatory", 
         views.LaudatoryListView.as_view(),
@@ -143,11 +143,28 @@ urlpatterns = [
         name="url_laudatory_delete"
     ),
     ############################################################
+    # Kỷ luật
     path(
         "<int:pk>/discipline",
-        views.officer_discipline,
-        name="officer_discipline",
+        views.DisciplineListView.as_view(),
+        name="url_discipline",
     ),
+    path(
+        "<int:pk>/discipline/create",
+        views.DisciplineCreateView.as_view(),
+        name="url_discipline_create",
+    ),
+    path(
+        "<int:pk>/discipline/update/<int:discipline_pk>",
+        views.DisciplineUpdateView.as_view(),
+        name="url_discipline_update",
+    ),
+    path(
+        "<int:pk>/discipline/delete/<int:discipline_pk>",
+        views.DisciplineDeleteView.as_view(),
+        name="url_discipline_delete",
+    ),
+    ############################################################
     path("<int:pk>/relative", views.officer_relative, name="officer_relative"),
     path("<int:pk>/abroad", views.officer_abroad, name="officer_abroad"),
     path(

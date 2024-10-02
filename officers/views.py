@@ -315,7 +315,11 @@ class OfficerRelatedMixin(LoginRequiredMixin):
 
         # Add the object ID to the context if editing (if the object exists)
         try:
-            if self.related_context_field.endswith("ies"):
+            if self.related_context_field.endswith("les"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("nes"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("ies"):
                 singular_field = self.related_context_field[:-3] + "y"
             elif self.related_context_field.endswith("es"):
                 singular_field = self.related_context_field[:-2]
@@ -654,7 +658,61 @@ class LaudatoryDeleteView(
 
 
 ########################################################
+# Officer Disciplines
 
+
+# Discipline Mixin
+class DisciplineMixin(OfficerRelatedMixin):
+    model = m.Discipline
+    form_class = f.DisciplineForm
+    view_url = "url_discipline"
+    related_context_field = "disciplines"
+
+
+# Discipline View
+class DisciplineListView(DisciplineMixin, ListView):
+    template_name = "officers/officer_discipline.html"
+    context_object_name = "disciplines"
+
+    def get_queryset(self):
+        return self.get_officer().disciplines.all()
+    
+
+# Create Discipline
+class DisciplineCreateView(
+    PermissionRequiredMixin,
+    DisciplineMixin,
+    CreateView,
+):
+    template_name = "officers/discipline_manage.html"
+    permission_required = "officers.adjust_discipline"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Discipline
+class DisciplineUpdateView(
+    PermissionRequiredMixin, DisciplineMixin, UpdateView
+):
+    pk_url_kwarg = "discipline_pk"
+    template_name = "officers/discipline_manage.html"
+    permission_required = "officers.adjust_discipline"
+
+
+# Delete Discipline
+class DisciplineDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Discipline
+    pk_url_kwarg = "discipline_pk"
+    view_url = "url_discipline"
+    related_context_field = "disciplines"
+    permission_required = "officers.delete_officer_discipline"
+
+
+########################################################
 
 @login_required
 def officer_discipline(request, pk):

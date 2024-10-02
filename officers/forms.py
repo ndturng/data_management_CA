@@ -161,3 +161,9 @@ class LaudatoryForm(RelatedBaseForm):
         model = m.Laudatory
         field_config = c.LAUDATORY_FIELDS
         fields = list(field_config.keys())
+
+class DisciplineForm(RelatedBaseForm):
+    class Meta:
+        model = m.Discipline
+        field_config = c.DISCIPLINE_FIELDS
+        fields = list(field_config.keys())
