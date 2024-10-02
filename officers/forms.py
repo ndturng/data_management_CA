@@ -149,3 +149,9 @@ class WorkProcessForm(RelatedBaseForm):
         model = m.WorkProcess
         field_config = c.WORK_PROCESS_FIELDS
         fields = list(field_config.keys())
+
+class SalaryProcessForm(RelatedBaseForm):
+    class Meta:
+        model = m.SalaryProcess
+        field_config = c.SALARY_PROCESS_FIELDS
+        fields = list(field_config.keys())

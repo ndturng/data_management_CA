@@ -98,11 +98,29 @@ urlpatterns = [
         views.WorkProcessDeleteView.as_view(),
         name="url_work_process_delete",
     ),
+    ############################################################
+    # Quá trình lương
     path(
         "<int:pk>/salary-process",
-        views.officer_salary_process,
-        name="officer_salary_process",
+        views.SalaryProcessListView.as_view(),
+        name="url_salary_process",
     ),
+    path(
+        "<int:pk>/salary-process/create",
+        views.SalaryProcessCreateView.as_view(),
+        name="url_salary_process_create",
+    ),
+    path(
+        "<int:pk>/salary-process/update/<int:salary_process_pk>",
+        views.SalaryProcessUpdateView.as_view(),
+        name="url_salary_process_update",
+    ),
+    path(
+        "<int:pk>/salary-process/delete/<int:salary_process_pk>",
+        views.SalaryProcessDeleteView.as_view(),
+        name="url_salary_process_delete",
+    ),
+    ############################################################
     path(
         "<int:pk>/laudatory", views.officer_laudatory, name="officer_laudatory"
     ),

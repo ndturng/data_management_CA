@@ -52,5 +52,18 @@
             Back to Officer Details
         </a>
 
+        <!-- Create or Update Salary Process Form -->
+        <h1>
+            {% if edit_salary_process_id %}Update Salary Process{% else %}Create
+            Salary Process{% endif %}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">
+                {% if edit_salary_process_id %}Update{% else %}Create
+                {% endif %}
+            </button>
+        </form>
     </body>
 </html>

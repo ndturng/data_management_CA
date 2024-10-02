@@ -542,15 +542,61 @@ class WorkProcessDeleteView(
 
 
 ########################################################
+# Officer Salary Processes
 
 
-@login_required
-def officer_salary_process(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    salary_processes = officer.salary_processes.all()
-    context = {"officer": officer, "salary_processes": salary_processes}
-    return render(request, "officers/officer_salary_process.html", context)
+# Salary Process Mixin
+class SalaryProcessMixin(OfficerRelatedMixin):
+    model = m.SalaryProcess
+    form_class = f.SalaryProcessForm
+    view_url = "url_salary_process"
+    related_context_field = "salary_processes"
 
+
+# Salary Process View
+class SalaryProcessListView(SalaryProcessMixin, ListView):
+    template_name = "officers/officer_salary_process.html"
+    context_object_name = "salary_processes"
+
+    def get_queryset(self):
+        return self.get_officer().salary_processes.all()
+    
+
+# Create Salary Process
+class SalaryProcessCreateView(
+    PermissionRequiredMixin,
+    SalaryProcessMixin,
+    CreateView,
+):
+    template_name = "officers/salary_process_manage.html"
+    permission_required = "officers.adjust_salary_process"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Salary Process
+class SalaryProcessUpdateView(
+    PermissionRequiredMixin, SalaryProcessMixin, UpdateView
+):
+    pk_url_kwarg = "salary_process_pk"
+    template_name = "officers/salary_process_manage.html"
+    permission_required = "officers.adjust_salary_process"
+
+
+# Delete Salary Process
+class SalaryProcessDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.SalaryProcess
+    pk_url_kwarg = "salary_process_pk"
+    view_url = "url_salary_process"
+    related_context_field = "salary_processes"
+    permission_required = "officers.delete_officer_salary_process"
+
+
+########################################################
 
 @login_required
 def officer_laudatory(request, pk):
