@@ -55,6 +55,19 @@
         <a href="{% url 'officer_detail' officer.pk %}">
             Back to Officer Details
         </a>
-        
+
+        <!-- Create or Update Relative Form -->
+        <h1>
+            {% if edit_relative_id %}Update Relative{% else %}Create Relative
+            {% endif %}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">
+                {% if edit_relative_id %}Update{% else %}Create
+                {% endif %}
+            </button>
+        </form>
     </body>
 </html>

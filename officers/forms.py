@@ -167,3 +167,9 @@ class DisciplineForm(RelatedBaseForm):
         model = m.Discipline
         field_config = c.DISCIPLINE_FIELDS
         fields = list(field_config.keys())
+
+class RelativeForm(RelatedBaseForm):
+    class Meta:
+        model = m.Relative
+        field_config = c.RELATIVE_FIELDS
+        fields = list(field_config.keys())

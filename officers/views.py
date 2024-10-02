@@ -315,7 +315,9 @@ class OfficerRelatedMixin(LoginRequiredMixin):
 
         # Add the object ID to the context if editing (if the object exists)
         try:
-            if self.related_context_field.endswith("les"):
+            if self.related_context_field.endswith("ves"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("les"):
                 singular_field = self.related_context_field[:-1]
             elif self.related_context_field.endswith("nes"):
                 singular_field = self.related_context_field[:-1]
@@ -713,21 +715,61 @@ class DisciplineDeleteView(
 
 
 ########################################################
-
-@login_required
-def officer_discipline(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    disciplines = officer.disciplines.all()
-    context = {"officer": officer, "disciplines": disciplines}
-    return render(request, "officers/officer_discipline.html", context)
+# Officer Relatives
 
 
-@login_required
-def officer_relative(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    relatives = officer.relatives.all()
-    context = {"officer": officer, "relatives": relatives}
-    return render(request, "officers/officer_relative.html", context)
+# Relative Mixin
+class RelativeMixin(OfficerRelatedMixin):
+    model = m.Relative
+    form_class = f.RelativeForm
+    view_url = "url_relative"
+    related_context_field = "relatives"
+
+
+# Relative View
+class RelativeListView(RelativeMixin, ListView):
+    template_name = "officers/officer_relative.html"
+    context_object_name = "relatives"
+
+    def get_queryset(self):
+        return self.get_officer().relatives.all()
+    
+
+# Create Relative
+class RelativeCreateView(
+    PermissionRequiredMixin,
+    RelativeMixin,
+    CreateView,
+):
+    template_name = "officers/relative_manage.html"
+    permission_required = "officers.adjust_relative"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form) 
+    
+
+# Update Relative
+class RelativeUpdateView(
+    PermissionRequiredMixin, RelativeMixin, UpdateView
+):
+    pk_url_kwarg = "relative_pk"
+    template_name = "officers/relative_manage.html"
+    permission_required = "officers.adjust_relative"
+
+
+# Delete Relative
+class RelativeDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Relative
+    pk_url_kwarg = "relative_pk"
+    view_url = "url_relative"
+    related_context_field = "relatives"
+    permission_required = "officers.delete_officer_relative"
+
+
+########################################################
 
 
 @login_required

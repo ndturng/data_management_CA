@@ -165,7 +165,28 @@ urlpatterns = [
         name="url_discipline_delete",
     ),
     ############################################################
-    path("<int:pk>/relative", views.officer_relative, name="officer_relative"),
+    # Thân nhân
+    path(
+        "<int:pk>/relative",
+        views.RelativeListView.as_view(),
+        name="url_relative",
+    ),
+    path(
+        "<int:pk>/relative/create",
+        views.RelativeCreateView.as_view(),
+        name="url_relative_create",
+    ),
+    path(
+        "<int:pk>/relative/update/<int:relative_pk>",
+        views.RelativeUpdateView.as_view(),
+        name="url_relative_update",
+    ),
+    path(
+        "<int:pk>/relative/delete/<int:relative_pk>",
+        views.RelativeDeleteView.as_view(),
+        name="url_relative_delete",
+    ),
+    ############################################################
     path("<int:pk>/abroad", views.officer_abroad, name="officer_abroad"),
     path(
         "<int:pk>/army-join-history",
