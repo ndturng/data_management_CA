@@ -209,10 +209,27 @@ urlpatterns = [
         name="url_abroad_delete",
     ),
     ############################################################
+    # Tham gia quân đội
     path(
         "<int:pk>/army-join-history",
-        views.officer_army_join_history,
-        name="officer_army_join_history",
+        views.ArmyJoinHistoryListView.as_view(),
+        name="url_army_join_history",
     ),
+    path(
+        "<int:pk>/army-join-history/create",
+        views.ArmyJoinHistoryCreateView.as_view(),
+        name="url_army_join_history_create",
+    ),
+    path(
+        "<int:pk>/army-join-history/update/<int:army_join_history_pk>",
+        views.ArmyJoinHistoryUpdateView.as_view(),
+        name="url_army_join_history_update",
+    ),
+    path(
+        "<int:pk>/army-join-history/delete/<int:army_join_history_pk>",
+        views.ArmyJoinHistoryDeleteView.as_view(),
+        name="url_army_join_history_delete",
+    ),
+    ############################################################
     path("<int:pk>/health", views.officer_health, name="officer_health"),
 ]

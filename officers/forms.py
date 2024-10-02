@@ -179,3 +179,9 @@ class AbroadForm(RelatedBaseForm):
         model = m.Abroad
         field_config = c.ABROAD_FIELDS
         fields = list(field_config.keys())
+
+class ArmyJoinHistoryForm(RelatedBaseForm):
+    class Meta:
+        model = m.ArmyJoinHistory
+        field_config = c.ARMY_JOIN_HISTORY_FIELDS
+        fields = list(field_config.keys())

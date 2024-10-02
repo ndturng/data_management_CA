@@ -825,14 +825,61 @@ class AbroadDeleteView(
 
 
 ########################################################
+# Officer Army Join Histories
 
 
-@login_required
-def officer_army_join_history(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    army_join_histories = officer.army_join_histories.all()
-    context = {"officer": officer, "army_join_histories": army_join_histories}
-    return render(request, "officers/officer_army_join_history.html", context)
+# Army Join History Mixin
+class ArmyJoinHistoryMixin(OfficerRelatedMixin):
+    model = m.ArmyJoinHistory
+    form_class = f.ArmyJoinHistoryForm
+    view_url = "url_army_join_history"
+    related_context_field = "army_join_histories"
+
+
+# Army Join History View
+class ArmyJoinHistoryListView(ArmyJoinHistoryMixin, ListView):
+    template_name = "officers/officer_army_join_history.html"
+    context_object_name = "army_join_histories"
+
+    def get_queryset(self):
+        return self.get_officer().army_join_histories.all()
+    
+
+# Create Army Join History
+class ArmyJoinHistoryCreateView(
+    PermissionRequiredMixin,
+    ArmyJoinHistoryMixin,
+    CreateView,
+):
+    template_name = "officers/army_join_history_manage.html"
+    permission_required = "officers.adjust_army_join_history"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Army Join History
+class ArmyJoinHistoryUpdateView(
+    PermissionRequiredMixin, ArmyJoinHistoryMixin, UpdateView
+):
+    pk_url_kwarg = "army_join_history_pk"
+    template_name = "officers/army_join_history_manage.html"
+    permission_required = "officers.adjust_army_join_history"
+
+
+# Delete Army Join History
+class ArmyJoinHistoryDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.ArmyJoinHistory
+    pk_url_kwarg = "army_join_history_pk"
+    view_url = "url_army_join_history"
+    related_context_field = "army_join_histories"
+    permission_required = "officers.delete_officer_army_join_history"
+
+
+########################################################
 
 
 @login_required
