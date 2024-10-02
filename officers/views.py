@@ -430,12 +430,58 @@ class PositionPlanDeleteView(
 
 
 ########################################################
-@login_required
-def officer_learning_path(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    learning_paths = officer.learning_paths.all()
-    context = {"officer": officer, "learning_paths": learning_paths}
-    return render(request, "officers/officer_learning_path.html", context)
+# Officer Learning Paths
+
+
+# Learning Path Mixin
+class LearningPathMixin(OfficerRelatedMixin):
+    model = m.LearningPath
+    form_class = f.LearningPathForm
+    view_url = "url_learning_path"
+    related_context_field = "learning_paths"
+
+
+# Learning Path View
+class LearningPathListView(LearningPathMixin, ListView):
+    template_name = "officers/officer_learning_path.html"
+    context_object_name = "learning_paths"
+
+    def get_queryset(self):
+        return self.get_officer().learning_paths.all()
+
+
+# Create Learning Path
+class LearningPathCreateView(
+    PermissionRequiredMixin,
+    LearningPathMixin,
+    CreateView,
+):
+    template_name = "officers/learning_path_manage.html"
+    permission_required = "officers.adjust_learning_path"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+
+
+# Update Learning Path
+class LearningPathUpdateView(
+    PermissionRequiredMixin, LearningPathMixin, UpdateView
+):
+    pk_url_kwarg = "learning_path_pk"
+    template_name = "officers/learning_path_manage.html"
+    permission_required = "officers.adjust_learning_path"
+
+
+# Delete Learning Path
+class LearningPathDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.LearningPath
+    pk_url_kwarg = "learning_path_pk"
+    view_url = "url_learning_path"
+    related_context_field = "learning_paths"
+    permission_required = "officers.delete_officer_learning_path"
 
 
 @login_required

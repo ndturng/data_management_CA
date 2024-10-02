@@ -54,12 +54,29 @@ urlpatterns = [
         views.PositionPlanDeleteView.as_view(),
         name="url_position_plan_delete",
     ),
+    ############################################################
     # Đào tạo
     path(
         "<int:pk>/learning-path",
-        views.officer_learning_path,
-        name="officer_learning_path",
+        views.LearningPathListView.as_view(),
+        name="url_learning_path",
     ),
+    path(
+        "<int:pk>/learning-path/create",
+        views.LearningPathCreateView.as_view(),
+        name="url_learning_path_create",
+    ),
+    path(
+        "<int:pk>/learning-path/update/<int:learning_path_pk>",
+        views.LearningPathUpdateView.as_view(),
+        name="url_learning_path_update",
+    ),
+    path(
+        "<int:pk>/learning-path/delete/<int:learning_path_pk>",
+        views.LearningPathDeleteView.as_view(),
+        name="url_learning_path_delete",
+    ),
+    ############################################################
     path(
         "<int:pk>/work-process",
         views.officer_work_process,

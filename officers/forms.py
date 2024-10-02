@@ -137,3 +137,9 @@ class PositionPlanForm(RelatedBaseForm):
         model = m.PositionPlan
         field_config = c.POSITION_PLAN_FIELDS
         fields = list(field_config.keys())
+
+class LearningPathForm(RelatedBaseForm):
+    class Meta:
+        model = m.LearningPath
+        field_config = c.LEARNING_PATH_FIELDS
+        fields = list(field_config.keys())
