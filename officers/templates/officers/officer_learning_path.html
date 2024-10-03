@@ -25,7 +25,7 @@
                 <a
                     href="{% url 'url_learning_path_update' officer.pk learning_path.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -36,18 +36,18 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Learning Path Button -->
         <a href="{% url 'url_learning_path_create' officer.pk %}">
-            <button>Create New Learning Path</button>
+            <button>Thêm mới</button>
         </a>
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
     </body>

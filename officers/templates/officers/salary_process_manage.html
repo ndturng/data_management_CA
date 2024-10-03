@@ -27,7 +27,7 @@
                 <a
                     href="{% url 'url_salary_process_update' officer.pk salary_process.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -38,31 +38,29 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Salary Process Button -->
         <a href="{% url 'url_salary_process_create' officer.pk %}">
-            <button>Create New Salary Process</button>
+            <button>Thêm mới</button>
         </a>
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
         <!-- Create or Update Salary Process Form -->
         <h1>
-            {% if edit_salary_process_id %}Update Salary Process{% else %}Create
-            Salary Process{% endif %}
+            {% if edit_salary_process_id %}Cập nhật{% else %}Thêm mới{% endif %}
         </h1>
 
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">
-                {% if edit_salary_process_id %}Update{% else %}Create
-                {% endif %}
+                Lưu
             </button>
         </form>
     </body>

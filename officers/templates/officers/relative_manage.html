@@ -31,7 +31,7 @@
                 <a
                     href="{% url 'url_relative_update' officer.pk relative.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -42,31 +42,30 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Relative Button -->
         <a href="{% url 'url_relative_create' officer.pk %}">
-            <button>Create New Relative</button>
+            <button>Thêm mới</button>
         </a>
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
         <!-- Create or Update Relative Form -->
         <h1>
-            {% if edit_relative_id %}Update Relative{% else %}Create Relative
+            {% if edit_relative_id %}Cập nhật{% else %}Thêm mới
             {% endif %}
         </h1>
 
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">
-                {% if edit_relative_id %}Update{% else %}Create
-                {% endif %}
+                Lưu
             </button>
         </form>
     </body>

@@ -27,7 +27,7 @@
                 <a
                     href="{% url 'url_salary_process_update' officer.pk salary_process.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -38,18 +38,18 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Salary Process Button -->
         <a href="{% url 'url_salary_process_create' officer.pk %}">
-            <button>Create New Salary Process</button>
+            <button>Thêm mới</button>
         </a>
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
     </body>

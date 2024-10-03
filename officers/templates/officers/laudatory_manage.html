@@ -27,7 +27,7 @@
                 <a
                     href="{% url 'url_laudatory_update' officer.pk laudatory.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -38,31 +38,30 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Laudatory Button -->
         <a href="{% url 'url_laudatory_create' officer.pk %}">
-            <button>Create New Laudatory</button>
+            <button>Thêm mới</button>
         </a>    
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
         <!-- Create or Update Laudatory Form -->
         <h1>
-            {% if edit_laudatory_id %}Update Laudatory{% else %}Create Laudatory
+            {% if edit_laudatory_id %}Cập nhật{% else %}Thêm mới
             {% endif %}
         </h1>
 
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">
-                {% if edit_laudatory_id %}Update{% else %}Create
-                {% endif %}
+                Lưu
             </button>
         </form>
     </body>

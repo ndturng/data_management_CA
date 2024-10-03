@@ -27,7 +27,7 @@
                 <a
                     href="{% url 'url_discipline_update' officer.pk discipline.id %}"
                 >
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -38,30 +38,29 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
         </ul>
         <!-- Create New Discipline Button -->
         <a href="{% url 'url_discipline_create' officer.pk %}">
-            <button>Create New Discipline</button>
+            <button>Thêm mới</button>
         </a>    
 
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
         <!-- Create or Update Discipline Form -->
         <h1>
-            {% if edit_discipline_id %}Update Discipline{% else %}Create Discipline
+            {% if edit_discipline_id %}Cập nhật{% else %}Thêm mới
             {% endif %}
         </h1>
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
             <button type="submit">
-                {% if edit_discipline_id %}Update{% else %}Create
-                {% endif %}
+                Lưu
             </button>
         </form>
     </body>

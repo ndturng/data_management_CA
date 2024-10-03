@@ -23,7 +23,7 @@
 
                 <!-- Update Button -->
                 <a href="{% url 'url_title_update' officer.pk title.id %}">
-                    Update
+                    Cập nhật
                 </a>
 
                 <!-- Delete Button with confirmation -->
@@ -34,7 +34,7 @@
                     onsubmit="return confirmDelete();"
                 >
                     {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
+                    <button type="submit" style="color: red">Xoá</button>
                 </form>
             </li>
             {% endfor %}
@@ -42,23 +42,23 @@
 
         <!-- Create New Title Button -->
         <a href="{% url 'url_title_create' officer.pk %}">
-            <button>Create New Title</button>
+            <button>Thêm mới</button>
         </a>
         
         <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
+            Quay lại
         </a>
 
         <!-- Create or Edit Title Form -->
         <h1>
-            {% if edit_title_id %}Update Title{% else %}Create New Title{% endif %}
+            {% if edit_title_id %}Cập nhật{% else %}Thêm mới{% endif %}
         </h1>
 
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
 
             <button type="submit">
-                {% if edit_title_id %}Update Title{% else %}Save Title {% endif %}
+                Lưu
             </button>
         </form>
     </body>
