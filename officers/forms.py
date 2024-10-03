@@ -137,3 +137,57 @@ class PositionPlanForm(RelatedBaseForm):
         model = m.PositionPlan
         field_config = c.POSITION_PLAN_FIELDS
         fields = list(field_config.keys())
+
+class LearningPathForm(RelatedBaseForm):
+    class Meta:
+        model = m.LearningPath
+        field_config = c.LEARNING_PATH_FIELDS
+        fields = list(field_config.keys())
+
+class WorkProcessForm(RelatedBaseForm):
+    class Meta:
+        model = m.WorkProcess
+        field_config = c.WORK_PROCESS_FIELDS
+        fields = list(field_config.keys())
+
+class SalaryProcessForm(RelatedBaseForm):
+    class Meta:
+        model = m.SalaryProcess
+        field_config = c.SALARY_PROCESS_FIELDS
+        fields = list(field_config.keys())
+
+class LaudatoryForm(RelatedBaseForm):
+    class Meta:
+        model = m.Laudatory
+        field_config = c.LAUDATORY_FIELDS
+        fields = list(field_config.keys())
+
+class DisciplineForm(RelatedBaseForm):
+    class Meta:
+        model = m.Discipline
+        field_config = c.DISCIPLINE_FIELDS
+        fields = list(field_config.keys())
+
+class RelativeForm(RelatedBaseForm):
+    class Meta:
+        model = m.Relative
+        field_config = c.RELATIVE_FIELDS
+        fields = list(field_config.keys())
+
+class AbroadForm(RelatedBaseForm):
+    class Meta:
+        model = m.Abroad
+        field_config = c.ABROAD_FIELDS
+        fields = list(field_config.keys())
+
+class ArmyJoinHistoryForm(RelatedBaseForm):
+    class Meta:
+        model = m.ArmyJoinHistory
+        field_config = c.ARMY_JOIN_HISTORY_FIELDS
+        fields = list(field_config.keys())
+
+class HealthForm(RelatedBaseForm):
+    class Meta:
+        model = m.Health
+        field_config = c.HEALTH_FIELDS
+        fields = list(field_config.keys())

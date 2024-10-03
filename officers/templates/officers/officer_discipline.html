@@ -1,19 +1,56 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ officer.birth_name }} - Kỷ luật </title>
-</head>
-<body>
-    <h1>{{ officer.birth_name }} - Kỷ luật:</h1>
-    
-    <!-- Display Officer Discipline -->
-    <ul>
-        {% for discipline in disciplines %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Kỷ luật</title>
+
+        <script type="module">
+            import { confirmDelete } from "{% static 'js/utils.js' %}";
+            window.confirmDelete = confirmDelete;
+        </script>
+    </head>
+    <body>
+        <h1>{{ officer.birth_name }} - Kỷ luật:</h1>
+        <ul>
+            {% for discipline in disciplines %}
             <li>
-                <strong>Thời gian</strong>: {{ discipline.time }} - <strong>Hình thức</strong>: {{ discipline.form }} - <strong>Nội dung</strong>: {{ discipline.content }}
+                <strong>Thời gian:</strong>
+                {{ discipline.time }} -
+                <strong>Hình thức:</strong>
+                {{ discipline.form }} -
+                <strong>Nội dung:</strong>
+                {{ discipline.content }}
+
+                <!-- Update Button -->
+                <a
+                    href="{% url 'url_discipline_update' officer.pk discipline.id %}"
+                >
+                    Cập nhật
+                </a>
+
+                <!-- Delete Button with confirmation -->
+                <form
+                    method="POST"
+                    action="{% url 'url_discipline_delete' officer.pk discipline.id %}"
+                    style="display: inline"
+                    onsubmit="return confirmDelete();"
+                >
+                    {% csrf_token %}
+                    <button type="submit" style="color: red">Xoá</button>
+                </form>
             </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
+            {% endfor %}
+        </ul>
+        <!-- Create New Discipline Button -->
+        <a href="{% url 'url_discipline_create' officer.pk %}">
+            <button>Thêm mới</button>
+        </a>    
+
+        <a href="{% url 'officer_detail' officer.pk %}">
+            Quay lại
+        </a>
+
+    </body>
+</html>
