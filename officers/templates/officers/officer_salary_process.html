@@ -1,19 +1,56 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ officer.birth_name }} - Quá trình lương </title>
-</head>
-<body>
-    <h1>{{ officer.birth_name }} - Quá trình lương:</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Quá trình lương</title>
 
-    <!-- Display Officer Salary Process -->
-    <ul>
-        {% for salary_process in salary_processes %}
+        <script type="module">
+            import { confirmDelete } from "{% static 'js/utils.js' %}";
+            window.confirmDelete = confirmDelete;
+        </script>
+    </head>
+    <body>
+        <h1>{{ officer.birth_name }} - Quá trình lương:</h1>
+        <ul>
+            {% for salary_process in salary_processes %}
             <li>
-                <strong>Thời gian</strong>: {{ salary_process.time }} - <strong>Cấp bậc hàm</strong>: {{ salary_process.mil_rank }} - <strong>Hệ số lương</strong>: {{ salary_process.salary_coefficient }}
+                <strong>Thời gian:</strong>
+                {{ salary_process.time }} -
+                <strong>Cấp bậc hàm:</strong>
+                {{ salary_process.mil_rank }} -
+                <strong>Hệ số lương:</strong>
+                {{ salary_process.salary_coefficient }}
+
+                <!-- Update Button -->
+                <a
+                    href="{% url 'url_salary_process_update' officer.pk salary_process.id %}"
+                >
+                    Cập nhật
+                </a>
+
+                <!-- Delete Button with confirmation -->
+                <form
+                    method="POST"
+                    action="{% url 'url_salary_process_delete' officer.pk salary_process.id %}"
+                    style="display: inline"
+                    onsubmit="return confirmDelete();"
+                >
+                    {% csrf_token %}
+                    <button type="submit" style="color: red">Xoá</button>
+                </form>
             </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
+            {% endfor %}
+        </ul>
+        <!-- Create New Salary Process Button -->
+        <a href="{% url 'url_salary_process_create' officer.pk %}">
+            <button>Thêm mới</button>
+        </a>
+
+        <a href="{% url 'officer_detail' officer.pk %}">
+            Quay lại
+        </a>
+
+    </body>
+</html>

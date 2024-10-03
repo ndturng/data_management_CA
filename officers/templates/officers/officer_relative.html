@@ -1,19 +1,60 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ officer.birth_name }} - Thân nhân </title>
-</head>
-<body>
-    <h1>{{ officer.birth_name }} - Thân nhân:</h1>
-    
-    <!-- Display Officer Relatives -->
-    <ul>
-        {% for relative in relatives %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Thân nhân</title>
+
+        <script type="module">
+            import { confirmDelete } from "{% static 'js/utils.js' %}";
+            window.confirmDelete = confirmDelete;
+        </script>
+    </head>
+    <body>
+        <h1>{{ officer.birth_name }} - Thân nhân:</h1>
+        <ul>
+            {% for relative in relatives %}
             <li>
-                <strong>{{ relative.relationship }}</strong>: {{ relative.name }} - <strong>Sinh năm</strong>: {{ relative.birth_year }} - <strong>Nghề nghiệp</strong>: {{ relative.job }} - <strong>Chỗ ở hiện nay</strong>: {{ relative.current_residence }}
+                <strong>Quan hệ:</strong>
+                {{ relative.relationship }} -
+                <strong>Họ và tên:</strong>
+                {{ relative.name }} -
+                <strong>Năm sinh:</strong>
+                {{ relative.birth_year }} -
+                <strong>Nghề nghiệp:</strong>
+                {{ relative.job }} -
+                <strong>Chỗ ở hiện nay:</strong>
+                {{ relative.current_residence }}
+
+                <!-- Update Button -->
+                <a
+                    href="{% url 'url_relative_update' officer.pk relative.id %}"
+                >
+                    Cập nhật
+                </a>
+
+                <!-- Delete Button with confirmation -->
+                <form
+                    method="POST"
+                    action="{% url 'url_relative_delete' officer.pk relative.id %}"
+                    style="display: inline"
+                    onsubmit="return confirmDelete();"
+                >
+                    {% csrf_token %}
+                    <button type="submit" style="color: red">Xoá</button>
+                </form>
             </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'officer_detail' officer.pk %}">Back to Officer Details</a>
+            {% endfor %}
+        </ul>
+        <!-- Create New Relative Button -->
+        <a href="{% url 'url_relative_create' officer.pk %}">
+            <button>Thêm mới</button>
+        </a>
+
+        <a href="{% url 'officer_detail' officer.pk %}">
+            Quay lại
+        </a>
+        
+    </body>
+</html>

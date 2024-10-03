@@ -24,14 +24,34 @@ class RelatedBaseForm(forms.ModelForm):
             self.fields[field_name].label = label
             self.fields[field_name].required = True
             
-            # Set specific widgets and formats for date fields
-            if 'date' in field_name:  # For date fields
+            # Set specific widgets and formats for certain fields
+            if 'date' in field_name: 
                 self.fields[field_name].input_formats = ["%d/%m/%Y"]
                 self.fields[field_name].widget = forms.DateInput(
                     format="%d/%m/%Y",
                     attrs={"placeholder": "Ví dụ: 15/05/2025"}
                 )
-            elif isinstance(self.fields[field_name], forms.CharField):  # For text fields
+            elif "period" in field_name:
                 self.fields[field_name].widget = forms.TextInput(
-                    attrs={"placeholder": f"Nhập {label}"}
+                    attrs={"placeholder": "Ví dụ: 2010 - 2015"}
+                )
+            elif "time" in field_name or "year" in field_name:
+                self.fields[field_name].widget = forms.TextInput(
+                    attrs={"placeholder": "Ví dụ: 2025"}
+                )
+            elif "coefficient" in field_name:
+                self.fields[field_name].widget = forms.TextInput(
+                    attrs={"placeholder": "Ví dụ: 5.4"}
+                )
+            elif "weight" in field_name:
+                self.fields[field_name].widget = forms.TextInput(
+                    attrs={"placeholder": "Ví dụ: 70"}
+                )
+            elif "height" in field_name:
+                self.fields[field_name].widget = forms.TextInput(
+                    attrs={"placeholder": "Ví dụ: 170"}
+                )
+            else:
+                self.fields[field_name].widget = forms.TextInput(
+                    attrs={"placeholder": f"Nhập {label.lower()}"}
                 )

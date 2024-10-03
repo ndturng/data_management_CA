@@ -281,13 +281,14 @@ class CustomLoginView(LoginView):
         #     return reverse("admin_dashboard")
         return reverse("officer_list")
 
+
 ########################################################
 # Officer Related Mixin
-class OfficerRelatedMixin:
+class OfficerRelatedMixin(LoginRequiredMixin):
     model = None  # Will be set in the view
     pk_url_kwarg = None  # Will be set in the view
     view_url = None  # Will be set in the view
-    related_context_fields = []
+    related_context_field: str = None
 
     def get_officer(self):
         return get_object_or_404(m.Officer, pk=self.kwargs["pk"])
@@ -297,7 +298,7 @@ class OfficerRelatedMixin:
         return get_object_or_404(
             self.model,
             pk=self.kwargs[self.pk_url_kwarg],
-            officer=self.get_officer()
+            officer=self.get_officer(),
         )
 
     def get_success_url(self):
@@ -308,25 +309,48 @@ class OfficerRelatedMixin:
         context = super().get_context_data(**kwargs)
         officer = self.get_officer()
         context["officer"] = officer
+        context[self.related_context_field] = getattr(
+            officer, self.related_context_field
+        ).all()
 
-        for field in self.related_context_fields:
-            context[field] = getattr(officer, field).all()
+        # Add the object ID to the context if editing (if the object exists)
+        try:
+            if self.related_context_field.endswith("ves"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("les"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("nes"):
+                singular_field = self.related_context_field[:-1]
+            elif self.related_context_field.endswith("ies"):
+                singular_field = self.related_context_field[:-3] + "y"
+            elif self.related_context_field.endswith("es"):
+                singular_field = self.related_context_field[:-2]
+            elif self.related_context_field.endswith("s"):
+                singular_field = self.related_context_field[:-1]
+            else:
+                singular_field = self.related_context_field
+                
+            context[f"edit_{singular_field}_id"] = self.object.id
+        except AttributeError:
+            pass
+
         return context
 
 
 ########################################################
 # Officer Titles
 
+
 # Title Mixin
 class TitleMixin(OfficerRelatedMixin):
     model = m.Title
     form_class = f.TitleForm
     view_url = "url_title_view"
-    related_context_fields = ["titles"]
+    related_context_field = "titles"
 
 
 # Title View
-class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
+class TitleListView(TitleMixin, ListView):
     template_name = "officers/officer_title.html"
     context_object_name = "titles"
 
@@ -335,9 +359,7 @@ class TitleListView(LoginRequiredMixin, TitleMixin, ListView):
 
 
 # Create Title
-class TitleCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, CreateView
-):
+class TitleCreateView(PermissionRequiredMixin, TitleMixin, CreateView):
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
@@ -347,38 +369,35 @@ class TitleCreateView(
 
 
 # Update Title
-class TitleUpdateView(
-    LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, UpdateView
-):
+class TitleUpdateView(PermissionRequiredMixin, TitleMixin, UpdateView):
     pk_url_kwarg = "title_pk"
     template_name = "officers/officer_title_manage.html"
     permission_required = "officers.adjust_officer_title"
 
 
 # Delete Title
-class TitleDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
-):
+class TitleDeleteView(PermissionRequiredMixin, OfficerRelatedMixin, DeleteView):
     model = m.Title
     pk_url_kwarg = "title_pk"
     view_url = "url_title_view"
-    related_context_fields = ["titles"]
+    related_context_field = "titles"
     permission_required = "officers.delete_officer_title"
 
 
 ########################################################
 # Officer Position Plans
 
+
 # Position Plan Mixin
 class PositionPlanMixin(OfficerRelatedMixin):
     model = m.PositionPlan
     form_class = f.PositionPlanForm
     view_url = "url_position_plan"
-    related_context_fields = ["position_plans"]
+    related_context_field = "position_plans"
 
 
 # Position Plan View
-class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
+class PositionPlanListView(PositionPlanMixin, ListView):
     template_name = "officers/position_plan.html"
     context_object_name = "position_plans"
 
@@ -388,7 +407,6 @@ class PositionPlanListView(LoginRequiredMixin, PositionPlanMixin, ListView):
 
 # Create Position Plan
 class PositionPlanCreateView(
-    LoginRequiredMixin,
     PermissionRequiredMixin,
     PositionPlanMixin,
     CreateView,
@@ -403,7 +421,7 @@ class PositionPlanCreateView(
 
 # Update Position Plan
 class PositionPlanUpdateView(
-    LoginRequiredMixin, PermissionRequiredMixin, PositionPlanMixin, UpdateView
+    PermissionRequiredMixin, PositionPlanMixin, UpdateView
 ):
     pk_url_kwarg = "position_plan_pk"
     template_name = "officers/position_plan_manage.html"
@@ -412,83 +430,505 @@ class PositionPlanUpdateView(
 
 # Delete Position Plan
 class PositionPlanDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
 ):
     model = m.PositionPlan
     pk_url_kwarg = "position_plan_pk"
     view_url = "url_position_plan"
-    related_context_fields = ["position_plans"]
+    related_context_field = "position_plans"
     permission_required = "officers.delete_officer_position_plan"
 
 
 ########################################################
-@login_required
-def officer_learning_path(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    learning_paths = officer.learning_paths.all()
-    context = {"officer": officer, "learning_paths": learning_paths}
-    return render(request, "officers/officer_learning_path.html", context)
+# Officer Learning Paths
 
 
-@login_required
-def officer_work_process(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    work_processes = officer.work_processes.all()
-    context = {"officer": officer, "work_processes": work_processes}
-    return render(request, "officers/officer_work_process.html", context)
+# Learning Path Mixin
+class LearningPathMixin(OfficerRelatedMixin):
+    model = m.LearningPath
+    form_class = f.LearningPathForm
+    view_url = "url_learning_path"
+    related_context_field = "learning_paths"
 
 
-@login_required
-def officer_salary_process(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    salary_processes = officer.salary_processes.all()
-    context = {"officer": officer, "salary_processes": salary_processes}
-    return render(request, "officers/officer_salary_process.html", context)
+# Learning Path View
+class LearningPathListView(LearningPathMixin, ListView):
+    template_name = "officers/officer_learning_path.html"
+    context_object_name = "learning_paths"
+
+    def get_queryset(self):
+        return self.get_officer().learning_paths.all()
 
 
-@login_required
-def officer_laudatory(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    laudatories = officer.laudatories.all()
-    context = {"officer": officer, "laudatories": laudatories}
-    return render(request, "officers/officer_laudatory.html", context)
+# Create Learning Path
+class LearningPathCreateView(
+    PermissionRequiredMixin,
+    LearningPathMixin,
+    CreateView,
+):
+    template_name = "officers/learning_path_manage.html"
+    permission_required = "officers.adjust_learning_path"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
 
 
-@login_required
-def officer_discipline(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    disciplines = officer.disciplines.all()
-    context = {"officer": officer, "disciplines": disciplines}
-    return render(request, "officers/officer_discipline.html", context)
+# Update Learning Path
+class LearningPathUpdateView(
+    PermissionRequiredMixin, LearningPathMixin, UpdateView
+):
+    pk_url_kwarg = "learning_path_pk"
+    template_name = "officers/learning_path_manage.html"
+    permission_required = "officers.adjust_learning_path"
 
 
-@login_required
-def officer_relative(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    relatives = officer.relatives.all()
-    context = {"officer": officer, "relatives": relatives}
-    return render(request, "officers/officer_relative.html", context)
+# Delete Learning Path
+class LearningPathDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.LearningPath
+    pk_url_kwarg = "learning_path_pk"
+    view_url = "url_learning_path"
+    related_context_field = "learning_paths"
+    permission_required = "officers.delete_officer_learning_path"
 
 
-@login_required
-def officer_abroad(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    abroads = officer.abroads.all()
-    context = {"officer": officer, "abroads": abroads}
-    return render(request, "officers/officer_abroad.html", context)
+########################################################
+# Officer Work Processes
 
 
-@login_required
-def officer_army_join_history(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    army_join_histories = officer.army_join_histories.all()
-    context = {"officer": officer, "army_join_histories": army_join_histories}
-    return render(request, "officers/officer_army_join_history.html", context)
+# Work Process Mixin
+class WorkProcessMixin(OfficerRelatedMixin):
+    model = m.WorkProcess
+    form_class = f.WorkProcessForm
+    view_url = "url_work_process"
+    related_context_field = "work_processes"
 
 
-@login_required
-def officer_health(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    healths = officer.healths.all()
-    context = {"officer": officer, "healths": healths}
-    return render(request, "officers/officer_health.html", context)
+# Work Process View
+class WorkProcessListView(WorkProcessMixin, ListView):
+    template_name = "officers/officer_work_process.html"
+    context_object_name = "work_processes"
+
+    def get_queryset(self):
+        return self.get_officer().work_processes.all()
+    
+
+# Create Work Process
+class WorkProcessCreateView(
+    PermissionRequiredMixin,
+    WorkProcessMixin,
+    CreateView,
+):
+    template_name = "officers/work_process_manage.html"
+    permission_required = "officers.adjust_work_process"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Work Process
+class WorkProcessUpdateView(
+    PermissionRequiredMixin, WorkProcessMixin, UpdateView
+):
+    pk_url_kwarg = "work_process_pk"
+    template_name = "officers/work_process_manage.html"
+    permission_required = "officers.adjust_work_process"
+
+
+# Delete Work Process
+class WorkProcessDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.WorkProcess
+    pk_url_kwarg = "work_process_pk"
+    view_url = "url_work_process"
+    related_context_field = "work_processes"
+    permission_required = "officers.delete_officer_work_process"
+
+
+########################################################
+# Officer Salary Processes
+
+
+# Salary Process Mixin
+class SalaryProcessMixin(OfficerRelatedMixin):
+    model = m.SalaryProcess
+    form_class = f.SalaryProcessForm
+    view_url = "url_salary_process"
+    related_context_field = "salary_processes"
+
+
+# Salary Process View
+class SalaryProcessListView(SalaryProcessMixin, ListView):
+    template_name = "officers/officer_salary_process.html"
+    context_object_name = "salary_processes"
+
+    def get_queryset(self):
+        return self.get_officer().salary_processes.all()
+    
+
+# Create Salary Process
+class SalaryProcessCreateView(
+    PermissionRequiredMixin,
+    SalaryProcessMixin,
+    CreateView,
+):
+    template_name = "officers/salary_process_manage.html"
+    permission_required = "officers.adjust_salary_process"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Salary Process
+class SalaryProcessUpdateView(
+    PermissionRequiredMixin, SalaryProcessMixin, UpdateView
+):
+    pk_url_kwarg = "salary_process_pk"
+    template_name = "officers/salary_process_manage.html"
+    permission_required = "officers.adjust_salary_process"
+
+
+# Delete Salary Process
+class SalaryProcessDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.SalaryProcess
+    pk_url_kwarg = "salary_process_pk"
+    view_url = "url_salary_process"
+    related_context_field = "salary_processes"
+    permission_required = "officers.delete_officer_salary_process"
+
+
+########################################################
+# Officer Laudatories
+
+
+# Laudatory Mixin
+class LaudatoryMixin(OfficerRelatedMixin):
+    model = m.Laudatory
+    form_class = f.LaudatoryForm
+    view_url = "url_laudatory"
+    related_context_field = "laudatories"
+
+
+# Laudatory View
+class LaudatoryListView(LaudatoryMixin, ListView):
+    template_name = "officers/officer_laudatory.html"
+    context_object_name = "laudatories"
+
+    def get_queryset(self):
+        return self.get_officer().laudatories.all()
+    
+
+# Create Laudatory
+class LaudatoryCreateView(
+    PermissionRequiredMixin,
+    LaudatoryMixin,
+    CreateView,
+):
+    template_name = "officers/laudatory_manage.html"
+    permission_required = "officers.adjust_laudatory"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Laudatory
+class LaudatoryUpdateView(
+    PermissionRequiredMixin, LaudatoryMixin, UpdateView
+):
+    pk_url_kwarg = "laudatory_pk"
+    template_name = "officers/laudatory_manage.html"
+    permission_required = "officers.adjust_laudatory"
+
+    
+# Delete Laudatory
+class LaudatoryDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Laudatory
+    pk_url_kwarg = "laudatory_pk"
+    view_url = "url_laudatory"
+    related_context_field = "laudatories"
+    permission_required = "officers.delete_officer_laudatory"
+
+
+########################################################
+# Officer Disciplines
+
+
+# Discipline Mixin
+class DisciplineMixin(OfficerRelatedMixin):
+    model = m.Discipline
+    form_class = f.DisciplineForm
+    view_url = "url_discipline"
+    related_context_field = "disciplines"
+
+
+# Discipline View
+class DisciplineListView(DisciplineMixin, ListView):
+    template_name = "officers/officer_discipline.html"
+    context_object_name = "disciplines"
+
+    def get_queryset(self):
+        return self.get_officer().disciplines.all()
+    
+
+# Create Discipline
+class DisciplineCreateView(
+    PermissionRequiredMixin,
+    DisciplineMixin,
+    CreateView,
+):
+    template_name = "officers/discipline_manage.html"
+    permission_required = "officers.adjust_discipline"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Discipline
+class DisciplineUpdateView(
+    PermissionRequiredMixin, DisciplineMixin, UpdateView
+):
+    pk_url_kwarg = "discipline_pk"
+    template_name = "officers/discipline_manage.html"
+    permission_required = "officers.adjust_discipline"
+
+
+# Delete Discipline
+class DisciplineDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Discipline
+    pk_url_kwarg = "discipline_pk"
+    view_url = "url_discipline"
+    related_context_field = "disciplines"
+    permission_required = "officers.delete_officer_discipline"
+
+
+########################################################
+# Officer Relatives
+
+
+# Relative Mixin
+class RelativeMixin(OfficerRelatedMixin):
+    model = m.Relative
+    form_class = f.RelativeForm
+    view_url = "url_relative"
+    related_context_field = "relatives"
+
+
+# Relative View
+class RelativeListView(RelativeMixin, ListView):
+    template_name = "officers/officer_relative.html"
+    context_object_name = "relatives"
+
+    def get_queryset(self):
+        return self.get_officer().relatives.all()
+    
+
+# Create Relative
+class RelativeCreateView(
+    PermissionRequiredMixin,
+    RelativeMixin,
+    CreateView,
+):
+    template_name = "officers/relative_manage.html"
+    permission_required = "officers.adjust_relative"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form) 
+    
+
+# Update Relative
+class RelativeUpdateView(
+    PermissionRequiredMixin, RelativeMixin, UpdateView
+):
+    pk_url_kwarg = "relative_pk"
+    template_name = "officers/relative_manage.html"
+    permission_required = "officers.adjust_relative"
+
+
+# Delete Relative
+class RelativeDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Relative
+    pk_url_kwarg = "relative_pk"
+    view_url = "url_relative"
+    related_context_field = "relatives"
+    permission_required = "officers.delete_officer_relative"
+
+
+########################################################
+# Officer Abroads
+
+
+# Abroad Mixin
+class AbroadMixin(OfficerRelatedMixin):
+    model = m.Abroad
+    form_class = f.AbroadForm
+    view_url = "url_abroad"
+    related_context_field = "abroads"
+
+
+# Abroad View
+class AbroadListView(AbroadMixin, ListView):
+    template_name = "officers/officer_abroad.html"
+    context_object_name = "abroads"
+
+    def get_queryset(self):
+        return self.get_officer().abroads.all()
+    
+
+# Create Abroad
+class AbroadCreateView(
+    PermissionRequiredMixin,
+    AbroadMixin,
+    CreateView,
+):
+    template_name = "officers/abroad_manage.html"
+    permission_required = "officers.adjust_abroad"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Abroad
+class AbroadUpdateView(
+    PermissionRequiredMixin, AbroadMixin, UpdateView
+):
+    pk_url_kwarg = "abroad_pk"
+    template_name = "officers/abroad_manage.html"
+    permission_required = "officers.adjust_abroad"
+
+
+# Delete Abroad
+class AbroadDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Abroad
+    pk_url_kwarg = "abroad_pk"
+    view_url = "url_abroad"
+    related_context_field = "abroads"
+    permission_required = "officers.delete_officer_abroad"
+
+
+########################################################
+# Officer Army Join Histories
+
+
+# Army Join History Mixin
+class ArmyJoinHistoryMixin(OfficerRelatedMixin):
+    model = m.ArmyJoinHistory
+    form_class = f.ArmyJoinHistoryForm
+    view_url = "url_army_join_history"
+    related_context_field = "army_join_histories"
+
+
+# Army Join History View
+class ArmyJoinHistoryListView(ArmyJoinHistoryMixin, ListView):
+    template_name = "officers/officer_army_join_history.html"
+    context_object_name = "army_join_histories"
+
+    def get_queryset(self):
+        return self.get_officer().army_join_histories.all()
+    
+
+# Create Army Join History
+class ArmyJoinHistoryCreateView(
+    PermissionRequiredMixin,
+    ArmyJoinHistoryMixin,
+    CreateView,
+):
+    template_name = "officers/army_join_history_manage.html"
+    permission_required = "officers.adjust_army_join_history"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Army Join History
+class ArmyJoinHistoryUpdateView(
+    PermissionRequiredMixin, ArmyJoinHistoryMixin, UpdateView
+):
+    pk_url_kwarg = "army_join_history_pk"
+    template_name = "officers/army_join_history_manage.html"
+    permission_required = "officers.adjust_army_join_history"
+
+
+# Delete Army Join History
+class ArmyJoinHistoryDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.ArmyJoinHistory
+    pk_url_kwarg = "army_join_history_pk"
+    view_url = "url_army_join_history"
+    related_context_field = "army_join_histories"
+    permission_required = "officers.delete_officer_army_join_history"
+
+
+########################################################
+# Officer Healths
+
+
+# Health Mixin
+class HealthMixin(OfficerRelatedMixin):
+    model = m.Health
+    form_class = f.HealthForm
+    view_url = "url_health"
+    related_context_field = "healths"
+
+
+# Health View
+class HealthListView(HealthMixin, ListView):
+    template_name = "officers/officer_health.html"
+    context_object_name = "healths"
+
+    def get_queryset(self):
+        return self.get_officer().healths.all()
+    
+
+# Create Health
+class HealthCreateView(
+    PermissionRequiredMixin,
+    HealthMixin,
+    CreateView,
+):
+    template_name = "officers/health_manage.html"
+    permission_required = "officers.adjust_health"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Health
+class HealthUpdateView(
+    PermissionRequiredMixin, HealthMixin, UpdateView
+):
+    pk_url_kwarg = "health_pk"
+    template_name = "officers/health_manage.html"
+    permission_required = "officers.adjust_health"
+
+
+# Delete Health
+class HealthDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Health
+    pk_url_kwarg = "health_pk"
+    view_url = "url_health"
+    related_context_field = "healths"
+    permission_required = "officers.delete_officer_health"

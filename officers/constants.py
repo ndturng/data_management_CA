@@ -118,7 +118,7 @@ DISCIPLINE_FIELDS = {
 
 # Thân nhân
 RELATIVE_FIELDS = {
-    "relationship": "Thân nhân",
+    "relationship": "Quan hệ",
     "name": "Họ và tên",
     "birth_year": "Năm sinh",
     "job": "Nghề nghiệp",
