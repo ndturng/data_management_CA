@@ -15,43 +15,99 @@
         </script>
     </head>
     <body>
-        <h1 class="text-center text-4xl font-semibold mt-5">{{ officer.birth_name }} - Thông tin chức danh:</h1>
-        <ul class="mt-10 ml-10">
-            {% for title in titles %}
-            <li>
-                <strong>Ngày bổ nhiệm:</strong>
-                {{ title.appointed_date|date:"d/m/Y" }}
-                <strong>Chức danh:</strong>
-                {{ title.title }} -
+        
+        <div class="navbar bg-base-100">
+            <div class="navbar-start">
+                <div class="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle ml-10 mt-5">
+                        <img src="{% static 'src/menu.png' %}" alt="Menu" class="w-10 h-10">
+                    </div>
+                    <ul
+                        tabindex="0"
+                        class="menu menu-lg dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 ml-5 shadow">
+                        <li><a href="{% url 'url_title_view' officer.pk %}">Chức danh</a></li>
+                        <li><a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a></li>
+                        <li><a href="{% url 'officer_learning_path' officer.pk %}">Đào tạo</a></li> 
+                        <li><a href="{% url 'officer_work_process' officer.pk %}">Quá trình công tác</a></li> 
+                        <li><a href="{% url 'officer_salary_process' officer.pk %}">Quá trình lương</a></li>
+                        <li><a href="{% url 'officer_laudatory' officer.pk %}">Khen thưởng</a></li>
+                        <li><a href="{% url 'officer_discipline' officer.pk %}">Kỷ luật</a></li> 
+                        <li><a href="{% url 'officer_relative' officer.pk %}">Thân nhân</a></li> 
+                        <li><a href="{% url 'officer_abroad' officer.pk %}">Ra nước ngoài</a></li>
+                        <li><a href="{% url 'officer_army_join_history' officer.pk %}">Tham gia quân đội</a></li>
+                        <li><a href="{% url 'officer_health' officer.pk %}">Sức khoẻ</a> 
+                        
+                        <a href="{% url 'officer_update' officer.pk %}">Edit</a> 
+                        <a href="{% url 'officer_list' %}">Back to List</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+       
+            
+        <div>
+            <h1 class="text-4xl text-center mt-10">Thông tin chức danh: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+            <div class="mt-16 mx-10">
+                <table class="table-auto border-collapse w-full text-center">
+                    <thead>
+                        <tr class="bg-gray-600 text-white text-xl">
+                            <th class="py-2 px-4">Ngày bổ nhiệm</th>
+                            <th class="py-2 px-4">Chức danh</th>
+                            <th class="py-2 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for title in titles %}
+                        <tr class="border-t border-gray-300 bg-gray-100 text-lg">
+                            <td class="py-2 px-4">{{ title.appointed_date|date:"d/m/Y" }}</td>
+                            <td class="py-2 px-4">{{ title.title }}</td>
+                            <td class="py-2 px-4">
+                                <!-- Update Button -->
+                                <a href="{% url 'url_title_update' officer.pk title.id %}" class="text-green-500 hover:text-green-600 underline mx-2">
+                                    Update 
+                                </a>
 
-                <!-- Update Button -->
-                <a href="{% url 'url_title_update' officer.pk title.id %}">
-                    Update
-                </a>
+                                <span>/</span>
 
-                <!-- Delete Button with confirmation -->
-                <form
-                    method="POST"
-                    action="{% url 'url_title_delete' officer.pk title.id %}"
-                    style="display: inline"
-                    onsubmit="return confirmDelete();"
-                >
-                    {% csrf_token %}
-                    <button type="submit" style="color: red">Delete</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
+                                <!-- Delete Button with confirmation -->
+                                <form
+                                    method="POST"
+                                    action="{% url 'url_title_delete' officer.pk title.id %}"
+                                    style="display: inline"
+                                    onsubmit="return confirmDelete();"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-600 hover:text-red-700 underline mx-2">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-        <!-- Create New Title Button -->
-        <a href="{% url 'url_title_create' officer.pk %}">
-            <button>Create New Title</button>
-        </a>
+                <!-- Create New Title Button -->
+                <div class="mt-5 text-right">
+                    <a href="{% url 'url_title_create' officer.pk %}">
+                        <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg">
+                            <span class="mr-2">Create New Title</span>
+                            <!-- Add the folder icon here -->
+                            <img src="{% static 'src/new-folder.png' %}" alt="New Folder" class="w-5 h-5">
+                        </button>
+                    </a>
+                </div>
+            </div>
 
-        <!-- Link to Officer Details Page -->
-        <a href="{% url 'officer_detail' officer.pk %}">
-            Back to Officer Details
-        </a>
+
+            <!-- Link to Officer Details Page -->
+            <a href="{% url 'officer_detail' officer.pk %}">
+                <button class="btn mt-10 ml-10 shadow-inner drop-shadow-lg text-lg">
+                    <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
+                    <span>Back to Officer Details</span>
+                </button> 
+            </a>
+        </div>
     </body>
 </html>
 
