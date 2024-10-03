@@ -54,5 +54,18 @@
             Back to Officer Details
         </a>
 
+        <!-- Create or Update Health Form -->
+        <h1>
+            {% if edit_health_id %}Update Health{% else %}Create Health
+            {% endif %}
+        </h1>
+
+        <form method="POST">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">
+                {% if edit_health_id %}Update{% else %}Create
+                {% endif %}
+            </button>
+        </form>
     </body>
 </html>

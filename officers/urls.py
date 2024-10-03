@@ -231,5 +231,25 @@ urlpatterns = [
         name="url_army_join_history_delete",
     ),
     ############################################################
-    path("<int:pk>/health", views.officer_health, name="officer_health"),
+    # Sức khỏe
+    path(
+        "<int:pk>/health",
+        views.HealthListView.as_view(),
+        name="url_health",
+    ),
+    path(
+        "<int:pk>/health/create",
+        views.HealthCreateView.as_view(),
+        name="url_health_create",
+    ),
+    path(
+        "<int:pk>/health/update/<int:health_pk>",
+        views.HealthUpdateView.as_view(),
+        name="url_health_update",
+    ),
+    path(
+        "<int:pk>/health/delete/<int:health_pk>",
+        views.HealthDeleteView.as_view(),
+        name="url_health_delete",
+    ),
 ]

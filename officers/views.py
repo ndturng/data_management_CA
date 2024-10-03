@@ -880,11 +880,55 @@ class ArmyJoinHistoryDeleteView(
 
 
 ########################################################
+# Officer Healths
 
 
-@login_required
-def officer_health(request, pk):
-    officer = get_object_or_404(m.Officer, pk=pk)
-    healths = officer.healths.all()
-    context = {"officer": officer, "healths": healths}
-    return render(request, "officers/officer_health.html", context)
+# Health Mixin
+class HealthMixin(OfficerRelatedMixin):
+    model = m.Health
+    form_class = f.HealthForm
+    view_url = "url_health"
+    related_context_field = "healths"
+
+
+# Health View
+class HealthListView(HealthMixin, ListView):
+    template_name = "officers/officer_health.html"
+    context_object_name = "healths"
+
+    def get_queryset(self):
+        return self.get_officer().healths.all()
+    
+
+# Create Health
+class HealthCreateView(
+    PermissionRequiredMixin,
+    HealthMixin,
+    CreateView,
+):
+    template_name = "officers/health_manage.html"
+    permission_required = "officers.adjust_health"
+
+    def form_valid(self, form):
+        form.instance.officer = self.get_officer()
+        return super().form_valid(form)
+    
+
+# Update Health
+class HealthUpdateView(
+    PermissionRequiredMixin, HealthMixin, UpdateView
+):
+    pk_url_kwarg = "health_pk"
+    template_name = "officers/health_manage.html"
+    permission_required = "officers.adjust_health"
+
+
+# Delete Health
+class HealthDeleteView(
+    PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
+):
+    model = m.Health
+    pk_url_kwarg = "health_pk"
+    view_url = "url_health"
+    related_context_field = "healths"
+    permission_required = "officers.delete_officer_health"

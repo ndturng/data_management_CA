@@ -185,3 +185,9 @@ class ArmyJoinHistoryForm(RelatedBaseForm):
         model = m.ArmyJoinHistory
         field_config = c.ARMY_JOIN_HISTORY_FIELDS
         fields = list(field_config.keys())
+
+class HealthForm(RelatedBaseForm):
+    class Meta:
+        model = m.Health
+        field_config = c.HEALTH_FIELDS
+        fields = list(field_config.keys())
