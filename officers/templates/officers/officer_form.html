@@ -1,7 +1,7 @@
-<h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Officer</h2>
+<h2>{% if form.instance.pk %}Cập nhật{% else %}Thêm{% endif %}Thông tin cán bộ</h2>
 <form method="post">
     {% csrf_token %}
-    <a href="{% url 'officer_list' %}">Back to List</a>
-    <button type="submit">Save</button>
+    <a href="{% url 'officer_list' %}">Quay lại</a>
+    <button type="submit">Lưu</button>
     {{ form.as_p }}
 </form>

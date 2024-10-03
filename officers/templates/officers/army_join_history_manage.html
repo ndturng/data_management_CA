@@ -4,26 +4,28 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{ officer.birth_name }} - Quy hoạch</title>
-        
+        <title>{{ officer.birth_name }} - Tham gia quân đội</title>
+
         <script type="module">
             import { confirmDelete } from "{% static 'js/utils.js' %}";
             window.confirmDelete = confirmDelete;
         </script>
     </head>
     <body>
-        <h1>{{ officer.birth_name }} - Thông tin quy hoạch:</h1>
+        <h1>{{ officer.birth_name }} - Tham gia quân đội:</h1>
         <ul>
-            {% for position_plan in position_plans %}
+            {% for army_join in army_join_histories %}
             <li>
                 <strong>Giai đoạn:</strong>
-                {{ position_plan.period }} -
-                <strong>Quy hoạch:</strong>
-                {{ position_plan.position }}
-                
+                {{ army_join.period }} -
+                <strong>Đơn vị:</strong>
+                {{ army_join.unit }} -
+                <strong>Hình thức:</strong>
+                {{ army_join.form }}
+
                 <!-- Update Button -->
                 <a
-                    href="{% url 'url_position_plan_update' officer.pk position_plan.id %}"
+                    href="{% url 'url_army_join_history_update' officer.pk army_join.id %}"
                 >
                     Cập nhật
                 </a>
@@ -31,7 +33,7 @@
                 <!-- Delete Button with confirmation -->
                 <form
                     method="POST"
-                    action="{% url 'url_position_plan_delete' officer.pk position_plan.id %}"
+                    action="{% url 'url_army_join_history_delete' officer.pk army_join.id %}"
                     style="display: inline"
                     onsubmit="return confirmDelete();"
                 >
@@ -41,8 +43,8 @@
             </li>
             {% endfor %}
         </ul>
-        <!-- Create New Position Plan Button -->
-        <a href="{% url 'url_position_plan_create' officer.pk %}">
+        <!-- Create New Army Join History Button -->
+        <a href="{% url 'url_army_join_history_create' officer.pk %}">
             <button>Thêm mới</button>
         </a>
 
@@ -50,14 +52,14 @@
             Quay lại
         </a>
 
-        <!-- Create or Update Position Plan Form -->
+        <!-- Create or Update Army Join History Form -->
         <h1>
-            {% if edit_position_plan_id %}Cập nhật{% else %}Thêm mới{% endif %}
+            {% if edit_army_join_history_id %}Cập nhật{% else %}Thêm mới
+            {% endif %}
         </h1>
 
         <form method="POST">
             {% csrf_token %} {{ form.as_p }}
-
             <button type="submit">
                 Lưu
             </button>
