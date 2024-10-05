@@ -1,12 +1,11 @@
 import unicodedata
+import zipfile
+from io import BytesIO
 
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
 from django.http import HttpResponse
@@ -16,7 +15,11 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
 from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
-from officers.utils import create_officer_related_objects, extract_officer_data
+from officers.utils import (
+    create_officer_related_objects,
+    export_related_data,
+    extract_officer_data,
+)
 
 from . import forms as f
 from . import models as m
@@ -101,38 +104,49 @@ def officer_list(request):
         if form.is_valid():
             selected_officers = form.cleaned_data["officers"]
             selected_fields = form.cleaned_data["fields"]
+            selected_related_tables = form.cleaned_data["related_tables"]
+            
+            # Create an in-memory ZIP file to store the officer Excel files
+            in_memory_zip = BytesIO()
+            with zipfile.ZipFile(in_memory_zip, 'w') as zip_file:
+                for officer in selected_officers:
+                    officers_data = []
+                    row = {}  
+                    for field in selected_fields:
+                        row[field] = getattr(officer, field)
+                    officers_data.append(row)
 
-            # Filter officers based on selected IDs
-            officers_to_export = officers.filter(pk__in=selected_officers)
+                    # Create an in-memory Excel file for the current officer
+                    officer_file = BytesIO()
+                    officer_filename = f"{officer.birth_name.replace(' ', '_')}.xlsx"
 
-            if not officers_to_export:
-                messages.warning(request, "No officers selected for export.")
-                return redirect("officer_list")
+                    with pd.ExcelWriter(officer_file, engine="openpyxl") as writer:
+                        # Write general officer info to "Officers" sheet
+                        field_labels = [GENERAL_INFO_FIELDS.get(field, field) for field in selected_fields]
+                        df_officer = pd.DataFrame(officers_data)
+                        df_officer.columns = field_labels
+                        df_officer.to_excel(writer, index=False, sheet_name="Thông tin chung")
 
-            # Retrieve data for selected officers and fields
-            officers_data = []
-            for idx, officer in enumerate(officers_to_export, start=1):
-                row = {
-                    "STT": idx,
-                }
-                for field in selected_fields:
-                    row[field] = getattr(officer, field)
+                        # Export related tables based on selection
+                        for table_key in selected_related_tables:
+                            sheet_config = SHEET_TO_MODEL_FIELDS.get(table_key)
+                            if sheet_config:
+                                export_related_data(
+                                    writer=writer,
+                                    officer=officer,
+                                    sheet_config=sheet_config, 
+                                    sheet_name=table_key 
+                                )
 
-                officers_data.append(row)
+                    # Ensure the Excel file is saved in memory
+                    officer_file.seek(0)
 
-            # Create a DataFrame with the selected fields
-            df = pd.DataFrame(officers_data, columns=["STT"] + selected_fields)
+                    zip_file.writestr(officer_filename, officer_file.read())
 
-            # Prepare the response as an Excel file
-            response = HttpResponse(
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-            response["Content-Disposition"] = (
-                "attachment; filename=officers.xlsx"
-            )
-
-            with pd.ExcelWriter(response, engine="openpyxl") as writer:
-                df.to_excel(writer, index=False, sheet_name="Officers")
+            # Prepare the response as a ZIP file
+            in_memory_zip.seek(0)
+            response = HttpResponse(in_memory_zip, content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename=thong_tin_CB.zip'
 
             return response
     else:
@@ -203,14 +217,14 @@ def excel_upload(request):
 
                         # Create related objects for the officer
                         for sheet_name, config in SHEET_TO_MODEL_FIELDS.items():
-                            model_class = config.model_class
+                            model = config.model
                             fields = config.fields
                             create_officer_related_objects(
                                 request=request,
                                 officer=officer,
                                 file=file,
                                 sheet_name=sheet_name,
-                                model_class=model_class,
+                                model=model,
                                 fields=fields,
                                 error_message_prefix=f"Error processing {sheet_name.lower()}",
                             )

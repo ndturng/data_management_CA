@@ -3,6 +3,7 @@ from datetime import datetime
 from django import forms
 
 from officers.classes import RelatedBaseForm
+from officers.config import SHEET_TO_MODEL_FIELDS
 
 from . import constants as c
 from . import models as m
@@ -101,11 +102,20 @@ class OfficerExportForm(forms.Form):
         required=True,
     )
 
+    related_tables = forms.MultipleChoiceField(
+        choices=[],  # This will hold the related table choices
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Get the field choices dynamically with labels from OfficerInfoForm
         self.fields["fields"].choices = self.get_field_choices()
+
+        # Get the related table choices
+        self.fields["related_tables"].choices = self.get_related_table_choices()
 
     def get_field_choices(self):
         # Map the fields from Officer model to their corresponding labels in OfficerInfoForm
@@ -124,6 +134,17 @@ class OfficerExportForm(forms.Form):
             field_choices.append((field_name.name, label))
 
         return field_choices
+    
+    def get_related_table_choices(self):
+        """
+        Get the related table choices from the SHEET_TO_MODEL_FIELDS config.
+        """
+        related_table_choices = []
+        for key, _ in SHEET_TO_MODEL_FIELDS.items():
+            # Use the key (which is the display name) for the related tables
+            related_table_choices.append((key, key))
+        
+        return related_table_choices
 
 
 class TitleForm(RelatedBaseForm):
