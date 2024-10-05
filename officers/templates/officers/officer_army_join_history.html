@@ -1,56 +1,6 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{ officer.birth_name }} - Tham gia quân đội</title>
-
-        <script type="module">
-            import { confirmDelete } from "{% static 'js/utils.js' %}";
-            window.confirmDelete = confirmDelete;
-        </script>
-    </head>
     <body>
-        <h1>{{ officer.birth_name }} - Tham gia quân đội:</h1>
-        <ul>
-            {% for army_join in army_join_histories %}
-            <li>
-                <strong>Giai đoạn:</strong>
-                {{ army_join.period }} -
-                <strong>Đơn vị:</strong>
-                {{ army_join.unit }} -
-                <strong>Hình thức:</strong>
-                {{ army_join.form }}
-
-                <!-- Update Button -->
-                <a
-                    href="{% url 'url_army_join_history_update' officer.pk army_join.id %}"
-                >
-                    Cập nhật
-                </a>
-
-                <!-- Delete Button with confirmation -->
-                <form
-                    method="POST"
-                    action="{% url 'url_army_join_history_delete' officer.pk army_join.id %}"
-                    style="display: inline"
-                    onsubmit="return confirmDelete();"
-                >
-                    {% csrf_token %}
-                    <button type="submit" style="color: red">Xoá</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
-        <!-- Create New Army Join History Button -->
-        <a href="{% url 'url_army_join_history_create' officer.pk %}">
-            <button>Thêm mới</button>
-        </a>
-
-        <a href="{% url 'officer_detail' officer.pk %}">
-            Quay lại
-        </a>
-
+        <h1>This HTML file is going to be deleted</h1>
     </body>
 </html>

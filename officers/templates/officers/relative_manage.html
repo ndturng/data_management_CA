@@ -57,16 +57,19 @@
         </a>
 
         <!-- Create or Update Relative Form -->
+        {% if form %}
         <h1>
             {% if edit_relative_id %}Cập nhật{% else %}Thêm mới
             {% endif %}
         </h1>
 
         <form method="POST">
-            {% csrf_token %} {{ form.as_p }}
+            {% csrf_token %} 
+            {{ form.as_p }}
             <button type="submit">
                 Lưu
             </button>
         </form>
+        {% endif %}
     </body>
 </html>
