@@ -57,7 +57,7 @@ def create_officer_related_objects(
     officer,
     file,
     sheet_name,
-    model_class,
+    model,
     fields,
     error_message_prefix,
 ):
@@ -68,7 +68,7 @@ def create_officer_related_objects(
     :param officer: The officer instance to associate with the related objects.
     :param file: The Excel file being processed.
     :param sheet_name: The name of the sheet in the Excel file.
-    :param model_class: The model class (e.g., Title, PositionPlan) to create objects for.
+    :param model: The model class (e.g., Title, PositionPlan) to create objects for.
     :param fields: A dictionary of fields to extract from the Excel sheet.
     :param error_message_prefix: A prefix for the error message in case of IntegrityError.
     """
@@ -84,7 +84,7 @@ def create_officer_related_objects(
 
             try:
                 # Create the related object using the model class and officer instance
-                model_class.objects.create(
+                model.objects.create(
                     officer=officer, **officer_related_data
                 )
             except IntegrityError as e:
@@ -100,9 +100,8 @@ def get_day(row, column):
     default_date = datetime(1800, 1, 1)
     try:
         day = row.get(column, None)
-        # print(f"Raw value for day: {day}, Type: {type(day)}")
 
-        if pd.isna(day):  # Check for NaT or NaN values
+        if pd.isna(day):
             return default_date
 
         if isinstance(day, str):
@@ -121,3 +120,29 @@ def get_day(row, column):
     except ValueError:
         print(f"Failed to parse date for {row['birth_name']} with value: {day}")
         return default_date
+
+def export_related_data(writer, officer, sheet_config, sheet_name):
+    """
+    Exports related data to a specific Excel sheet for an individual officer.
+    
+    :param writer: The Excel writer object to write to.
+    :param officer: The officer object whose related data is being exported.
+    :param sheet_config: The SheetConfig object containing model, fields, and related_name.
+    :param sheet_name: The name of the sheet in the Excel file.
+    """
+    related_data = []
+
+    related_items = getattr(officer, sheet_config.related_name).all()
+
+    for item in related_items:
+        row = {} 
+        # Extract configured fields
+        for field, display_name in sheet_config.fields.items():
+            row[display_name] = getattr(item, field, "")
+
+        related_data.append(row)
+
+    # Convert the related data to a DataFrame and write it to the sheet
+    df_related = pd.DataFrame(related_data)
+    if not df_related.empty: 
+        df_related.to_excel(writer, index=False, sheet_name=sheet_name)

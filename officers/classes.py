@@ -4,8 +4,14 @@ from dataclasses import dataclass
 
 @dataclass
 class SheetConfig:
-    model_class: type
+    model: type
     fields: dict
+    related_name: str
+
+    def __init__(self, model, fields, related_name):
+        self.model = model
+        self.fields = fields
+        self.related_name = related_name
 
 
 class RelatedBaseForm(forms.ModelForm):

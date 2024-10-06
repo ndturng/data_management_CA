@@ -1,4 +1,6 @@
 import unicodedata
+import zipfile
+from io import BytesIO
 
 import pandas as pd
 from django.contrib import messages
@@ -16,7 +18,11 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
 from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
-from officers.utils import create_officer_related_objects, extract_officer_data
+from officers.utils import (
+    create_officer_related_objects,
+    export_related_data,
+    extract_officer_data,
+)
 
 from . import forms as f
 from . import models as m
@@ -101,38 +107,62 @@ def officer_list(request):
         if form.is_valid():
             selected_officers = form.cleaned_data["officers"]
             selected_fields = form.cleaned_data["fields"]
+            selected_related_tables = form.cleaned_data["related_tables"]
 
-            # Filter officers based on selected IDs
-            officers_to_export = officers.filter(pk__in=selected_officers)
+            # Create an in-memory ZIP file to store the officer Excel files
+            in_memory_zip = BytesIO()
+            with zipfile.ZipFile(in_memory_zip, "w") as zip_file:
+                for officer in selected_officers:
+                    officers_data = []
+                    row = {}
+                    for field in selected_fields:
+                        row[field] = getattr(officer, field)
+                    officers_data.append(row)
 
-            if not officers_to_export:
-                messages.warning(request, "No officers selected for export.")
-                return redirect("officer_list")
+                    # Create an in-memory Excel file for the current officer
+                    officer_file = BytesIO()
+                    officer_filename = (
+                        f"{officer.birth_name.replace(' ', '_')}.xlsx"
+                    )
 
-            # Retrieve data for selected officers and fields
-            officers_data = []
-            for idx, officer in enumerate(officers_to_export, start=1):
-                row = {
-                    "STT": idx,
-                }
-                for field in selected_fields:
-                    row[field] = getattr(officer, field)
+                    with pd.ExcelWriter(
+                        officer_file, engine="openpyxl"
+                    ) as writer:
+                        # Write general officer info to "Officers" sheet
+                        field_labels = [
+                            GENERAL_INFO_FIELDS.get(field, field)
+                            for field in selected_fields
+                        ]
+                        df_officer = pd.DataFrame(officers_data)
+                        df_officer.columns = field_labels
+                        df_officer.to_excel(
+                            writer, index=False, sheet_name="Thông tin chung"
+                        )
 
-                officers_data.append(row)
+                        # Export related tables based on selection
+                        for table_key in selected_related_tables:
+                            sheet_config = SHEET_TO_MODEL_FIELDS.get(table_key)
+                            if sheet_config:
+                                export_related_data(
+                                    writer=writer,
+                                    officer=officer,
+                                    sheet_config=sheet_config,
+                                    sheet_name=table_key,
+                                )
 
-            # Create a DataFrame with the selected fields
-            df = pd.DataFrame(officers_data, columns=["STT"] + selected_fields)
+                    # Ensure the Excel file is saved in memory
+                    officer_file.seek(0)
 
-            # Prepare the response as an Excel file
+                    zip_file.writestr(officer_filename, officer_file.read())
+
+            # Prepare the response as a ZIP file
+            in_memory_zip.seek(0)
             response = HttpResponse(
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                in_memory_zip, content_type="application/zip"
             )
             response["Content-Disposition"] = (
-                "attachment; filename=officers.xlsx"
+                "attachment; filename=thong_tin_CB.zip"
             )
-
-            with pd.ExcelWriter(response, engine="openpyxl") as writer:
-                df.to_excel(writer, index=False, sheet_name="Officers")
 
             return response
     else:
@@ -203,14 +233,14 @@ def excel_upload(request):
 
                         # Create related objects for the officer
                         for sheet_name, config in SHEET_TO_MODEL_FIELDS.items():
-                            model_class = config.model_class
+                            model = config.model
                             fields = config.fields
                             create_officer_related_objects(
                                 request=request,
                                 officer=officer,
                                 file=file,
                                 sheet_name=sheet_name,
-                                model_class=model_class,
+                                model=model,
                                 fields=fields,
                                 error_message_prefix=f"Error processing {sheet_name.lower()}",
                             )
@@ -307,34 +337,41 @@ class OfficerRelatedMixin(LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         officer = self.get_officer()
         context["officer"] = officer
+
         context[self.related_context_field] = getattr(
             officer, self.related_context_field
         ).all()
-
-        # Add the object ID to the context if editing (if the object exists)
+        
         try:
-            if self.related_context_field.endswith("ves"):
-                singular_field = self.related_context_field[:-1]
-            elif self.related_context_field.endswith("les"):
-                singular_field = self.related_context_field[:-1]
-            elif self.related_context_field.endswith("nes"):
-                singular_field = self.related_context_field[:-1]
-            elif self.related_context_field.endswith("ies"):
-                singular_field = self.related_context_field[:-3] + "y"
-            elif self.related_context_field.endswith("es"):
-                singular_field = self.related_context_field[:-2]
-            elif self.related_context_field.endswith("s"):
-                singular_field = self.related_context_field[:-1]
-            else:
-                singular_field = self.related_context_field
-                
+            singular_field = self.get_singular_field_name(
+                self.related_context_field
+            )
             context[f"edit_{singular_field}_id"] = self.object.id
         except AttributeError:
             pass
 
         return context
+
+    def get_singular_field_name(self, field_name):
+        """
+        Converts plural field names to singular.
+        """
+        if field_name.endswith("ves"):
+            return field_name[:-1]
+        elif field_name.endswith("les"):
+            return field_name[:-1]
+        elif field_name.endswith("nes"):
+            return field_name[:-1]
+        elif field_name.endswith("ies"):
+            return field_name[:-3] + "y"
+        elif field_name.endswith("es"):
+            return field_name[:-2]
+        elif field_name.endswith("s"):
+            return field_name[:-1]
+        return field_name
 
 
 ########################################################
@@ -351,7 +388,7 @@ class TitleMixin(OfficerRelatedMixin):
 
 # Title View
 class TitleListView(TitleMixin, ListView):
-    template_name = "officers/officer_title.html"
+    template_name = "officers/officer_title_manage.html"
     context_object_name = "titles"
 
     def get_queryset(self):
@@ -398,7 +435,7 @@ class PositionPlanMixin(OfficerRelatedMixin):
 
 # Position Plan View
 class PositionPlanListView(PositionPlanMixin, ListView):
-    template_name = "officers/position_plan.html"
+    template_name = "officers/position_plan_manage.html"
     context_object_name = "position_plans"
 
     def get_queryset(self):
@@ -453,7 +490,7 @@ class LearningPathMixin(OfficerRelatedMixin):
 
 # Learning Path View
 class LearningPathListView(LearningPathMixin, ListView):
-    template_name = "officers/officer_learning_path.html"
+    template_name = "officers/learning_path_manage.html"
     context_object_name = "learning_paths"
 
     def get_queryset(self):
@@ -508,12 +545,12 @@ class WorkProcessMixin(OfficerRelatedMixin):
 
 # Work Process View
 class WorkProcessListView(WorkProcessMixin, ListView):
-    template_name = "officers/officer_work_process.html"
+    template_name = "officers/work_process_manage.html"
     context_object_name = "work_processes"
 
     def get_queryset(self):
         return self.get_officer().work_processes.all()
-    
+
 
 # Create Work Process
 class WorkProcessCreateView(
@@ -527,7 +564,7 @@ class WorkProcessCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Work Process
 class WorkProcessUpdateView(
@@ -563,12 +600,12 @@ class SalaryProcessMixin(OfficerRelatedMixin):
 
 # Salary Process View
 class SalaryProcessListView(SalaryProcessMixin, ListView):
-    template_name = "officers/officer_salary_process.html"
+    template_name = "officers/salary_process_manage.html"
     context_object_name = "salary_processes"
 
     def get_queryset(self):
         return self.get_officer().salary_processes.all()
-    
+
 
 # Create Salary Process
 class SalaryProcessCreateView(
@@ -582,7 +619,7 @@ class SalaryProcessCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Salary Process
 class SalaryProcessUpdateView(
@@ -618,12 +655,12 @@ class LaudatoryMixin(OfficerRelatedMixin):
 
 # Laudatory View
 class LaudatoryListView(LaudatoryMixin, ListView):
-    template_name = "officers/officer_laudatory.html"
+    template_name = "officers/laudatory_manage.html"
     context_object_name = "laudatories"
 
     def get_queryset(self):
         return self.get_officer().laudatories.all()
-    
+
 
 # Create Laudatory
 class LaudatoryCreateView(
@@ -637,17 +674,15 @@ class LaudatoryCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Laudatory
-class LaudatoryUpdateView(
-    PermissionRequiredMixin, LaudatoryMixin, UpdateView
-):
+class LaudatoryUpdateView(PermissionRequiredMixin, LaudatoryMixin, UpdateView):
     pk_url_kwarg = "laudatory_pk"
     template_name = "officers/laudatory_manage.html"
     permission_required = "officers.adjust_laudatory"
 
-    
+
 # Delete Laudatory
 class LaudatoryDeleteView(
     PermissionRequiredMixin, OfficerRelatedMixin, DeleteView
@@ -673,12 +708,12 @@ class DisciplineMixin(OfficerRelatedMixin):
 
 # Discipline View
 class DisciplineListView(DisciplineMixin, ListView):
-    template_name = "officers/officer_discipline.html"
+    template_name = "officers/discipline_manage.html"
     context_object_name = "disciplines"
 
     def get_queryset(self):
         return self.get_officer().disciplines.all()
-    
+
 
 # Create Discipline
 class DisciplineCreateView(
@@ -692,7 +727,7 @@ class DisciplineCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Discipline
 class DisciplineUpdateView(
@@ -728,12 +763,12 @@ class RelativeMixin(OfficerRelatedMixin):
 
 # Relative View
 class RelativeListView(RelativeMixin, ListView):
-    template_name = "officers/officer_relative.html"
+    template_name = "officers/relative_manage.html"
     context_object_name = "relatives"
 
     def get_queryset(self):
         return self.get_officer().relatives.all()
-    
+
 
 # Create Relative
 class RelativeCreateView(
@@ -746,13 +781,11 @@ class RelativeCreateView(
 
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
-        return super().form_valid(form) 
-    
+        return super().form_valid(form)
+
 
 # Update Relative
-class RelativeUpdateView(
-    PermissionRequiredMixin, RelativeMixin, UpdateView
-):
+class RelativeUpdateView(PermissionRequiredMixin, RelativeMixin, UpdateView):
     pk_url_kwarg = "relative_pk"
     template_name = "officers/relative_manage.html"
     permission_required = "officers.adjust_relative"
@@ -783,12 +816,12 @@ class AbroadMixin(OfficerRelatedMixin):
 
 # Abroad View
 class AbroadListView(AbroadMixin, ListView):
-    template_name = "officers/officer_abroad.html"
+    template_name = "officers/abroad_manage.html"
     context_object_name = "abroads"
 
     def get_queryset(self):
         return self.get_officer().abroads.all()
-    
+
 
 # Create Abroad
 class AbroadCreateView(
@@ -802,12 +835,10 @@ class AbroadCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Abroad
-class AbroadUpdateView(
-    PermissionRequiredMixin, AbroadMixin, UpdateView
-):
+class AbroadUpdateView(PermissionRequiredMixin, AbroadMixin, UpdateView):
     pk_url_kwarg = "abroad_pk"
     template_name = "officers/abroad_manage.html"
     permission_required = "officers.adjust_abroad"
@@ -838,12 +869,12 @@ class ArmyJoinHistoryMixin(OfficerRelatedMixin):
 
 # Army Join History View
 class ArmyJoinHistoryListView(ArmyJoinHistoryMixin, ListView):
-    template_name = "officers/officer_army_join_history.html"
+    template_name = "officers/army_join_history_manage.html"
     context_object_name = "army_join_histories"
 
     def get_queryset(self):
         return self.get_officer().army_join_histories.all()
-    
+
 
 # Create Army Join History
 class ArmyJoinHistoryCreateView(
@@ -857,7 +888,7 @@ class ArmyJoinHistoryCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Army Join History
 class ArmyJoinHistoryUpdateView(
@@ -893,12 +924,12 @@ class HealthMixin(OfficerRelatedMixin):
 
 # Health View
 class HealthListView(HealthMixin, ListView):
-    template_name = "officers/officer_health.html"
+    template_name = "officers/health_manage.html"
     context_object_name = "healths"
 
     def get_queryset(self):
         return self.get_officer().healths.all()
-    
+
 
 # Create Health
 class HealthCreateView(
@@ -912,12 +943,10 @@ class HealthCreateView(
     def form_valid(self, form):
         form.instance.officer = self.get_officer()
         return super().form_valid(form)
-    
+
 
 # Update Health
-class HealthUpdateView(
-    PermissionRequiredMixin, HealthMixin, UpdateView
-):
+class HealthUpdateView(PermissionRequiredMixin, HealthMixin, UpdateView):
     pk_url_kwarg = "health_pk"
     template_name = "officers/health_manage.html"
     permission_required = "officers.adjust_health"
