@@ -1,7 +1,7 @@
-<h2>Confirm Delete All</h2>
-<p>Are you sure you want to delete all officers?</p>
+<h2>XÁC NHẬN XOÁ TẤT CẢ</h2>
+<p>BẠN CÓ MUỐN XOÁ TẤT CẢ THÔNG TIN TRONG CƠ SỞ DỮ LIỆU?</p>
 <form method="post">
     {% csrf_token %}
-    <button type="submit">Yes, delete all</button>
+    <button type="submit">XOÁ TẤT CẢ</button>
 </form>
 <a href="{% url 'officer_list' %}">Cancel</a>
