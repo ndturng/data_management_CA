@@ -83,9 +83,7 @@ class MultipleFileField(forms.FileField):
 
 class ExcelUploadForm(forms.Form):
     files = MultipleFileField(
-        label="Select files",
         required=True,
-        help_text="Select one or more Excel files to upload.",
     )
 
 
