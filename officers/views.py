@@ -46,11 +46,11 @@ def officer_list(request):
 
     officers = m.Officer.objects.all()  # Start with all officers
 
-    # Search by name
+    # Search by birth_name
     query = request.GET.get("q")
     if query:
         normalized_query = unicodedata.normalize("NFC", query)
-        officers = officers.filter(name__icontains=normalized_query)
+        officers = officers.filter(birth_name__icontains=normalized_query)
 
     # Search by ID
     id_ca_query = request.GET.get("id_ca")
