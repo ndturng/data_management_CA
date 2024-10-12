@@ -123,24 +123,24 @@ urlpatterns = [
     ############################################################
     # Khen thưởng
     path(
-        "<int:pk>/laudatory", 
+        "<int:pk>/laudatory",
         views.LaudatoryListView.as_view(),
-        name="url_laudatory"
+        name="url_laudatory",
     ),
     path(
         "<int:pk>/laudatory/create",
         views.LaudatoryCreateView.as_view(),
-        name="url_laudatory_create"
+        name="url_laudatory_create",
     ),
     path(
         "<int:pk>/laudatory/update/<int:laudatory_pk>",
         views.LaudatoryUpdateView.as_view(),
-        name="url_laudatory_update"
+        name="url_laudatory_update",
     ),
     path(
         "<int:pk>/laudatory/delete/<int:laudatory_pk>",
         views.LaudatoryDeleteView.as_view(),
-        name="url_laudatory_delete"
+        name="url_laudatory_delete",
     ),
     ############################################################
     # Kỷ luật
@@ -251,5 +251,27 @@ urlpatterns = [
         "<int:pk>/health/delete/<int:health_pk>",
         views.HealthDeleteView.as_view(),
         name="url_health_delete",
+    ),
+    ############################################################
+    # Hình ảnh
+    path(
+        "<int:pk>/images", 
+        views.ImageListView.as_view(), 
+        name="url_image",
+    ),
+    path(
+        "<int:pk>/images/create",
+        views.ImageCreateView.as_view(),
+        name="url_image_create",
+    ),
+    path(
+        "<int:officer_pk>/images/update/<int:image_pk>",
+        views.ImageUpdateView.as_view(),
+        name="url_image_update",
+    ),
+    path(
+        "<int:officer_pk>/images/delete/<int:image_pk>",
+        views.ImageDeleteView.as_view(),
+        name="url_image_delete",
     ),
 ]

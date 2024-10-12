@@ -141,3 +141,24 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+import os
+from decouple import config
+
+# Check if in production environment
+IS_PRODUCTION = config('IS_PRODUCTION', default=False, cast=bool)
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Media settings
+if IS_PRODUCTION:
+    MEDIA_ROOT = r'C:\Users\user\Documents\myapp\media'  # Adjust for your production server
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# URL path for accessing media files
+MEDIA_URL = '/media/'
+
+# Optional: If you still need protected media, configure this separately
+# PROTECTED_MEDIA_ROOT = os.path.join(BASE_DIR, 'protected_media')  # Only use for restricted media

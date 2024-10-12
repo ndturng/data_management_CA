@@ -1,6 +1,9 @@
+import os
 import unicodedata
 
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from officers.utils import cal_next_rank
 
@@ -267,6 +270,7 @@ class WorkProcess(models.Model):  # Quá trình công tác
     period = models.CharField(max_length=11, null=True, blank=True)
     work_content = models.CharField(max_length=255, null=True, blank=True)
 
+
 class SalaryProcess(models.Model):  # Quá trình lương
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="salary_processes"
@@ -274,6 +278,7 @@ class SalaryProcess(models.Model):  # Quá trình lương
     time = models.IntegerField(null=True, blank=True)
     mil_rank = models.CharField(max_length=255, null=True, blank=True)
     salary_coefficient = models.FloatField(null=True, blank=True)
+
 
 class Laudatory(models.Model):  # Khen thưởng
     officer = models.ForeignKey(
@@ -283,6 +288,7 @@ class Laudatory(models.Model):  # Khen thưởng
     form = models.CharField(max_length=255, null=True, blank=True)
     content = models.CharField(max_length=255, null=True, blank=True)
 
+
 class Discipline(models.Model):  # Kỷ luật
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="disciplines"
@@ -290,6 +296,7 @@ class Discipline(models.Model):  # Kỷ luật
     time = models.IntegerField(null=True, blank=True)
     form = models.CharField(max_length=255, null=True, blank=True)
     content = models.CharField(max_length=255, null=True, blank=True)
+
 
 class Relative(models.Model):  # Thân nhân
     officer = models.ForeignKey(
@@ -301,6 +308,7 @@ class Relative(models.Model):  # Thân nhân
     job = models.CharField(max_length=255, null=True, blank=True)
     current_residence = models.CharField(max_length=255, null=True, blank=True)
 
+
 class Abroad(models.Model):  # Ra nước ngoài
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="abroads"
@@ -308,6 +316,7 @@ class Abroad(models.Model):  # Ra nước ngoài
     time = models.IntegerField(null=True, blank=True)
     country = models.CharField(max_length=255, null=True, blank=True)
     purpose = models.CharField(max_length=255, null=True, blank=True)
+
 
 class ArmyJoinHistory(models.Model):  # Tham gia quân đội
     officer = models.ForeignKey(
@@ -317,6 +326,7 @@ class ArmyJoinHistory(models.Model):  # Tham gia quân đội
     unit = models.CharField(max_length=255, null=True, blank=True)
     form = models.CharField(max_length=255, null=True, blank=True)
 
+
 class Health(models.Model):  # Sức khoẻ
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="healths"
@@ -325,3 +335,34 @@ class Health(models.Model):  # Sức khoẻ
     height = models.IntegerField(null=True, blank=True)
     medical_history = models.CharField(max_length=255, null=True, blank=True)
     other = models.CharField(max_length=255, null=True, blank=True)
+
+
+class Image(models.Model):  # Hình ảnh
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="images"
+    )
+    image = models.ImageField(
+        upload_to="officer_images/", null=True, blank=True
+    )
+    description = models.CharField(max_length=255, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # If replacing an image, delete the old file
+        try:
+            this = Image.objects.get(id=self.id)
+            if this.image != self.image:
+                this.image.delete(save=False)
+        except Image.DoesNotExist:
+            pass  # This is the first save, so no replacement needed
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.description
+
+
+@receiver(post_delete, sender=Image)
+def delete_image_file(sender, instance, **kwargs):
+    # Check if the image file exists and delete it
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)

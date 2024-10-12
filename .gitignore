@@ -3,3 +3,10 @@
 
 # migrations # check later
 officers/migrations/*.py
+
+**/__pycache__/
+
+# ignore all image files
+*.png
+*.jpg
+*.jpeg
