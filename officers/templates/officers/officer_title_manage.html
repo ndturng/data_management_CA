@@ -60,7 +60,10 @@
                             <td class="py-2 px-4">{{ title.title }}</td>
                             <td class="py-2 px-4">
                                 <!-- Update Button -->
-                                <a href="{% url 'url_title_update' officer.pk title.id %}" class="text-green-500 hover:text-green-600 underline mx-2">
+                                <a href="{% url 'url_title_update' officer.pk title.id %}" 
+                                onclick="modal.showModal(); return false" 
+                                class="text-green-500 hover:text-green-600 underline mx-2"
+                                >
                                     Cập nhật
                                 </a>
 
@@ -86,7 +89,7 @@
 
                 <!-- Create New Title Button -->
                 <div class="mt-5 text-right">
-                    <a href="{% url 'url_title_create' officer.pk %}">
+                    <a href="{% url 'url_title_create' officer.pk %}" onclick="modal.showModal(); return false">
                         <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg">
                             <span class="mr-2">Thêm mới</span>
                             <!-- Add the folder icon here -->
@@ -95,6 +98,34 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Form for creating/updating titles -->
+             
+            {% if form %}
+            <dialog id="modal" class="modal">
+                <div class="modal-box">
+                    <form method="dialog">
+                        <button class="btn btn-sm btn-circle btn-ghost absolute right-5 top-5">
+                            <img src="{% static 'src/close.png' %}" alt="Close icon" class="w-5 h-5">
+                        </button>
+                    </form>
+
+                    <h1 class="text-xl font-semibold mb-8">
+                        {% if edit_title_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    </h1>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="modal-action">
+                            <button type="submit" class="btn">
+                                Lưu
+                            </button>
+                        </div>
+                    </form>  
+                </div>
+            </dialog>
+            {% endif %}
 
             <!-- Link to Officer Details Page -->
             <a href="{% url 'officer_detail' officer.pk %}">
@@ -106,20 +137,7 @@
 
 
 
-            <!-- Form for creating/updating titles -->
-            {% if form %}
-            <h1>
-                {% if edit_title_id %}Cập nhật{% else %}Thêm mới{% endif %}
-            </h1>
-
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">
-                    Lưu
-                </button>
-            </form>
-            {% endif %}
+            
         </div>
     </body>
 </html>
