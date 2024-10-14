@@ -60,7 +60,20 @@
 
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+            
+            <div>
+                <label for="time">Thời gian:</label>
+                {{ form.time }}
+            </div>
+            <div>
+                <label for="mil_rank">Cấp bậc hàm:</label>
+                {{ form.mil_rank }}
+            </div>
+            <div>
+                <label for="salary_coefficient">Hệ số lương:</label>
+                {{ form.salary_coefficient }}
+            </div>
+            
             <button type="submit">
                 Lưu
             </button>

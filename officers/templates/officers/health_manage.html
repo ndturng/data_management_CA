@@ -63,7 +63,24 @@
 
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+
+            <div>
+                <label for="id_weight">Cân nặng:</label>
+                {{ form.weight }}
+            </div>
+            <div>
+                <label for="id_height">Chiều cao:</label>
+                {{ form.height }}
+            </div>
+            <div>
+                <label for="id_medical_history">Lịch sử bệnh:</label>
+                {{ form.medical_history }}
+            </div>
+            <div>
+                <label for="id_other">Khác:</label>
+                {{ form.other }}
+            </div>
+            
             <button type="submit">
                 Lưu
             </button>

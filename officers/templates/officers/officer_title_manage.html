@@ -57,11 +57,20 @@
 
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div>
+                <label for="id_appointed_date">Ngày bổ nhiệm:</label>
+                {{ form.appointed_date }}
+            </div>
+            <div>
+                <label for="id_title">Chức danh:</label>
+                {{ form.title }}
+            </div>
+
             <button type="submit">
                 Lưu
             </button>
-        </form>
+        </form>        
         {% endif %}
     </body>
 </html>
