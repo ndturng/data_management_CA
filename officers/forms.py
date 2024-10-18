@@ -83,9 +83,7 @@ class MultipleFileField(forms.FileField):
 
 class ExcelUploadForm(forms.Form):
     files = MultipleFileField(
-        label="Select files",
         required=True,
-        help_text="Select one or more Excel files to upload.",
     )
 
 
@@ -134,7 +132,7 @@ class OfficerExportForm(forms.Form):
             field_choices.append((field_name.name, label))
 
         return field_choices
-    
+
     def get_related_table_choices(self):
         """
         Get the related table choices from the SHEET_TO_MODEL_FIELDS config.
@@ -143,7 +141,7 @@ class OfficerExportForm(forms.Form):
         for key, _ in SHEET_TO_MODEL_FIELDS.items():
             # Use the key (which is the display name) for the related tables
             related_table_choices.append((key, key))
-        
+
         return related_table_choices
 
 
@@ -153,11 +151,13 @@ class TitleForm(RelatedBaseForm):
         field_config = c.TITLE_FIELDS
         fields = list(field_config.keys())
 
+
 class PositionPlanForm(RelatedBaseForm):
     class Meta:
         model = m.PositionPlan
         field_config = c.POSITION_PLAN_FIELDS
         fields = list(field_config.keys())
+
 
 class LearningPathForm(RelatedBaseForm):
     class Meta:
@@ -165,11 +165,13 @@ class LearningPathForm(RelatedBaseForm):
         field_config = c.LEARNING_PATH_FIELDS
         fields = list(field_config.keys())
 
+
 class WorkProcessForm(RelatedBaseForm):
     class Meta:
         model = m.WorkProcess
         field_config = c.WORK_PROCESS_FIELDS
         fields = list(field_config.keys())
+
 
 class SalaryProcessForm(RelatedBaseForm):
     class Meta:
@@ -177,11 +179,13 @@ class SalaryProcessForm(RelatedBaseForm):
         field_config = c.SALARY_PROCESS_FIELDS
         fields = list(field_config.keys())
 
+
 class LaudatoryForm(RelatedBaseForm):
     class Meta:
         model = m.Laudatory
         field_config = c.LAUDATORY_FIELDS
         fields = list(field_config.keys())
+
 
 class DisciplineForm(RelatedBaseForm):
     class Meta:
@@ -189,11 +193,13 @@ class DisciplineForm(RelatedBaseForm):
         field_config = c.DISCIPLINE_FIELDS
         fields = list(field_config.keys())
 
+
 class RelativeForm(RelatedBaseForm):
     class Meta:
         model = m.Relative
         field_config = c.RELATIVE_FIELDS
         fields = list(field_config.keys())
+
 
 class AbroadForm(RelatedBaseForm):
     class Meta:
@@ -201,14 +207,32 @@ class AbroadForm(RelatedBaseForm):
         field_config = c.ABROAD_FIELDS
         fields = list(field_config.keys())
 
+
 class ArmyJoinHistoryForm(RelatedBaseForm):
     class Meta:
         model = m.ArmyJoinHistory
         field_config = c.ARMY_JOIN_HISTORY_FIELDS
         fields = list(field_config.keys())
 
+
 class HealthForm(RelatedBaseForm):
     class Meta:
         model = m.Health
         field_config = c.HEALTH_FIELDS
         fields = list(field_config.keys())
+
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = m.Image
+        fields = ["image", "description"]  # Fields to be displayed in the form
+
+        widgets = {
+            "description": forms.TextInput(attrs={"class": "form-control"}),
+            "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields["image"].label = "Tệp ảnh"
+        self.fields["description"].label = "Mô tả"

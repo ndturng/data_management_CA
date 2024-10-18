@@ -58,7 +58,13 @@
 
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+            
+            <label for="period">Giai đoạn:</label>
+            {{ form.period }}
+            <label for="work_content">Công tác:</label>
+            {{ form.work_content }}
+            <label for="work_place">Đơn vị công tác:</label>
+            {{ form.work_place }}
 
             <button type="submit">
                 Lưu

@@ -4,4 +4,9 @@
 # migrations # check later
 officers/migrations/*.py
 
-**/__pycache__
+**/__pycache__/
+
+# ignore all image files
+*.png
+*.jpg
+*.jpeg

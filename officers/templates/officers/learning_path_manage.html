@@ -58,7 +58,16 @@
 
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+
+            <div>
+                <label for="period">Giai đoạn:</label>
+                {{ form.period }}
+            </div>
+            <div>
+                <label for="learning_content">Nội dung đào tạo:</label>
+                {{ form.learning_content }}
+            </div>
+            
             <button type="submit">
                 Lưu
             </button>

@@ -1,6 +1,102 @@
-<h2>Upload Excel File</h2>
-<form method="post" enctype="multipart/form-data">
+<h2>Tải dữ liệu lên từ tệp Excel</h2>
+<form method="post" enctype="multipart/form-data" id="uploadForm">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button> | <a href="{% url 'officer_list' %}">Back to List</a>
+    <label for="fileInput" id="fileLabel">Chọn một hoặc nhiều tệp Excel:</label>
+    <input id="fileInput" type="file" name="files" multiple style="display: none;" required>
+    <em id="fileName">Không có tệp nào được chọn</em>
+
+    <!-- Container for displaying selected file names in a column -->
+    <div id="fileListContainer"></div>
+
+    <!-- Toggle button to show more or hide file names -->
+    <button type="button" id="toggleButton" style="display:none;">Hiển thị tất cả tệp đã chọn</button><br>
+
+    <button type="button" id="customButton">Chọn tệp</button>
+    <button type="button" id="submitButton">Tải lên</button> <br><br>
+    <a href="{% url 'officer_list' %}">Quay lại</a>
 </form>
+
+<script>
+    // Trigger the file selection dialog when "Chọn tệp" button is clicked
+    document.getElementById('customButton').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
+
+    // Update the displayed file names when files are selected
+    document.getElementById('fileInput').addEventListener('change', function() {
+        const input = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const toggleButton = document.getElementById('toggleButton');
+        const maxDisplayCount = 3; 
+
+        // Clear any previous file list
+        fileListContainer.innerHTML = '';
+
+        if (input.files.length > 0) {
+            const fileList = Array.from(input.files);
+            let fullFileNames = fileList.map(file => file.name);  // Full file names array
+
+            // Create a list to display file names
+            const ul = document.createElement('ul');
+            ul.style.listStyleType = 'none';  // Remove bullet points
+
+            // Initially display only maxDisplayCount files
+            fileList.slice(0, maxDisplayCount).forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.name;
+                ul.appendChild(li);
+            });
+            
+            // Hide "Không có tệp nào được chọn" message
+            fileNameDisplay.textContent = '';
+
+            if (fileList.length > maxDisplayCount) {
+                const moreFiles = fileList.slice(maxDisplayCount).map(file => {
+                    const li = document.createElement('li');
+                    li.textContent = file.name;
+                    li.style.display = 'none'; // Initially hide the extra files
+                    return li;
+                });
+
+                moreFiles.forEach(li => ul.appendChild(li));
+                toggleButton.style.display = 'inline';
+
+                // Set up the toggle functionality
+                let expanded = false;  // Flag to track if list is expanded
+                toggleButton.addEventListener('click', function() {
+                    if (expanded) {
+                        // Hide extra files
+                        moreFiles.forEach(li => li.style.display = 'none');
+                        toggleButton.textContent = 'Hiển thị tất cả'; 
+                    } else {
+                        // Show extra files
+                        moreFiles.forEach(li => li.style.display = 'block');
+                        toggleButton.textContent = 'Ẩn bớt'; 
+                    }
+                    expanded = !expanded;  // Toggle the expanded flag
+                });
+            } else {
+                toggleButton.style.display = 'none';  // Hide the toggle button if no extra files
+            }
+
+            // Append the list to the container
+            fileListContainer.appendChild(ul);
+        } else {
+            fileListContainer.innerHTML = '<span id="fileName">Không có tệp nào được chọn</span>';
+            toggleButton.style.display = 'none';
+        }
+    });
+
+    // Handle form submission when "Tải lên" button is clicked
+    document.getElementById('submitButton').addEventListener('click', function(event) {
+        const input = document.getElementById('fileInput');
+        
+        if (input.files.length === 0) {
+            alert('Vui lòng chọn ít nhất một tệp.');
+        } else {
+            // Manually submit the form
+            document.getElementById('uploadForm').submit();
+        }
+    });
+</script>

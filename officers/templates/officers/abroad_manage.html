@@ -60,7 +60,20 @@
         </h1>
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+
+            <div>
+                <label for="id_time">Thời gian:</label>
+                {{ form.time }}
+            </div>
+            <div>
+                <label for="id_country">Địa điểm:</label>
+                {{ form.country }}
+            </div>
+            <div>
+                <label for="id_purpose">Mục đích:</label>
+                {{ form.purpose }}
+            </div>
+            
             <button type="submit">
                 Lưu
             </button>
