@@ -2741,32 +2741,16 @@ details.collapse summary::-webkit-details-marker {
   position: sticky;
 }
 
-.right-2 {
-  right: 0.5rem;
-}
-
-.top-2 {
-  top: 0.5rem;
+.right-5 {
+  right: 1.25rem;
 }
 
 .top-5 {
   top: 1.25rem;
 }
 
-.right-3 {
-  right: 0.75rem;
-}
-
-.right-5 {
-  right: 1.25rem;
-}
-
 .z-\[1\] {
   z-index: 1;
-}
-
-.m-5 {
-  margin: 1.25rem;
 }
 
 .mx-10 {
@@ -2784,9 +2768,8 @@ details.collapse summary::-webkit-details-marker {
   margin-right: auto;
 }
 
-.my-5 {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
+.mb-8 {
+  margin-bottom: 2rem;
 }
 
 .ml-10 {
@@ -2821,12 +2804,8 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 1.25rem;
 }
 
-.mb-5 {
-  margin-bottom: 1.25rem;
-}
-
-.mb-8 {
-  margin-bottom: 2rem;
+.mb-7 {
+  margin-bottom: 1.75rem;
 }
 
 .block {
@@ -2925,10 +2904,8 @@ details.collapse summary::-webkit-details-marker {
   justify-content: center;
 }
 
-.space-x-4 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(1rem * var(--tw-space-x-reverse));
-  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+.justify-between {
+  justify-content: space-between;
 }
 
 .rounded-box {

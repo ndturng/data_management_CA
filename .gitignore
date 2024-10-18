@@ -4,4 +4,4 @@
 # migrations # check later
 officers/migrations/*.py
 
-__pycache__/*.cpython-312.pyc
+**/__pycache__
