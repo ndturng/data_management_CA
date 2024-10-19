@@ -151,8 +151,15 @@
         {% csrf_token %}
         <h3>Chọn cán bộ và thông tin cần trích xuất</h3>
 
+        <!-- Officer Selection -->
         <div>
             <strong>Chọn cán bộ:</strong><br>
+
+            <label>
+                <input type="checkbox" id="select-all-officers">
+                Chọn tất cả
+            </label> <br>
+
             {% for officer in officers %}
                 <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
                 <label for="officer_{{ officer.pk }}">{{ officer.birth_name }} ({{ officer.id_ca }})</label>
@@ -160,14 +167,27 @@
             {% endfor %}
         </div>
 
+        <!-- Field Selection -->
         <div>
             <strong>Chọn thông tin:</strong><br>
+
+            <label>
+                <input type="checkbox" id="select-all-fields"> 
+                Chọn tất cả
+            </label>
+
             {{ form.fields }}
         </div>
 
         <!-- Related Tables Selection -->
         <div>
             <strong>Chọn bảng liên quan:</strong><br>
+            
+            <label>
+                <input type="checkbox" id="select-all-related-tables">
+                Chọn tất cả
+            </label>
+            
             {{ form.related_tables }}
         </div>
 
@@ -191,4 +211,23 @@
             exportForm.style.display = 'none';
         }
     }
+    document.getElementById('select-all-officers').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="officers"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+    document.getElementById('select-all-fields').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    document.getElementById('select-all-related-tables').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="{{ form.related_tables.name }}"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
 </script>

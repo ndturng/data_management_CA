@@ -1,7 +1,6 @@
 # Makefile for Django Project Management
 
 # Variables
-VENV_PATH=venv/bin/activate
 DJANGO_MANAGE=python manage.py
 MYSQL_SERVICE=mysql
 
@@ -12,10 +11,6 @@ start-mysql:
 # Connect to MySQL
 connect-mysql:
 	  mysql -u root -p
-
-# Activate the virtual environment
-activ-env:
-	  source $(VENV_PATH)
 
 # Run Django development server
 runserver:
