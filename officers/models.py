@@ -209,6 +209,9 @@ class Officer(models.Model):
         if self.date_of_birth:
             self.birth_year = self.date_of_birth.year
 
+        # add label for birth_year
+        self._meta.get_field("birth_year").verbose_name = "Năm sinh"
+        
         # Normalize name fields to NFC
         if self.birth_name:
             self.birth_name = unicodedata.normalize("NFC", self.birth_name)
