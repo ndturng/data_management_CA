@@ -123,6 +123,8 @@ class OfficerExportForm(forms.Form):
         field_choices = []
 
         for field_name in m.Officer._meta.fields:
+            if field_name.name == "id":
+                continue
             # Get the field's label from OfficerInfoForm if available
             label = (
                 form.fields[field_name.name].label
