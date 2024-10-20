@@ -12,7 +12,7 @@ from officers.utils import cal_next_rank
 class Officer(models.Model):
     # Số hiệu - Số hồ sơ
     id_ca = models.CharField(
-        max_length=255, null=True, blank=True, unique=True, default="nan"
+        max_length=255, null=True, blank=True, unique=True,
     )
     # Họ và tên khai sinh
     birth_name = models.CharField(max_length=255, null=True, blank=False)
@@ -22,13 +22,13 @@ class Officer(models.Model):
     gender = models.CharField(max_length=255, null=True, blank=False)
     # Nơi sinh
     birth_place = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, 
     )
     # Chỗ ở hiện nay
     current_residence = models.CharField(max_length=255, null=True, blank=False)
     # Dân tộc
     folk = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, default="Kinh"
     )
     # Tôn giáo
     religion = models.CharField(
@@ -36,7 +36,7 @@ class Officer(models.Model):
     )
     # Ngày sinh
     date_of_birth = models.DateField(
-        null=True, blank=True, default="nan"
+        null=True, blank=True,
     )  # handle the case just the month and year
     birth_year = models.IntegerField(null=True, blank=True, default=1800)
 
@@ -44,7 +44,7 @@ class Officer(models.Model):
     month_join_group = models.CharField(max_length=7, null=True, blank=True)
     # Đoàn thể
     group = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Tháng năm vào Đảng
     month_join_party = models.CharField(max_length=7, null=True, blank=True)
@@ -54,11 +54,11 @@ class Officer(models.Model):
     )
     # Số thẻ Đảng
     party_card_number = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Chức vụ Đảng
     party_position = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, default="Đảng viên"
     )
     # Tháng năm tuyển dụng
     month_recruit = models.CharField(max_length=7, null=True, blank=True)
@@ -66,33 +66,33 @@ class Officer(models.Model):
     month_join_CA = models.CharField(max_length=7, null=True, blank=True)
     # Đơn vị tuyển
     recruit_unit = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, default="Công an tỉnh Phú Yên"
     )
     # Nguồn tuyển
     recruit_source = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Ký hiệu đơn vị
     unit_notation = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Chức vụ
     position = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Cấp bậc
     military_rank = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, 
     )
     # Hệ số lương
     salary_coefficient = models.FloatField(null=True, blank=True, default=4.2)
     # Quyết định lương
     salary_decision = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, 
     )
     # Năm quyết định lương
     salary_decision_year = models.IntegerField(
-        null=True, blank=True, default=1800
+        null=True, blank=True,
     )
     # Hệ số lương tiếp theo
     next_salary_coefficient = models.FloatField(
@@ -100,79 +100,79 @@ class Officer(models.Model):
     )
     # Năm quyết định lương tiếp theo
     next_salary_decision_year = models.IntegerField(
-        null=True, blank=True, default=1800
+        null=True, blank=True,
     )
     # Đơn vị công tác
     work_unit = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Lực lượng
     military_type = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, 
     )
     # Loại hàm
     rank_type = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Quân trang
     equipment_type = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Giày
     size_of_shoes = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Mũ
     size_of_hat = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Quần áo
     size_of_clothes = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Công tác chuyên trách
     specialized_work = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Quyết định điều động
     maneuver_decision = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Công tác khác
     other_work = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Công tác làm nhiều nhất
     most_work = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Trình độ học vấn
     education = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True, default="12/12"
     )
     # Tin học
     certi_of_IT = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Ngoại ngữ
     certi_of_foreign_language = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Trình độ chính trị
     political_theory = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Năng lực sở trường
     strength = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Nhóm máu
     blood_type = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Danh hiệu
     compete_title = models.CharField(
-        max_length=255, null=True, blank=True, default="Không"
+        max_length=255, null=True, blank=True,
     )
     # Gia đình chính sách
     policy_family = models.CharField(
@@ -180,23 +180,23 @@ class Officer(models.Model):
     )
     # Địa chỉ hồ sơ
     profile_address = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Số điện thoại
     phone_number = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Số TK BIDV
     bank_account_BIDV = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Số sổ bảo hiểm
     insurance_number = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Số CCCD
     id_citizen = models.CharField(
-        max_length=255, null=True, blank=True, default="nan"
+        max_length=255, null=True, blank=True,
     )
     # Ngày cập nhật
     date_update = models.DateField(null=True, blank=True)

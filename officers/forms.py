@@ -16,10 +16,10 @@ class OfficerInfoForm(forms.ModelForm):
         fields += [key for key in c.GENERAL_INFO_ADDED_FIELDS.keys()]
         widgets = {
             "date_of_birth": forms.DateInput(
-                format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
+                format="%d/%m/%Y", attrs={"placeholder": "ví dụ: 15/06/1990"}
             ),
             "date_update": forms.DateInput(
-                format="%d-%m-%Y", attrs={"placeholder": "dd-mm-yyyy"}
+                format="%d/%m/%Y", attrs={"placeholder": "ví dụ: 15/06/2021"}
             ),
         }
 
@@ -32,16 +32,11 @@ class OfficerInfoForm(forms.ModelForm):
 
         # add placeholders for GENERAL_INFO_DATE_FIELDS
         for field in c.GENERAL_INFO_MONTH_FIELDS:
-            self.fields[field].widget.attrs["placeholder"] = "mm/yyyy"
+            self.fields[field].widget.attrs["placeholder"] = "ví dụ: 06/2021"
 
-        self.fields["date_of_birth"].input_formats = ["%d-%m-%Y"]
-        if not self.initial.get("date_of_birth"):
-            self.initial["date_of_birth"] = "01-01-1800"
-            self.initial["birth_year"] = "1800"
-
-        self.fields["date_update"].input_formats = ["%d-%m-%Y"]
+        self.fields["date_update"].input_formats = ["%d/%m/%Y"]
         if not self.initial.get("date_update"):
-            self.initial["date_update"] = datetime.now().strftime("%d-%m-%Y")
+            self.initial["date_update"] = datetime.now().strftime("%d/%m/%Y")
 
     def clean_month_year(self, field_name):
         value = self.cleaned_data.get(field_name)
