@@ -65,7 +65,28 @@
 
         <form method="POST">
             {% csrf_token %} 
-            {{ form.as_p }}
+            
+            <div>
+                <label for="relationship">Quan hệ:</label>
+                {{ form.relationship }}
+            </div>
+            <div>
+                <label for="name">Họ và tên:</label>
+                {{ form.name }}
+            </div>
+            <div>
+                <label for="birth_year">Năm sinh:</label>
+                {{ form.birth_year }}
+            </div>
+            <div>
+                <label for="job">Nghề nghiệp:</label>
+                {{ form.job }}
+            </div>
+            <div>
+                <label for="current_residence">Chỗ ở hiện nay:</label>
+                {{ form.current_residence }}
+            </div>
+            
             <button type="submit">
                 Lưu
             </button>

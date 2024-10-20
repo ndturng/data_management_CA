@@ -46,11 +46,11 @@ def officer_list(request):
 
     officers = m.Officer.objects.all()  # Start with all officers
 
-    # Search by name
+    # Search by birth_name
     query = request.GET.get("q")
     if query:
         normalized_query = unicodedata.normalize("NFC", query)
-        officers = officers.filter(name__icontains=normalized_query)
+        officers = officers.filter(birth_name__icontains=normalized_query)
 
     # Search by ID
     id_ca_query = request.GET.get("id_ca")
@@ -961,3 +961,81 @@ class HealthDeleteView(
     view_url = "url_health"
     related_context_field = "healths"
     permission_required = "officers.delete_officer_health"
+
+
+########################################################
+# Officer Images
+
+# List View
+class ImageListView(LoginRequiredMixin, ListView):
+    model = m.Image
+    template_name = 'officers/image_list.html'
+    context_object_name = 'images'
+    pk_url_kwarg = 'pk'  # Officer's pk
+
+    def get_queryset(self):
+        self.officer = get_object_or_404(m.Officer, pk=self.kwargs[self.pk_url_kwarg])
+        return self.officer.images.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['officer'] = self.officer
+        return context
+
+# Create Image View
+class ImageCreateView(LoginRequiredMixin, CreateView):
+    model = m.Image
+    form_class = f.ImageForm
+    template_name = 'officers/image_form.html'
+    pk_url_kwarg = 'pk'  # Officer's pk
+
+    def form_valid(self, form):
+        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.pk_url_kwarg])
+        form.instance.officer = officer
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        # Pass the officer's pk to the template
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs[self.pk_url_kwarg]
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('url_image', kwargs={self.pk_url_kwarg: self.kwargs[self.pk_url_kwarg]})
+
+# Update Image View
+class ImageUpdateView(LoginRequiredMixin, UpdateView):
+    model = m.Image
+    form_class = f.ImageForm
+    template_name = 'officers/image_form.html'
+    pk_url_kwarg = 'image_pk'  # Image's pk
+    officer_url_kwarg = 'officer_pk'  # Officer's pk
+
+    def get_object(self):
+        # Ensure the image belongs to the correct officer
+        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.officer_url_kwarg])
+        return get_object_or_404(m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer)
+
+    def get_success_url(self):
+        return reverse_lazy('url_image', kwargs={'pk': self.kwargs['officer_pk']})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add officer's pk to the context so the template can use it
+        context['pk'] = self.kwargs[self.officer_url_kwarg]
+        return context
+
+# Delete Image View
+class ImageDeleteView(LoginRequiredMixin, DeleteView):
+    model = m.Image
+    template_name = 'officers/image_confirm_delete.html'
+    pk_url_kwarg = 'image_pk'  # Image's pk
+    officer_url_kwarg = 'officer_pk'  # Officer's pk
+
+    def get_object(self):
+        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.officer_url_kwarg])
+        return get_object_or_404(m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer)
+
+    def get_success_url(self):
+        # Use pk instead of officer_pk to match the URL pattern
+        return reverse_lazy('url_image', kwargs={'pk': self.kwargs[self.officer_url_kwarg]})

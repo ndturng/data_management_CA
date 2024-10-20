@@ -1,0 +1,11 @@
+{% block content %}
+  <div class="container">
+    <h2>Bạn đang muốn xoá ảnh này?</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      <a href="{% url 'url_image' pk=object.officer.pk %}" class="btn btn-secondary">HUỶ</a> |
+      <button type="submit" class="btn btn-danger">XOÁ</button>
+    </form>
+  </div>
+{% endblock %}
