@@ -135,14 +135,14 @@
 <!-- Officer List and Filter Form -->
 <div id="officerList" style="display: block;">
 
-    <ul>
+    <ol>
         {% for officer in officers %}
-            <li>{{ officer.birth_name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+            <li>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}  
                 - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> | 
                 <a href="{% url 'officer_delete' officer.pk %}">Xoá</a>
             </li>
         {% endfor %}
-    </ul>
+    </ol>
 </div>
 
 <!-- Export Form -->
@@ -159,12 +159,15 @@
                 <input type="checkbox" id="select-all-officers">
                 Chọn tất cả
             </label> <br>
-
-            {% for officer in officers %}
-                <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
-                <label for="officer_{{ officer.pk }}">{{ officer.birth_name }} ({{ officer.id_ca }})</label>
-                <br>
-            {% endfor %}
+            <ol>
+                {% for officer in officers %}
+                    <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                    <label for="officer_{{ officer.pk }}">
+                        {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}
+                    </label>
+                    <br>
+                {% endfor %}
+            </ol>
         </div>
 
         <!-- Field Selection -->
@@ -175,8 +178,9 @@
                 <input type="checkbox" id="select-all-fields"> 
                 Chọn tất cả
             </label>
-
-            {{ form.fields }}
+            <ul>
+                {{ form.fields }}
+            </ul>
         </div>
 
         <!-- Related Tables Selection -->
@@ -187,8 +191,9 @@
                 <input type="checkbox" id="select-all-related-tables">
                 Chọn tất cả
             </label>
-            
-            {{ form.related_tables }}
+            <ul>
+                {{ form.related_tables }}
+            </ul>
         </div>
 
         <button type="submit" name="export">Xuất dữ liệu</button>
