@@ -43,15 +43,15 @@
             </div>
         </div>
         <div>
-            <h1 class="text-4xl text-center ">Thông tin chức danh: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+            <h1 class="text-4xl text-center">Thông tin chức danh: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
             <div class="mt-10 mx-10">
                 <div class="flex justify-between mb-7">
                     <!-- Link to Officer Details Page -->
-                    <a href="{% url 'officer_detail' officer.pk %}">
-                        <button class="btn shadow-inner drop-shadow-lg text-lg">
-                            <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
-                            <span>Quay lại</span>
-                        </button> 
+                    <a href="{% url 'officer_detail' officer.pk %}"
+                    class="btn shadow-inner drop-shadow-lg text-lg"
+                    >
+                        <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
+                        <span>Quay lại</span>
                     </a>
 
                     <!-- Create New Title Button -->
@@ -107,23 +107,28 @@
             </div>
 
             <!-- Form for creating/updating titles -->
-             
             {% if form %}
             <dialog id="modal" class="modal">
                 <div class="modal-box">
-                    <form method="dialog">
-                        <button class="btn btn-sm btn-circle btn-ghost absolute right-5 top-5">
-                            <img src="{% static 'src/close.png' %}" alt="Close icon" class="w-5 h-5">
-                        </button>
-                    </form>
-
-                    <h1 class="text-xl font-semibold mb-8">
+                    <h1 class="text-xl font-semibold mb-7 ml-2">
                         {% if edit_title_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
                     </h1>
-
+                    <form method="dialog">
+                        <a href="{% url 'url_title_view' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                            <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
+                        </a>
+                    </form>
+                    
                     <form method="POST">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <div class="pb-5">
+                            <label for="id_appointed_date" class="font-semibold mr-3">Ngày bổ nhiệm:</label>
+                            {{ form.appointed_date }}
+                        </div>
+                        <div>
+                            <label for="id_title" class="font-semibold mr-11">Chức danh:</label>
+                            {{ form.title }}
+                        </div>
                         <div class="modal-action">
                             <button type="submit" class="btn">
                                 Lưu
@@ -131,19 +136,18 @@
                         </div>
                     </form>  
                 </div>
+                <form method="dialog" class="modal-backdrop">
+                    <a href="{% url 'url_title_view' officer.pk %}">close</a>
+                </form>
             </dialog>
             {% endif %}
 
-            
             <script>
                 // Automatically show the modal when the page loads
                 document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('modal').showModal();
                 });
             </script>
-
-
-            
         </div>
     </body>
 </html>

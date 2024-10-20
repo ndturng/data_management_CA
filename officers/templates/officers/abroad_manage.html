@@ -1,83 +1,160 @@
 {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{{ officer.birth_name }} - Ra nước ngoài</title>
+        {% tailwind_css %}
 
-        <script type="module">
-            import { confirmDelete } from "{% static 'js/utils.js' %}";
-            window.confirmDelete = confirmDelete;
+        <script>
+            function confirmDelete() {
+                return confirm('Are you sure you want to delete this title?');
+            }
         </script>
     </head>
     <body>
-        <h1>{{ officer.birth_name }} - Ra nước ngoài:</h1>
-        <ul>
-            {% for abroad in abroads %}
-            <li>
-                <strong>Thời gian:</strong>
-                {{ abroad.time }} -
-                <strong>Địa điểm:</strong>
-                {{ abroad.country }} -
-                <strong>Mục đích:</strong>
-                {{ abroad.purpose }}
+        <div class="navbar bg-base-100">
+            <div class="navbar-start">
+                <div class="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle ml-10 mt-5">
+                        <img src="{% static 'src/menu.png' %}" alt="Menu" class="w-10 h-10">
+                    </div>
+                    <ul
+                        tabindex="0"
+                        class="menu menu-lg dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 ml-5 shadow">
+                        <li><a href="{% url 'url_title_view' officer.pk %}">Chức danh</a></li>
+                        <li><a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a></li>
+                        <li><a href="{% url 'url_learning_path' officer.pk %}">Đào tạo</a></li> 
+                        <li><a href="{% url 'url_work_process' officer.pk %}">Quá trình công tác</a></li> 
+                        <li><a href="{% url 'url_salary_process' officer.pk %}">Quá trình lương</a></li>
+                        <li><a href="{% url 'url_laudatory' officer.pk %}">Khen thưởng</a></li>
+                        <li><a href="{% url 'url_discipline' officer.pk %}">Kỷ luật</a></li> 
+                        <li><a href="{% url 'url_relative' officer.pk %}">Thân nhân</a></li> 
+                        <li><a href="{% url 'url_abroad' officer.pk %}">Ra nước ngoài</a></li>
+                        <li><a href="{% url 'url_army_join_history' officer.pk %}">Tham gia quân đội</a></li>
+                        <li><a href="{% url 'url_health' officer.pk %}">Sức khoẻ</a> 
+                        
+                        <a href="{% url 'officer_update' officer.pk %}">Cập nhật</a> 
+                        <a href="{% url 'officer_list' %}">Quay lại danh sách</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-                <!-- Update Button -->
-                <a
-                    href="{% url 'url_abroad_update' officer.pk abroad.id %}"
-                >
-                    Cập nhật
-                </a>
+        <div>
+            <h1 class="text-4xl text-center">Ra nước ngoài: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+            <div class="my-10 mx-10">
+                <div class="flex justify-between mb-7">
+                    <a href="{% url 'officer_detail' officer.pk %}"
+                    class="btn shadow-inner drop-shadow-lg text-lg"
+                    >
+                        <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
+                        <span>Quay lại</span>
+                    </a>
+                    <!-- Create New Abroad Button -->
+                    <a href="{% url 'url_abroad_create' officer.pk %}">
+                        <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg">
+                            <span class="mr-2">Thêm mới</span>
+                            <!-- Add the folder icon here -->
+                            <img src="{% static 'src/new-folder.png' %}" alt="New Folder" class="w-5 h-5">
+                        </button>
+                    </a>
+                </div>
 
-                <!-- Delete Button with confirmation -->
-                <form
-                    method="POST"
-                    action="{% url 'url_abroad_delete' officer.pk abroad.id %}"
-                    style="display: inline"
-                    onsubmit="return confirmDelete();"
-                >
-                    {% csrf_token %}
-                    <button type="submit" style="color: red">Xoá</button>
+                <table class="table-auto border-collapse w-full text-center">
+                    <thead>
+                        <tr class="bg-gray-600 text-white text-xl">
+                            <th class="py-2 px-4">Thời gian</th>
+                            <th class="py-2 px-4">Địa điểm</th>
+                            <th class="py-2 px-4">Mục đích</th>
+                            <th class="py-2 px-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for abroad in abroads %}
+                        <tr class="border-t border-gray-300 bg-gray-100 text-lg">
+                            <td class="py-2 px-4">{{ abroad.time }}</td>
+                            <td class="py-2 px-4">{{ abroad.country }}</td>
+                            <td class="py-2 px-4">{{ abroad.purpose }}</td>
+                            <td class="py-2 px-4">
+                                <!-- Update Button -->
+                                <a href="{% url 'url_abroad_update' officer.pk abroad.id %}"
+                                class="text-green-500 hover:text-green-600 underline mx-2"
+                                >
+                                    Cập nhật
+                                </a>
+
+                                <span>/</span>
+                                <!-- Delete Button with confirmation -->
+                                <form
+                                    method="POST"
+                                    action="{% url 'url_abroad_delete' officer.pk abroad.id %}"
+                                    style="display: inline"
+                                    onsubmit="return confirmDelete();"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-600 hover:text-red-700 underline mx-2">
+                                        Xoá
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Create or Update Abroad Form -->
+            {% if form %}
+            <dialog class="modal" id="modal">
+                <div class="modal-box">
+                    <h1 class="text-xl font-semibold mb-7 ml-2">
+                        {% if edit_abroad_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:
+                        {% endif %}
+                    </h1>
+                    <form method="dialog">
+                        <a href="{% url 'url_abroad' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                            <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
+                        </a>
+                    </form>
+
+                    <form method="POST" class="ml-10">
+                        {% csrf_token %} 
+
+                        <div class="pb-5">
+                            <label for="id_time" class="font-semibold mr-3">Thời gian:</label>
+                            {{ form.time }}
+                        </div>
+                        <div class="pb-5">
+                            <label for="id_country" class="font-semibold mr-3">Địa điểm:</label>
+                            {{ form.country }}
+                        </div>
+                        <div>
+                            <label for="id_purpose" class="font-semibold mr-3">Mục đích:</label>
+                            {{ form.purpose }}
+                        </div>
+                        
+                        <div class="modal-action">
+                            <button type="submit" class="btn">
+                                Lưu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                    <a href="{% url 'url_abroad' officer.pk %}">close</a>
                 </form>
-            </li>
-            {% endfor %}
-        </ul>
-        <!-- Create New Abroad Button -->
-        <a href="{% url 'url_abroad_create' officer.pk %}">
-            <button>Thêm mới</button>
-        </a>
-
-        <a href="{% url 'officer_detail' officer.pk %}">
-            Quay lại
-        </a>
-
-        <!-- Create or Update Abroad Form -->
-        {% if form %}
-        <h1>
-            {% if edit_abroad_id %}Cập nhật{% else %}Thêm mới
+            </dialog>
             {% endif %}
-        </h1>
-        <form method="POST">
-            {% csrf_token %} 
 
-            <div>
-                <label for="id_time">Thời gian:</label>
-                {{ form.time }}
-            </div>
-            <div>
-                <label for="id_country">Địa điểm:</label>
-                {{ form.country }}
-            </div>
-            <div>
-                <label for="id_purpose">Mục đích:</label>
-                {{ form.purpose }}
-            </div>
-            
-            <button type="submit">
-                Lưu
-            </button>
-        </form>
-        {% endif %}
+            <script>
+                // Automatically show the modal when the page loads
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.getElementById('modal').showModal();
+                });
+            </script>
+        </div>
     </body>
 </html>

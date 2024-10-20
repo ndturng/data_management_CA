@@ -162,10 +162,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 import os
-from decouple import config
+# from decouple import config
 
 # Check if in production environment
-IS_PRODUCTION = config('IS_PRODUCTION', default=False, cast=bool)
+# IS_PRODUCTION = config('IS_PRODUCTION', default=False, cast=bool)
+IS_PRODUCTION = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
