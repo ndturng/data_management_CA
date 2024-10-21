@@ -7,6 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{{ officer.birth_name }} - Quy hoạch</title>
         {% tailwind_css %}
+
+        <link rel="stylesheet" href="{% static 'src/styles.css' %}">
         
         <script>
             function confirmDelete() {
@@ -108,28 +110,29 @@
             {% if form %}
             <dialog id="modal" class="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_position_plan_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    <h1 class="text-xl font-semibold mb-7">
+                        {% if edit_position_plan_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_position_plan' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_position_plan' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
 
                     <form method="POST">
                         {% csrf_token %} 
-                        <div class="pb-5">
-                            <label for="period" class="font-semibold ml-2 mr-8">Giai đoạn:</label>
+                        <label for="period" class="font-semibold ml-6">Giai đoạn:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.period }}
                         </div>
-                        <div>
-                            <label for="position" class="font-semibold mr-7">Quy hoạch:</label>
+                        
+                        <label for="position" class="font-semibold ml-7">Quy hoạch:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.position }}
                         </div>
 
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>

@@ -1,5 +1,6 @@
 {% load static %}
 {% load static tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,6 +8,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{{ officer.birth_name }} - Chức danh</title>
         {% tailwind_css %}
+
+        <link rel="stylesheet" href="{% static 'src/styles.css' %}">
 
         <script>
             function confirmDelete() {
@@ -110,27 +113,29 @@
             {% if form %}
             <dialog id="modal" class="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_title_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_title_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_title_view' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_title_view' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
                     
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="pb-5">
-                            <label for="id_appointed_date" class="font-semibold mr-3">Ngày bổ nhiệm:</label>
+                        
+                        <label for="id_appointed_date" class="font-semibold ml-8">Ngày bổ nhiệm:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.appointed_date }}
                         </div>
-                        <div>
-                            <label for="id_title" class="font-semibold ml-8 mr-3">Chức danh:</label>
+                        
+                        <label for="id_title" class="font-semibold ml-8">Chức danh:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.title }}
                         </div>
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>
@@ -145,16 +150,8 @@
             <script>
                 // Automatically show the modal when the page loads
                 document.addEventListener("DOMContentLoaded", function() {
-                    console.log('DOM fully loaded and parsed');
-                    const modal = document.getElementById('modal');
-                    if (modal) {
-                        console.log('Modal found, showing modal');
-                        modal.showModal();
-                    } else {
-                        console.error('Modal element not found.');
-                    }
+                    document.getElementById('modal').showModal();
                 });
-
             </script>
             
         </div>
