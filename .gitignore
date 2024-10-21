@@ -10,3 +10,5 @@ officers/migrations/*.py
 *.png
 *.jpg
 *.jpeg
+
+node_modules/
