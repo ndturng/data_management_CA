@@ -126,7 +126,7 @@
                             {{ form.appointed_date }}
                         </div>
                         <div>
-                            <label for="id_title" class="font-semibold mr-11">Chức danh:</label>
+                            <label for="id_title" class="font-semibold ml-8 mr-3">Chức danh:</label>
                             {{ form.title }}
                         </div>
                         <div class="modal-action">
@@ -145,9 +145,18 @@
             <script>
                 // Automatically show the modal when the page loads
                 document.addEventListener("DOMContentLoaded", function() {
-                    document.getElementById('modal').showModal();
+                    console.log('DOM fully loaded and parsed');
+                    const modal = document.getElementById('modal');
+                    if (modal) {
+                        console.log('Modal found, showing modal');
+                        modal.showModal();
+                    } else {
+                        console.error('Modal element not found.');
+                    }
                 });
+
             </script>
+            
         </div>
     </body>
 </html>
