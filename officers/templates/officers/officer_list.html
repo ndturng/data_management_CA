@@ -135,14 +135,14 @@
 <!-- Officer List and Filter Form -->
 <div id="officerList" style="display: block;">
 
-    <ul>
+    <ol>
         {% for officer in officers %}
-            <li>{{ officer.birth_name }} ({{ officer.date_of_birth|date:"d/m/Y" }}) {{ officer.id_ca }}  
+            <li>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}  
                 - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> | 
                 <a href="{% url 'officer_delete' officer.pk %}">Xoá</a>
             </li>
         {% endfor %}
-    </ul>
+    </ol>
 </div>
 
 <!-- Export Form -->
@@ -151,24 +151,49 @@
         {% csrf_token %}
         <h3>Chọn cán bộ và thông tin cần trích xuất</h3>
 
+        <!-- Officer Selection -->
         <div>
             <strong>Chọn cán bộ:</strong><br>
-            {% for officer in officers %}
-                <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
-                <label for="officer_{{ officer.pk }}">{{ officer.birth_name }} ({{ officer.id_ca }})</label>
-                <br>
-            {% endfor %}
+
+            <label>
+                <input type="checkbox" id="select-all-officers">
+                Chọn tất cả
+            </label> <br>
+            <ol>
+                {% for officer in officers %}
+                    <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                    <label for="officer_{{ officer.pk }}">
+                        {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}
+                    </label>
+                    <br>
+                {% endfor %}
+            </ol>
         </div>
 
+        <!-- Field Selection -->
         <div>
             <strong>Chọn thông tin:</strong><br>
-            {{ form.fields }}
+
+            <label>
+                <input type="checkbox" id="select-all-fields"> 
+                Chọn tất cả
+            </label>
+            <ul>
+                {{ form.fields }}
+            </ul>
         </div>
 
         <!-- Related Tables Selection -->
         <div>
             <strong>Chọn bảng liên quan:</strong><br>
-            {{ form.related_tables }}
+            
+            <label>
+                <input type="checkbox" id="select-all-related-tables">
+                Chọn tất cả
+            </label>
+            <ul>
+                {{ form.related_tables }}
+            </ul>
         </div>
 
         <button type="submit" name="export">Xuất dữ liệu</button>
@@ -191,4 +216,23 @@
             exportForm.style.display = 'none';
         }
     }
+    document.getElementById('select-all-officers').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="officers"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+    document.getElementById('select-all-fields').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    document.getElementById('select-all-related-tables').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="{{ form.related_tables.name }}"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
 </script>
