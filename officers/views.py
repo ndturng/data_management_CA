@@ -38,7 +38,6 @@ def officer_list(request):
         "size_of_hat": "size_of_hat",
         "political_theory": "political_theory",
         "position": "position",
-        "year_of_birth": "birth_year",
         "education": "education",
         "current_residence": "current_residence",
         "birth_place": "birth_place",
@@ -55,9 +54,14 @@ def officer_list(request):
     # Search by ID
     id_ca_query = request.GET.get("id_ca")
     if id_ca_query:
-        # Trim the whitespace
         id_ca_query = id_ca_query.strip()
         officers = officers.filter(id_ca__icontains=id_ca_query)
+
+    # Search by year of birth
+    birth_year_query = request.GET.get("birth_year")
+    if birth_year_query:
+        birth_year_query = birth_year_query.strip()
+        officers = officers.filter(birth_year=birth_year_query)
 
     # Apply filters
     for field, filter_action in filter_fields.items():
@@ -70,9 +74,6 @@ def officer_list(request):
                 # Otherwise, apply a simple filter
                 officers = officers.filter(**{filter_action: value})
 
-        if field == "year_of_birth":
-            selected_year_of_birth = int(value) if value else None
-
     # Get unique sorted values for filter dropdowns
     dropdown_fields = {
         "military_types": "military_type",
@@ -82,7 +83,6 @@ def officer_list(request):
         "political_theories": "political_theory",
         "hat_sizes": "size_of_hat",
         "positions": "position",
-        "years_of_birth": "birth_year",
         "birth_places": "birth_place",
         "educations": "education",
         "current_residences": "current_residence",
@@ -99,7 +99,7 @@ def officer_list(request):
     context["officers"] = officers
     context["query"] = query
     context["id_ca_query"] = id_ca_query
-    context["selected_year_of_birth"] = selected_year_of_birth
+    context["birth_year_query"] = birth_year_query
 
     # Handle export functionality
     if request.method == "POST" and "export" in request.POST:
