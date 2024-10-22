@@ -57,7 +57,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for mt in military_types %}
+        {% for mt in military_type %}
             <option value="{{ mt }}" 
                 {% if request.GET.military_type == mt %}selected{% endif %}
                 >{{ mt }}</option>
@@ -71,7 +71,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for mr in military_ranks %}
+        {% for mr in military_rank %}
             <option value="{{ mr }}" 
                 {% if request.GET.military_rank == mr %}selected{% endif %}
                 >{{ mr }}</option>
@@ -85,7 +85,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for p in positions %}
+        {% for p in position %}
             <option value="{{ p }}" 
                 {% if request.GET.position == p %}selected{% endif %}
                 >{{ p }}</option>
@@ -99,7 +99,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for wu in work_units %}
+        {% for wu in work_unit %}
             <option value="{{ wu }}" 
                 {% if request.GET.work_unit == wu %}selected{% endif %}
                 >{{ wu }}</option>
@@ -113,7 +113,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for pt in political_theories %}
+        {% for pt in political_theory %}
             <option value="{{ pt }}" 
                 {% if request.GET.political_theory == pt %}selected{% endif %}
                 >{{ pt }}</option>
@@ -127,7 +127,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for bp in birth_places %}
+        {% for bp in birth_place %}
             <option value="{{ bp }}" 
                 {% if request.GET.birth_place == bp %}selected{% endif %}
                 >{{ bp }}</option>
@@ -141,7 +141,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for ed in educations %}
+        {% for ed in education %}
             <option value="{{ ed }}" 
                 {% if request.GET.education == ed %}selected{% endif %}
                 >{{ ed }}</option>
@@ -155,7 +155,7 @@
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for cr in current_residences %}
+        {% for cr in current_residence %}
             <option value="{{ cr }}" 
                 {% if request.GET.current_residence == cr %}selected{% endif %}
                 >{{ cr }}</option>

@@ -1,3 +1,22 @@
+SEARCH_FIELDS = [
+    "birth_name",
+    "id_ca",
+    "birth_year",
+]
+
+FILTER_FIELDS = [
+    "military_type",
+    "military_rank",
+    "work_unit",
+    "blood_type",
+    "size_of_hat",
+    "political_theory",
+    "position",
+    "education",
+    "current_residence",
+    "birth_place",
+]
+
 REQUIRED_FIELDS = [
     "birth_name",
     "id_ca",
@@ -167,7 +186,7 @@ RANK_SCALE = {
 
 SALARY_SCALE = {
     # salary_coefficient: (military_rank, next_salary_coefficient, promotion_year)
-    3.2: ("Hạ sĩ", 3.5, 1),  
+    3.2: ("Hạ sĩ", 3.5, 1),
     3.5: ("Trung sĩ", 3.8, 1),
     3.8: ("Thượng sĩ", 4.2, 2),
     4.2: ("Thiếu úy", 4.6, 2),
