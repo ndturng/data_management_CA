@@ -20,9 +20,9 @@
 
     <!-- Search by name -->
     <input type="text"
-           name="q"
+           name="birth_name"
            placeholder="Tìm theo tên"
-           value="{{ query|default_if_none:'' }}"
+           value="{{ birth_name|default_if_none:'' }}"
            style="flex: 1;
                   min-width: 150px" />
 
@@ -30,7 +30,7 @@
     <input type="text"
            name="id_ca"
            placeholder="Tìm theo số hiệu"
-           value="{{ id_ca_query|default_if_none:'' }}"
+           value="{{ id_ca|default_if_none:'' }}"
            style="flex: 1;
                   min-width: 150px" />
 
@@ -38,7 +38,7 @@
     <input type="text"
     name="birth_year"
     placeholder="Tìm theo năm sinh"
-    value="{{ birth_year_query|default_if_none:'' }}"
+    value="{{ birth_year|default_if_none:'' }}"
     style="flex: 1;
             min-width: 150px" />
 

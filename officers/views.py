@@ -30,6 +30,14 @@ from . import models as m
 
 @login_required
 def officer_list(request):
+    context = {}
+
+    search_fields = [
+        "birth_name",
+        "id_ca",
+        "birth_year",
+    ]
+
     filter_fields = {
         "military_type": "military_type",
         "military_rank": "military_rank",
@@ -45,23 +53,16 @@ def officer_list(request):
 
     officers = m.Officer.objects.all()  # Start with all officers
 
-    # Search by birth_name
-    query = request.GET.get("q")
-    if query:
-        normalized_query = unicodedata.normalize("NFC", query)
-        officers = officers.filter(birth_name__icontains=normalized_query)
-
-    # Search by ID
-    id_ca_query = request.GET.get("id_ca")
-    if id_ca_query:
-        id_ca_query = id_ca_query.strip()
-        officers = officers.filter(id_ca__icontains=id_ca_query)
-
-    # Search by year of birth
-    birth_year_query = request.GET.get("birth_year")
-    if birth_year_query:
-        birth_year_query = birth_year_query.strip()
-        officers = officers.filter(birth_year=birth_year_query)
+    # Search by multiple fields
+    for field in search_fields:
+        query = request.GET.get(field)
+        # Normalize the query
+        if query:
+            print("Seaching for: ", query)
+            query = query.strip()
+            normalized_query = unicodedata.normalize("NFC", query)
+            officers = officers.filter(**{f"{field}__icontains": normalized_query})
+            context[field] = query
 
     # Apply filters
     for field, filter_action in filter_fields.items():
@@ -88,18 +89,14 @@ def officer_list(request):
         "current_residences": "current_residence",
     }
 
-    context = {}
     for context_key, field in dropdown_fields.items():
         context[context_key] = sorted(
             filter(
                 None, m.Officer.objects.values_list(field, flat=True).distinct()
             )
         )
-
+    
     context["officers"] = officers
-    context["query"] = query
-    context["id_ca_query"] = id_ca_query
-    context["birth_year_query"] = birth_year_query
 
     # Handle export functionality
     if request.method == "POST" and "export" in request.POST:
