@@ -1,181 +1,263 @@
 {% if user.is_authenticated %}
-    <p>Chào mừng, {{ user.username }}! </p>
-    <form method="POST" action="{% url 'logout' %}">
+    <p>Chào mừng, {{ user.username }}!</p>
+    <form method="POST"
+          action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Đăng xuất</button>
     </form>
 {% else %}
     <a href="{% url 'login' %}">Đăng nhập</a>
 {% endif %}
+
 <h2>THÔNG TIN CÁN BỘ</h2>
 
+<form method="GET"
+      action="{% url 'officer_list' %}"
+      style="display: flex;
+             flex-wrap: wrap;
+             gap: 10px;
+             align-items: center">
 
+    <!-- Search by name -->
+    <input type="text"
+           name="q"
+           placeholder="Tìm theo tên"
+           value="{{ query|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-<form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-    <input type="text" name="q" placeholder="Tìm theo tên" value="{{ query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+    <!-- Search by id_ca -->
+    <input type="text"
+           name="id_ca"
+           placeholder="Tìm theo số hiệu"
+           value="{{ id_ca_query|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-    <input type="text" name="id_ca" placeholder="Tìm theo số hiệu" value="{{ id_ca_query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+    <button type="submit"
+            style="flex: 0 0 auto">Lọc</button>
 
-    <button type="submit" style="flex: 0 0 auto;">Lọc</button>
     {% if request.GET %}
-        <a href="{% url 'officer_list' %}" class="button" style="flex: 0 0 auto;">Xoá bộ lọc</a>
+        <a href="{% url 'officer_list' %}"
+           class="button"
+           style="flex: 0 0 auto">Xoá bộ lọc</a>
     {% endif %}
 
     <label for="military_type">Lực lượng:</label>
-    <select name="military_type" style="flex: 1; min-width: 150px;">
+    <select name="military_type"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for mt in military_types %}
-            <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
+            <option value="{{ mt }}" 
+                {% if request.GET.military_type == mt %}selected{% endif %}
+                >{{ mt }}</option>
         {% endfor %}
+
     </select>
 
     <label for="military_rank">Cấp bậc hàm:</label>
-    <select name="military_rank" style="flex: 1; min-width: 150px;">
+    <select name="military_rank"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for mr in military_ranks %}
-            <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
+            <option value="{{ mr }}" 
+                {% if request.GET.military_rank == mr %}selected{% endif %}
+                >{{ mr }}</option>
         {% endfor %}
+
     </select>
 
     <label for="position">Chức vụ:</label>
-    <select name="position" style="flex: 1; min-width: 150px;">
+    <select name="position"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for p in positions %}
-            <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
+            <option value="{{ p }}" 
+                {% if request.GET.position == p %}selected{% endif %}
+                >{{ p }}</option>
         {% endfor %}
+
     </select>
 
     <label for="work_unit">Đơn vị công tác:</label>
-    <select name="work_unit" style="flex: 1; min-width: 150px;">
+    <select name="work_unit"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for wu in work_units %}
-            <option value="{{ wu }}" {% if request.GET.work_unit == wu %}selected{% endif %}>{{ wu }}</option>
+            <option value="{{ wu }}" 
+                {% if request.GET.work_unit == wu %}selected{% endif %}
+                >{{ wu }}</option>
         {% endfor %}
+
     </select>
 
     <label for="political_theory">LLCT:</label>
-    <select name="political_theory" style="flex: 1; min-width: 150px;">
+    <select name="political_theory"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for pt in political_theories %}
-            <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
+            <option value="{{ pt }}" 
+                {% if request.GET.political_theory == pt %}selected{% endif %}
+                >{{ pt }}</option>
         {% endfor %}
+
     </select>
 
     <label for="year_of_birth">Năm sinh:</label>
-    <select name="year_of_birth" style="flex: 1; min-width: 150px;">
+    <select name="year_of_birth"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for year in years_of_birth %}
-            <option value="{{ year }}" {% if year == selected_year_of_birth %}selected{% endif %}>{{ year }}</option>
+            <option value="{{ year }}" 
+                {% if year == selected_year_of_birth %}selected{% endif %}
+                >{{ year }}</option>
         {% endfor %}
+
     </select>
 
     <label for="birth_place">Nơi sinh:</label>
-    <select name="birth_place" style="flex: 1; min-width: 150px;">
+    <select name="birth_place"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for bp in birth_places %}
-            <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
+            <option value="{{ bp }}" 
+                {% if request.GET.birth_place == bp %}selected{% endif %}
+                >{{ bp }}</option>
         {% endfor %}
+
     </select>
 
     <label for="education">Trình độ học vấn:</label>
-    <select name="education" style="flex: 1; min-width: 150px;">
+    <select name="education"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for ed in educations %}
-            <option value="{{ ed }}" {% if request.GET.education == ed %}selected{% endif %}>{{ ed }}</option>
+            <option value="{{ ed }}" 
+                {% if request.GET.education == ed %}selected{% endif %}
+                >{{ ed }}</option>
         {% endfor %}
+
     </select>
 
     <label for="current_residence">Chỗ ở hiện nay:</label>
-    <select name="current_residence" style="flex: 1; min-width: 150px;">
+    <select name="current_residence"
+            style="flex: 1;
+                   min-width: 150px">
         <option value="">Tất cả</option>
+
         {% for cr in current_residences %}
-            <option value="{{ cr }}" {% if request.GET.current_residence == cr %}selected{% endif %}>{{ cr }}</option>
+            <option value="{{ cr }}" 
+                {% if request.GET.current_residence == cr %}selected{% endif %}
+                >{{ cr }}</option>
         {% endfor %}
+
     </select>
 
-    {% comment %} <label for="blood_type">Blood Type:</label>
-    <select name="blood_type" style="flex: 1; min-width: 150px;">
-        <option value="">Tất cả</option>
-        {% for bt in blood_types %}
-            <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
-        {% endfor %}
-    </select> {% endcomment %}
-
-    {% comment %} <label for="size_of_hat">Hat Size:</label>
-    <select name="size_of_hat" style="flex: 1; min-width: 150px;">
-        <option value="">Tất cả</option>
-        {% for hs in hat_size %}
-            <option value="{{ hs }}" {% if request.GET.size_of_hat == hs %}selected{% endif %}>{{ hs }}</option>
-        {% endfor %}
-    </select> {% endcomment %}
-
-    
 </form>
 
-<a href="{% url 'officer_create' %}">Thêm mới cán bộ</a> | 
+<a href="{% url 'officer_create' %}">Thêm mới cán bộ</a> |
 <a href="{% url 'excel_upload' %}">Tải lên từ Excel</a>
+
 {% if officers %}
     | <a href="{% url 'delete_all_officers' %}">Xoá tất cả</a>
 {% endif %}
 
+
 <!-- Display messages -->
+
 {% if messages %}
+
     {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
+
 {% endif %}
+
 
 <!-- Checkbox to toggle between officer list and export form -->
 <label>
-    <input type="checkbox" id="toggleExportForm" onclick="toggleView()"> Xuất dữ liệu
+    <input type="checkbox"
+           id="toggleExportForm"
+           onclick="toggleView()" />
+    Xuất dữ liệu
 </label>
 
 <!-- Officer List and Filter Form -->
-<div id="officerList" style="display: block;">
+<div id="officerList"
+     style="display: block">
 
     <ol>
+
         {% for officer in officers %}
-            <li>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}  
-                - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> | 
+            <li>
+                {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
+                - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> |
                 <a href="{% url 'officer_delete' officer.pk %}">Xoá</a>
             </li>
         {% endfor %}
+
     </ol>
 </div>
 
 <!-- Export Form -->
-<div id="exportForm" style="display: none;">
-    <form method="post" action="{% url 'officer_list' %}">
+<div id="exportForm"
+     style="display: none">
+    <form method="post"
+          action="{% url 'officer_list' %}">
         {% csrf_token %}
         <h3>Chọn cán bộ và thông tin cần trích xuất</h3>
 
         <!-- Officer Selection -->
         <div>
-            <strong>Chọn cán bộ:</strong><br>
+            <strong>Chọn cán bộ:</strong>
+            <br />
 
             <label>
-                <input type="checkbox" id="select-all-officers">
+                <input type="checkbox"
+                       id="select-all-officers" />
                 Chọn tất cả
-            </label> <br>
+            </label>
+            <br />
             <ol>
+
                 {% for officer in officers %}
-                    <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                    <input type="checkbox"
+                           name="officers"
+                           value="{{ officer.pk }}"
+                           id="officer_{{ officer.pk }}" />
                     <label for="officer_{{ officer.pk }}">
-                        {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}
+                        {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
                     </label>
-                    <br>
+                    <br />
                 {% endfor %}
+
             </ol>
         </div>
 
         <!-- Field Selection -->
         <div>
-            <strong>Chọn thông tin:</strong><br>
+            <strong>Chọn thông tin:</strong>
+            <br />
 
             <label>
-                <input type="checkbox" id="select-all-fields"> 
+                <input type="checkbox"
+                       id="select-all-fields" />
                 Chọn tất cả
             </label>
             <ul>
@@ -185,10 +267,12 @@
 
         <!-- Related Tables Selection -->
         <div>
-            <strong>Chọn bảng liên quan:</strong><br>
-            
+            <strong>Chọn bảng liên quan:</strong>
+            <br />
+
             <label>
-                <input type="checkbox" id="select-all-related-tables">
+                <input type="checkbox"
+                       id="select-all-related-tables" />
                 Chọn tất cả
             </label>
             <ul>
@@ -196,7 +280,8 @@
             </ul>
         </div>
 
-        <button type="submit" name="export">Xuất dữ liệu</button>
+        <button type="submit"
+                name="export">Xuất dữ liệu</button>
     </form>
 </div>
 
