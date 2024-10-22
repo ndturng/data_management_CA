@@ -51,6 +51,20 @@
            style="flex: 0 0 auto">Xoá bộ lọc</a>
     {% endif %}
 
+    <label for="gender">Giới tính:</label>
+    <select name="gender"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+        
+        {% for g in gender %}
+            <option value="{{ g }}"
+                {% if request.GET.gender == g %}selected{% endif %}
+                >{{ g }}</option>
+        {% endfor %}
+
+    </select>
+
     <label for="military_type">Lực lượng:</label>
     <select name="military_type"
             style="flex: 1;

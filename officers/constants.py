@@ -15,6 +15,7 @@ FILTER_FIELDS = [
     "education",
     "current_residence",
     "birth_place",
+    "gender",
 ]
 
 REQUIRED_FIELDS = [
