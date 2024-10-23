@@ -42,6 +42,30 @@
     style="flex: 1;
             min-width: 150px" />
 
+    <!-- Search by year_join_party -->
+    <input type="text"
+           name="year_join_party"
+           placeholder="Tìm theo năm vào Đảng"
+           value="{{ year_join_party|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+    
+    <!-- Search by year_join_party_official -->
+    <input type="text"
+           name="year_join_party_official"
+           placeholder="Tìm theo năm vào Đảng chính thức"
+           value="{{ year_join_party_official|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by year_join_CA -->
+    <input type="text"
+           name="year_join_CA"
+           placeholder="Tìm theo năm vào CA"
+           value="{{ year_join_CA|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
     <!-- Search by current_residence -->
     <input type="text"
            name="current_residence"

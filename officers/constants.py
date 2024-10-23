@@ -11,7 +11,9 @@ SEARCH_FIELDS = [
     "phone_number",
     "bank_account_BIDV",
     "id_citizen",
-
+    "year_join_party",
+    "year_join_party_official",
+    "year_join_CA",
 ]
 
 FILTER_FIELDS = [
