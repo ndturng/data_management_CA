@@ -23,9 +23,18 @@ FILTER_FIELDS = [
     "size_of_hat",
     "political_theory",
     "position",
-    "education",
     "birth_place",
     "gender",
+    "party_position",
+    "salary_coefficient",
+    "equipment_type",
+    "size_of_shoes",
+    "size_of_hat",
+    "size_of_clothes",
+    "certi_of_IT",
+    "certi_of_foreign_language",
+    "blood_type",
+    "profile_address",
 ]
 
 REQUIRED_FIELDS = [
@@ -56,7 +65,7 @@ GENERAL_INFO_FIELDS = {
     "recruit_source": "Nguồn tuyển",
     "unit_notation": "Ký hiệu đơn vị",
     "position": "Chức vụ",
-    "military_rank": "Cấp bậc",
+    "military_rank": "Cấp bậc hàm",
     "salary_coefficient": "Hệ số lương",
     "salary_decision": "Quyết định lương",
     "salary_decision_year": "Năm quyết định lương",

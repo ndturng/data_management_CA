@@ -189,6 +189,19 @@
 
     </select>
 
+    <label for="salary_coefficient">Hệ số lương:</label>
+    <select name="salary_coefficient"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for sc in salary_coefficient %}
+            <option value="{{ sc }}" 
+                {% if request.GET.salary_coefficient == sc %}selected{% endif %}
+                >{{ sc }}</option>
+        {% endfor %}
+    </select>
+
     <label for="position">Chức vụ:</label>
     <select name="position"
             style="flex: 1;
@@ -203,7 +216,20 @@
 
     </select>
 
-    <label for="political_theory">LLCT:</label>
+    <label for="party_position">Chức vụ Đảng:</label>
+    <select name="party_position"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for pp in party_position %}
+            <option value="{{ pp }}" 
+                {% if request.GET.party_position == pp %}selected{% endif %}
+                >{{ pp }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="political_theory">Trình độ chính trị:</label>
     <select name="political_theory"
             style="flex: 1;
                    min-width: 150px">
@@ -231,18 +257,108 @@
 
     </select>
 
-    <label for="education">Trình độ học vấn:</label>
-    <select name="education"
+    <label for="equipment_type">Quân trang:</label>
+    <select name="equipment_type"
             style="flex: 1;
                    min-width: 150px">
         <option value="">Tất cả</option>
 
-        {% for ed in education %}
-            <option value="{{ ed }}" 
-                {% if request.GET.education == ed %}selected{% endif %}
-                >{{ ed }}</option>
+        {% for et in equipment_type %}
+            <option value="{{ et }}" 
+                {% if request.GET.equipment_type == et %}selected{% endif %}
+                >{{ et }}</option>
         {% endfor %}
+    </select>
 
+    <label for="size_of_shoes">Giày:</label>
+    <select name="size_of_shoes"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for sos in size_of_shoes %}
+            <option value="{{ sos }}" 
+                {% if request.GET.size_of_shoes == sos %}selected{% endif %}
+                >{{ sos }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_hat">Mũ:</label>
+    <select name="size_of_hat"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for soh in size_of_hat %}
+            <option value="{{ soh }}" 
+                {% if request.GET.size_of_hat == soh %}selected{% endif %}
+                >{{ soh }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_clothes">Quần áo:</label>
+    <select name="size_of_clothes"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for soc in size_of_clothes %}
+            <option value="{{ soc }}" 
+                {% if request.GET.size_of_clothes == soc %}selected{% endif %}
+                >{{ soc }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="certi_of_IT">Tin học:</label>
+    <select name="certi_of_IT"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for cit in certi_of_IT %}
+            <option value="{{ cit }}" 
+                {% if request.GET.certi_of_IT == cit %}selected{% endif %}
+                >{{ cit }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="certi_of_foreign_language">Ngoại ngữ:</label>
+    <select name="certi_of_foreign_language"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for cofl in certi_of_foreign_language %}
+            <option value="{{ cofl }}" 
+                {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}
+                >{{ cofl }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="blood_type">Nhóm máu:</label>
+    <select name="blood_type"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for bt in blood_type %}
+            <option value="{{ bt }}" 
+                {% if request.GET.blood_type == bt %}selected{% endif %}
+                >{{ bt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="profile_address">Địa chỉ hồ sơ:</label>
+    <select name="profile_address"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for pa in profile_address %}
+            <option value="{{ pa }}" 
+                {% if request.GET.profile_address == pa %}selected{% endif %}
+                >{{ pa }}</option>
+        {% endfor %}
     </select>
 
 </form>
