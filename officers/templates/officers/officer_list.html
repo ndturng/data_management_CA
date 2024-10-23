@@ -42,6 +42,78 @@
     style="flex: 1;
             min-width: 150px" />
 
+    <!-- Search by current_residence -->
+    <input type="text"
+           name="current_residence"
+           placeholder="Tìm theo chỗ ở hiện nay"
+           value="{{ current_residence|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by salary_decision_year -->
+    <input type="text"
+           name="salary_decision_year"
+           placeholder="Tìm theo năm quyết định lương"
+           value="{{ salary_decision_year|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by work_unit -->
+    <input type="text"
+           name="work_unit"
+           placeholder="Tìm theo đơn vị công tác"
+           value="{{ work_unit|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by specialized_work -->
+    <input type="text"
+           name="specialized_work"
+           placeholder="Tìm theo công tác chuyên trách"
+           value="{{ specialized_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by other_work -->
+    <input type="text"
+           name="other_work"
+           placeholder="Tìm theo công tác khác"
+           value="{{ other_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by most_work -->
+    <input type="text"
+           name="most_work"
+           placeholder="Tìm theo công tác làm nhiều nhất"
+           value="{{ most_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+    
+    <!-- Search by phone_number -->
+    <input type="text"
+           name="phone_number"
+           placeholder="Tìm theo số điện thoại"
+           value="{{ phone_number|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by bank_account_BIDV -->
+    <input type="text"
+           name="bank_account_BIDV"
+           placeholder="Tìm theo số tài khoản BIDV"
+           value="{{ bank_account_BIDV|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
+    <!-- Search by id_citizen -->
+    <input type="text"
+           name="id_citizen"
+           placeholder="Tìm theo số CMND"
+           value="{{ id_citizen|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+
     <button type="submit"
             style="flex: 0 0 auto">Lọc</button>
 
@@ -107,20 +179,6 @@
 
     </select>
 
-    <label for="work_unit">Đơn vị công tác:</label>
-    <select name="work_unit"
-            style="flex: 1;
-                   min-width: 150px">
-        <option value="">Tất cả</option>
-
-        {% for wu in work_unit %}
-            <option value="{{ wu }}" 
-                {% if request.GET.work_unit == wu %}selected{% endif %}
-                >{{ wu }}</option>
-        {% endfor %}
-
-    </select>
-
     <label for="political_theory">LLCT:</label>
     <select name="political_theory"
             style="flex: 1;
@@ -159,20 +217,6 @@
             <option value="{{ ed }}" 
                 {% if request.GET.education == ed %}selected{% endif %}
                 >{{ ed }}</option>
-        {% endfor %}
-
-    </select>
-
-    <label for="current_residence">Chỗ ở hiện nay:</label>
-    <select name="current_residence"
-            style="flex: 1;
-                   min-width: 150px">
-        <option value="">Tất cả</option>
-
-        {% for cr in current_residence %}
-            <option value="{{ cr }}" 
-                {% if request.GET.current_residence == cr %}selected{% endif %}
-                >{{ cr }}</option>
         {% endfor %}
 
     </select>

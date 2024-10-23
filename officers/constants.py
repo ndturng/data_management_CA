@@ -2,18 +2,26 @@ SEARCH_FIELDS = [
     "birth_name",
     "id_ca",
     "birth_year",
+    "current_residence",
+    "salary_decision_year",
+    "work_unit",
+    "specialized_work",
+    "other_work",
+    "most_work",
+    "phone_number",
+    "bank_account_BIDV",
+    "id_citizen",
+
 ]
 
 FILTER_FIELDS = [
     "military_type",
     "military_rank",
-    "work_unit",
     "blood_type",
     "size_of_hat",
     "political_theory",
     "position",
     "education",
-    "current_residence",
     "birth_place",
     "gender",
 ]
