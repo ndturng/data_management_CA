@@ -88,6 +88,10 @@ GENERAL_INFO_FIELDS = {
 GENERAL_INFO_ADDED_FIELDS = {
     "next_salary_coefficient": "Hệ số lương tiếp theo",
     "next_salary_decision_year": "Năm quyết định lương tiếp theo",
+    "birth_year": "Năm sinh",
+    "year_join_party": "Năm vào Đảng",
+    "year_join_party_official": "Năm chính thức",
+    "year_join_CA": "Năm vào CA",
 }
 
 GENERAL_INFO_MONTH_FIELDS = [

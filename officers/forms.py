@@ -25,6 +25,7 @@ class OfficerInfoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
+        # Set the labels for the fields
         for key, value in c.GENERAL_INFO_FIELDS.items():
             self.fields[key].label = value
         for key, value in c.GENERAL_INFO_ADDED_FIELDS.items():
