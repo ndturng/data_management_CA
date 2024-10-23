@@ -105,6 +105,11 @@ GENERAL_INFO_ADDED_FIELDS = {
     "year_join_CA": "Năm vào CA",
 }
 
+GENERAL_INFO_DATE_FIELDS = [
+    "date_of_birth",
+    "date_update",
+]
+
 GENERAL_INFO_MONTH_FIELDS = [
     "month_join_group",
     "month_join_party",

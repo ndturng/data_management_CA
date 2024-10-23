@@ -14,14 +14,6 @@ class OfficerInfoForm(forms.ModelForm):
         model = m.Officer
         fields = [key for key in c.GENERAL_INFO_FIELDS.keys()]
         fields += [key for key in c.GENERAL_INFO_ADDED_FIELDS.keys()]
-        widgets = {
-            "date_of_birth": forms.DateInput(
-                format="%d/%m/%Y", attrs={"placeholder": "ví dụ: 15/06/1990"}
-            ),
-            "date_update": forms.DateInput(
-                format="%d/%m/%Y", attrs={"placeholder": "ví dụ: 15/06/2021"}
-            ),
-        }
 
     def __init__(self, *args, **kwargs):
         super(OfficerInfoForm, self).__init__(*args, **kwargs)
@@ -35,7 +27,12 @@ class OfficerInfoForm(forms.ModelForm):
         for field in c.GENERAL_INFO_MONTH_FIELDS:
             self.fields[field].widget.attrs["placeholder"] = "ví dụ: 06/2021"
 
-        self.fields["date_update"].input_formats = ["%d/%m/%Y"]
+        for field in c.GENERAL_INFO_DATE_FIELDS:
+            self.fields[field].input_formats = ["%d/%m/%Y"]
+            self.fields[field].widget = forms.DateInput(
+                format="%d/%m/%Y", attrs={"placeholder": "ví dụ: 15/06/1990"}
+            )
+
         if not self.initial.get("date_update"):
             self.initial["date_update"] = datetime.now().strftime("%d/%m/%Y")
 
@@ -48,7 +45,7 @@ class OfficerInfoForm(forms.ModelForm):
             except ValueError:
                 # Raise a validation error if it doesn't match the expected format
                 raise forms.ValidationError(
-                    f"{self.fields[field_name].label} must be in MM/YYYY format."
+                    f"{self.fields[field_name].label}: nhập sai định dạng. Vui lòng nhập theo ví dụ: 06/2021"
                 )
         return value
 

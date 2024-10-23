@@ -36,10 +36,10 @@ class Officer(models.Model):
     )
     # Ngày sinh
     date_of_birth = models.DateField(
-        null=True, blank=True,
+        null=True, blank=False,
     )  # handle the case just the month and year
     # Năm sinh # added field
-    birth_year = models.IntegerField(null=True, blank=True, default=1800)
+    birth_year = models.IntegerField(null=True, blank=True)
     # Tháng năm vào Đoàn
     month_join_group = models.CharField(max_length=7, null=True, blank=True)
     # Đoàn thể
@@ -93,7 +93,7 @@ class Officer(models.Model):
         max_length=255, null=True, blank=True, 
     )
     # Hệ số lương
-    salary_coefficient = models.FloatField(null=True, blank=True, default=4.2)
+    salary_coefficient = models.FloatField(null=True, blank=True)
     # Quyết định lương
     salary_decision = models.CharField(
         max_length=255, null=True, blank=True, 
@@ -104,7 +104,7 @@ class Officer(models.Model):
     )
     # Hệ số lương tiếp theo
     next_salary_coefficient = models.FloatField(
-        null=True, blank=True, default=4.6
+        null=True, blank=True
     )
     # Năm quyết định lương tiếp theo
     next_salary_decision_year = models.IntegerField(
