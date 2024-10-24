@@ -25,145 +25,407 @@
     </div>
   </div>
 
-<div>
-    <form method="GET" action="{% url 'officer_list' %}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-        <input type="text" name="q" placeholder="Tìm theo tên" value="{{ query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+<form method="GET"
+      action="{% url 'officer_list' %}"
+      style="display: flex;
+             flex-wrap: wrap;
+             gap: 10px;
+             align-items: center">
 
-        <input type="text" name="id_ca" placeholder="Tìm theo số hiệu" value="{{ id_ca_query|default_if_none:'' }}" style="flex: 1; min-width: 150px;">
+    <!-- Search by name -->
+    <input type="text"
+           name="birth_name"
+           placeholder="Tìm theo tên"
+           value="{{ birth_name|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <button type="submit" style="flex: 0 0 auto;">Lọc</button>
-        {% if request.GET %}
-            <a href="{% url 'officer_list' %}" class="button" style="flex: 0 0 auto;">Xoá bộ lọc</a>
-        {% endif %}
+    <!-- Search by id_ca -->
+    <input type="text"
+           name="id_ca"
+           placeholder="Tìm theo số hiệu"
+           value="{{ id_ca|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="military_type">Lực lượng:</label>
-        <select name="military_type" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for mt in military_types %}
-                <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
-            {% endfor %}
-        </select>
+    <!--Search by birth_year-->
+    <input type="text"
+    name="birth_year"
+    placeholder="Tìm theo năm sinh"
+    value="{{ birth_year|default_if_none:'' }}"
+    style="flex: 1;
+            min-width: 150px" />
 
-        <label for="military_rank">Cấp bậc hàm:</label>
-        <select name="military_rank" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for mr in military_ranks %}
-                <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by year_join_party -->
+    <input type="text"
+           name="year_join_party"
+           placeholder="Tìm theo năm vào Đảng"
+           value="{{ year_join_party|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+    
+    <!-- Search by year_join_party_official -->
+    <input type="text"
+           name="year_join_party_official"
+           placeholder="Tìm theo năm vào Đảng chính thức"
+           value="{{ year_join_party_official|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="position">Chức vụ:</label>
-        <select name="position" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for p in positions %}
-                <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by year_join_CA -->
+    <input type="text"
+           name="year_join_CA"
+           placeholder="Tìm theo năm vào CA"
+           value="{{ year_join_CA|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="work_unit">Đơn vị công tác:</label>
-        <select name="work_unit" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for wu in work_units %}
-                <option value="{{ wu }}" {% if request.GET.work_unit == wu %}selected{% endif %}>{{ wu }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by current_residence -->
+    <input type="text"
+           name="current_residence"
+           placeholder="Tìm theo chỗ ở hiện nay"
+           value="{{ current_residence|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="political_theory">LLCT:</label>
-        <select name="political_theory" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for pt in political_theories %}
-                <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by salary_decision_year -->
+    <input type="text"
+           name="salary_decision_year"
+           placeholder="Tìm theo năm quyết định lương"
+           value="{{ salary_decision_year|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="year_of_birth">Năm sinh:</label>
-        <select name="year_of_birth" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for year in years_of_birth %}
-                <option value="{{ year }}" {% if year == selected_year_of_birth %}selected{% endif %}>{{ year }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by work_unit -->
+    <input type="text"
+           name="work_unit"
+           placeholder="Tìm theo đơn vị công tác"
+           value="{{ work_unit|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="birth_place">Nơi sinh:</label>
-        <select name="birth_place" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for bp in birth_places %}
-                <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by specialized_work -->
+    <input type="text"
+           name="specialized_work"
+           placeholder="Tìm theo công tác chuyên trách"
+           value="{{ specialized_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="education">Trình độ học vấn:</label>
-        <select name="education" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for ed in educations %}
-                <option value="{{ ed }}" {% if request.GET.education == ed %}selected{% endif %}>{{ ed }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by other_work -->
+    <input type="text"
+           name="other_work"
+           placeholder="Tìm theo công tác khác"
+           value="{{ other_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        <label for="current_residence">Chỗ ở hiện nay:</label>
-        <select name="current_residence" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for cr in current_residences %}
-                <option value="{{ cr }}" {% if request.GET.current_residence == cr %}selected{% endif %}>{{ cr }}</option>
-            {% endfor %}
-        </select>
+    <!-- Search by most_work -->
+    <input type="text"
+           name="most_work"
+           placeholder="Tìm theo công tác làm nhiều nhất"
+           value="{{ most_work|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
+    
+    <!-- Search by phone_number -->
+    <input type="text"
+           name="phone_number"
+           placeholder="Tìm theo số điện thoại"
+           value="{{ phone_number|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        {% comment %} <label for="blood_type">Blood Type:</label>
-        <select name="blood_type" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for bt in blood_types %}
-                <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
-            {% endfor %}
-        </select> {% endcomment %}
+    <!-- Search by bank_account_BIDV -->
+    <input type="text"
+           name="bank_account_BIDV"
+           placeholder="Tìm theo số tài khoản BIDV"
+           value="{{ bank_account_BIDV|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
-        {% comment %} <label for="size_of_hat">Hat Size:</label>
-        <select name="size_of_hat" style="flex: 1; min-width: 150px;">
-            <option value="">Tất cả</option>
-            {% for hs in hat_size %}
-                <option value="{{ hs }}" {% if request.GET.size_of_hat == hs %}selected{% endif %}>{{ hs }}</option>
-            {% endfor %}
-        </select> {% endcomment %}
+    <!-- Search by id_citizen -->
+    <input type="text"
+           name="id_citizen"
+           placeholder="Tìm theo số CMND"
+           value="{{ id_citizen|default_if_none:'' }}"
+           style="flex: 1;
+                  min-width: 150px" />
 
+    <button type="submit"
+            style="flex: 0 0 auto">Lọc</button>
+
+    {% if request.GET %}
+        <a href="{% url 'officer_list' %}"
+           class="button"
+           style="flex: 0 0 auto">Xoá bộ lọc</a>
+    {% endif %}
+
+    <label for="gender">Giới tính:</label>
+    <select name="gender"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
         
-    </form>
-</div>
+        {% for g in gender %}
+            <option value="{{ g }}"
+                {% if request.GET.gender == g %}selected{% endif %}
+                >{{ g }}</option>
+        {% endfor %}
 
-<a href="{% url 'officer_create' %}">Thêm mới cán bộ</a> | 
+    </select>
+
+    <label for="military_type">Lực lượng:</label>
+    <select name="military_type"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for mt in military_type %}
+            <option value="{{ mt }}" 
+                {% if request.GET.military_type == mt %}selected{% endif %}
+                >{{ mt }}</option>
+        {% endfor %}
+
+    </select>
+
+    <label for="military_rank">Cấp bậc hàm:</label>
+    <select name="military_rank"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for mr in military_rank %}
+            <option value="{{ mr }}" 
+                {% if request.GET.military_rank == mr %}selected{% endif %}
+                >{{ mr }}</option>
+        {% endfor %}
+
+    </select>
+
+    <label for="salary_coefficient">Hệ số lương:</label>
+    <select name="salary_coefficient"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for sc in salary_coefficient %}
+            <option value="{{ sc }}" 
+                {% if request.GET.salary_coefficient == sc %}selected{% endif %}
+                >{{ sc }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="position">Chức vụ:</label>
+    <select name="position"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for p in position %}
+            <option value="{{ p }}" 
+                {% if request.GET.position == p %}selected{% endif %}
+                >{{ p }}</option>
+        {% endfor %}
+
+    </select>
+
+    <label for="party_position">Chức vụ Đảng:</label>
+    <select name="party_position"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for pp in party_position %}
+            <option value="{{ pp }}" 
+                {% if request.GET.party_position == pp %}selected{% endif %}
+                >{{ pp }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="political_theory">Trình độ chính trị:</label>
+    <select name="political_theory"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for pt in political_theory %}
+            <option value="{{ pt }}" 
+                {% if request.GET.political_theory == pt %}selected{% endif %}
+                >{{ pt }}</option>
+        {% endfor %}
+
+    </select>
+
+    <label for="birth_place">Nơi sinh:</label>
+    <select name="birth_place"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for bp in birth_place %}
+            <option value="{{ bp }}" 
+                {% if request.GET.birth_place == bp %}selected{% endif %}
+                >{{ bp }}</option>
+        {% endfor %}
+
+    </select>
+
+    <label for="equipment_type">Quân trang:</label>
+    <select name="equipment_type"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for et in equipment_type %}
+            <option value="{{ et }}" 
+                {% if request.GET.equipment_type == et %}selected{% endif %}
+                >{{ et }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_shoes">Giày:</label>
+    <select name="size_of_shoes"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for sos in size_of_shoes %}
+            <option value="{{ sos }}" 
+                {% if request.GET.size_of_shoes == sos %}selected{% endif %}
+                >{{ sos }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_hat">Mũ:</label>
+    <select name="size_of_hat"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for soh in size_of_hat %}
+            <option value="{{ soh }}" 
+                {% if request.GET.size_of_hat == soh %}selected{% endif %}
+                >{{ soh }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size_of_clothes">Quần áo:</label>
+    <select name="size_of_clothes"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for soc in size_of_clothes %}
+            <option value="{{ soc }}" 
+                {% if request.GET.size_of_clothes == soc %}selected{% endif %}
+                >{{ soc }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="certi_of_IT">Tin học:</label>
+    <select name="certi_of_IT"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for cit in certi_of_IT %}
+            <option value="{{ cit }}" 
+                {% if request.GET.certi_of_IT == cit %}selected{% endif %}
+                >{{ cit }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="certi_of_foreign_language">Ngoại ngữ:</label>
+    <select name="certi_of_foreign_language"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for cofl in certi_of_foreign_language %}
+            <option value="{{ cofl }}" 
+                {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}
+                >{{ cofl }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="blood_type">Nhóm máu:</label>
+    <select name="blood_type"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for bt in blood_type %}
+            <option value="{{ bt }}" 
+                {% if request.GET.blood_type == bt %}selected{% endif %}
+                >{{ bt }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="profile_address">Địa chỉ hồ sơ:</label>
+    <select name="profile_address"
+            style="flex: 1;
+                   min-width: 150px">
+        <option value="">Tất cả</option>
+
+        {% for pa in profile_address %}
+            <option value="{{ pa }}" 
+                {% if request.GET.profile_address == pa %}selected{% endif %}
+                >{{ pa }}</option>
+        {% endfor %}
+    </select>
+
+</form>
+
+<a href="{% url 'officer_create' %}">Thêm mới cán bộ</a> |
 <a href="{% url 'excel_upload' %}">Tải lên từ Excel</a>
+
 {% if officers %}
     | <a href="{% url 'delete_all_officers' %}">Xoá tất cả</a>
 {% endif %}
 
+
 <!-- Display messages -->
+
 {% if messages %}
+
     {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
+
 {% endif %}
+
 
 <!-- Checkbox to toggle between officer list and export form -->
 <label>
-    <input type="checkbox" id="toggleExportForm" onclick="toggleView()"> Xuất dữ liệu
+    <input type="checkbox"
+           id="toggleExportForm"
+           onclick="toggleView()" />
+    Xuất dữ liệu
 </label>
 
 <!-- Officer List and Filter Form -->
-<div id="officerList" style="display: block;">
+<div id="officerList"
+     style="display: block">
 
     <ol>
+
         {% for officer in officers %}
-            <li>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}  
-                - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> | 
+            <li>
+                {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
+                - <a href="{% url 'officer_detail' officer.pk %}">Xem</a> |
                 <a href="{% url 'officer_delete' officer.pk %}">Xoá</a>
             </li>
         {% endfor %}
+
     </ol>
 </div>
 
 <!-- Export Form -->
-<div id="exportForm" style="display: none;">
-    <form method="post" action="{% url 'officer_list' %}">
+<div id="exportForm"
+     style="display: none">
+    <form method="post"
+          action="{% url 'officer_list' %}">
         {% csrf_token %}
         <h3 class="mb-10">Chọn cán bộ và thông tin cần trích xuất</h3>
 
@@ -214,11 +476,10 @@
             </div>
         </div>
 
-        <button type="submit" name="export">Xuất dữ liệu</button>
+        <button type="submit"
+                name="export">Xuất dữ liệu</button>
     </form>
 </div>
-
-
 
 <script>
     function toggleView() {
