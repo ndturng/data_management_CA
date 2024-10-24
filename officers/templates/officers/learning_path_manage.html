@@ -105,27 +105,29 @@
             {% if form %}
             <dialog class="modal" id="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-bold mb-7 ml-2">
-                        {% if edit_learning_path_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    <h1 class="text-xl text-center font-bold mb-7 ml-2">
+                        {% if edit_learning_path_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_learning_path' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_learning_path' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
 
                     <form method="POST">
                         {% csrf_token %} 
-                        <div class="pb-5">
-                            <label for="period" class="font-semibold mr-5 pl-14">Giai đoạn:</label>
+                        
+                        <label for="period" class="font-semibold ml-7">Giai đoạn:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.period }}
                         </div>
-                        <div>
-                            <label for="learning_content" class="font-semibold mr-5">Nội dung đào tạo:</label>
+                        
+                        <label for="learning_content" class="font-semibold ml-7">Nội dung đào tạo:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.learning_content }}
                         </div>
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>

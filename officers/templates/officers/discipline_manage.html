@@ -108,8 +108,8 @@
             {% if form %}
             <dialog class="modal" id="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_discipline_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_discipline_id %}Cập nhật thông tin{% else %}Thêm mới thông tin
                         {% endif %}
                     </h1>
                     <form method="dialog">
@@ -118,18 +118,21 @@
                         </a>
                     </form>
 
-                    <form method="POST" class="ml-10">
+                    <form method="POST">
                         {% csrf_token %} 
-                        <div class="pb-5">
-                            <label for="id_time" class="font-semibold mr-4">Thời gian:</label>
+                        
+                        <label for="id_time" class="font-semibold ml-7">Thời gian:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.time }}
                         </div>
-                        <div class="pb-5">
-                            <label for="id_form" class="font-semibold mr-3">Hình thức:</label>
+                        
+                        <label for="id_form" class="font-semibold ml-7">Hình thức:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.form }}
                         </div>
-                        <div>
-                            <label for="id_content" class="font-semibold mr-4">Nội dung:</label>
+                        
+                        <label for="id_content" class="font-semibold ml-7">Nội dung:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.content }}
                         </div>
                         

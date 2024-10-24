@@ -58,6 +58,6 @@ module.exports = {
     ],
 
     daisyui: {
-        themes: ["emerald"], // Add your preferred themes here
+        themes: ["corporate"], // Add your preferred themes here
     },
 }

@@ -115,8 +115,8 @@
             {% if form %}
             <dialog class="modal" id="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_relative_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_relative_id %}Cập nhật thông tin{% else %}Thêm mới thông tin
                         {% endif %}
                     </h1>
                     <form method="dialog">
@@ -125,32 +125,37 @@
                         </a>
                     </form>
 
-                    <form method="POST" class="ml-10">
+                    <form method="POST">
                         {% csrf_token %} 
                         
-                        <div class="pb-5">
-                            <label for="relationship" class="font-semibold mr-16">Quan hệ:</label>
+                        
+                        <label for="relationship" class="font-semibold ml-7">Quan hệ:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.relationship }}
                         </div>
-                        <div class="pb-5">
-                            <label for="name" class="font-semibold mr-14">Họ và tên:</label>
+                        
+                        <label for="name" class="font-semibold ml-7">Họ và tên:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.name }}
                         </div>
-                        <div class="pb-5">
-                            <label for="birth_year" class="font-semibold mr-14">Năm sinh:</label>
+                        
+                        <label for="birth_year" class="font-semibold ml-7">Năm sinh:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.birth_year }}
                         </div>
-                        <div class="pb-5">
-                            <label for="job" class="font-semibold mr-8">Nghề nghiệp:</label>
+                        
+                        <label for="job" class="font-semibold ml-7">Nghề nghiệp:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.job }}
                         </div>
-                        <div>
-                            <label for="current_residence" class="font-semibold mr-4">Chỗ ở hiện nay:</label>
+                        
+                        <label for="current_residence" class="font-semibold ml-7">Chỗ ở hiện nay:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.current_residence }}
                         </div>
                         
                         <div class="modal-action">
-                            <button type="submit" class="btn mr-1">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>

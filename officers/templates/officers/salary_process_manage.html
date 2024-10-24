@@ -110,11 +110,11 @@
             {% if form %}
             <dialog id="modal" class="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_salary_process_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_salary_process_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_salary_process' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_salary_process' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
@@ -122,20 +122,23 @@
                     <form method="POST">
                         {% csrf_token %} 
                         
-                        <div class="pb-5">
-                            <label for="time" class="font-semibold mr-9 ml-3">Thời gian:</label>
+                        
+                        <label for="time" class="font-semibold ml-7">Thời gian:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.time }}
                         </div>
-                        <div class="pb-5">
-                            <label for="mil_rank" class="font-semibold mr-5">Cấp bậc hàm:</label>
+                        
+                        <label for="mil_rank" class="font-semibold ml-7">Cấp bậc hàm:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.mil_rank }}
                         </div>
-                        <div>
-                            <label for="salary_coefficient" class="font-semibold mr-7">Hệ số lương:</label>
+                        
+                        <label for="salary_coefficient" class="font-semibold ml-7">Hệ số lương:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.salary_coefficient }}
                         </div>
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>

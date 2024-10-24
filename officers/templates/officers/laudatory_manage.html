@@ -109,33 +109,36 @@
             {% if form %}
             <dialog id="modal" class="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_laudatory_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:{% endif %}
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_laudatory_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_laudatory' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_laudatory' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
 
-                    <form method="POST" class="ml-10">
+                    <form method="POST">
                         {% csrf_token %} 
 
-                        <div class="pb-5">
-                            <label for="id_time" class="font-semibold mr-4">Thời gian:</label>
+                        
+                        <label for="id_time" class="font-semibold ml-7">Thời gian:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.time }}
                         </div>
-                        <div class="pb-5">
-                            <label for="id_form" class="font-semibold mr-3">Hình thức:</label>
+                        
+                        <label for="id_form" class="font-semibold ml-7">Hình thức:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.form }}
                         </div>
-                        <div>
-                            <label for="id_content" class="font-semibold mr-4">Nội dung:</label>
+                        
+                        <label for="id_content" class="font-semibold ml-7">Nội dung:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.content }}
                         </div>
                         
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3">
                                 Lưu
                             </button>
                         </div>
