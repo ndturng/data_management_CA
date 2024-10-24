@@ -15,54 +15,57 @@
         </script>
     </head>
     <body>
-        <div class="navbar bg-base-100">
-            <div class="navbar-start">
-                <div class="dropdown">
-                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle ml-10 mt-5">
-                        <img src="{% static 'src/menu.png' %}" alt="Menu" class="w-10 h-10">
-                    </div>
-                    <ul
-                        tabindex="0"
-                        class="menu menu-lg dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 ml-5 shadow">
-                        <li><a href="{% url 'url_title_view' officer.pk %}">Chức danh</a></li>
-                        <li><a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a></li>
-                        <li><a href="{% url 'url_learning_path' officer.pk %}">Đào tạo</a></li> 
-                        <li><a href="{% url 'url_work_process' officer.pk %}">Quá trình công tác</a></li> 
-                        <li><a href="{% url 'url_salary_process' officer.pk %}">Quá trình lương</a></li>
-                        <li><a href="{% url 'url_laudatory' officer.pk %}">Khen thưởng</a></li>
-                        <li><a href="{% url 'url_discipline' officer.pk %}">Kỷ luật</a></li> 
-                        <li><a href="{% url 'url_relative' officer.pk %}">Thân nhân</a></li> 
-                        <li><a href="{% url 'url_abroad' officer.pk %}">Ra nước ngoài</a></li>
-                        <li><a href="{% url 'url_army_join_history' officer.pk %}">Tham gia quân đội</a></li>
-                        <li><a href="{% url 'url_health' officer.pk %}">Sức khoẻ</a> 
-                        
-                        <a href="{% url 'officer_update' officer.pk %}">Cập nhật</a> 
-                        <a href="{% url 'officer_list' %}">Quay lại danh sách</a>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <div class="drawer">
+            <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+            <div class="drawer-content">
+                <!-- Page content here -->
+                <label for="my-drawer" class="btn btn-ghost btn-circle ml-10 mt-5">
+                    <img src="{% static 'src/menu.png' %}" alt="Menu" class="w-10 h-10">
+                </label>
 
-        <div>
-            <h1 class="text-4xl text-center">Ra nước ngoài: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
-            <div class="my-10 mx-10">
-                <div class="flex justify-between mb-7">
+                <h1 class="text-4xl text-center">Ra nước ngoài: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+
+                <div class="flex justify-between mb-7 mt-10 mx-10">
                     <a href="{% url 'officer_detail' officer.pk %}"
-                    class="btn shadow-inner drop-shadow-lg text-lg"
+                    class="btn shadow-inner drop-shadow-lg text-lg rounded-lg"
                     >
                         <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
                         <span>Quay lại</span>
                     </a>
-                    <!-- Create New Abroad Button -->
-                    <a href="{% url 'url_abroad_create' officer.pk %}">
-                        <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg">
+                    
+                    <!-- Create New Position Plan Button -->
+                    <a href="{% url 'url_position_plan_create' officer.pk %}">
+                        <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10">
                             <span class="mr-2">Thêm mới</span>
-                            <!-- Add the folder icon here -->
                             <img src="{% static 'src/new-folder.png' %}" alt="New Folder" class="w-5 h-5">
                         </button>
                     </a>
                 </div>
+            </div>
+            <div class="drawer-side">
+                <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+                <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4 text-lg">
+                    <!-- Sidebar content here -->
+                    <li><a href="{% url 'url_title_view' officer.pk %}">Chức danh</a></li>
+                    <li><a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a></li>
+                    <li><a href="{% url 'url_learning_path' officer.pk %}">Đào tạo</a></li> 
+                    <li><a href="{% url 'url_work_process' officer.pk %}">Quá trình công tác</a></li> 
+                    <li><a href="{% url 'url_salary_process' officer.pk %}">Quá trình lương</a></li>
+                    <li><a href="{% url 'url_laudatory' officer.pk %}">Khen thưởng</a></li>
+                    <li><a href="{% url 'url_discipline' officer.pk %}">Kỷ luật</a></li> 
+                    <li><a href="{% url 'url_relative' officer.pk %}">Thân nhân</a></li> 
+                    <li><a href="{% url 'url_abroad' officer.pk %}">Ra nước ngoài</a></li>
+                    <li><a href="{% url 'url_army_join_history' officer.pk %}">Tham gia quân đội</a></li>
+                    <li><a href="{% url 'url_health' officer.pk %}">Sức khoẻ</a> 
+                    
+                    <a href="{% url 'officer_update' officer.pk %}">Cập nhật</a> 
+                    <a href="{% url 'officer_list' %}">Quay lại danh sách</a>
+                </ul>
+            </div>
+        </div>
 
+        <div>
+            <div class="mx-10">
                 <table class="table-auto border-collapse w-full text-center">
                     <thead>
                         <tr class="bg-gray-600 text-white text-xl">
@@ -110,34 +113,36 @@
             {% if form %}
             <dialog class="modal" id="modal">
                 <div class="modal-box">
-                    <h1 class="text-xl font-semibold mb-7 ml-2">
-                        {% if edit_abroad_id %}Cập nhật thông tin:{% else %}Thêm mới thông tin:
+                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                        {% if edit_abroad_id %}Cập nhật thông tin{% else %}Thêm mới thông tin
                         {% endif %}
                     </h1>
                     <form method="dialog">
-                        <a href="{% url 'url_abroad' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                        <a href="{% url 'url_abroad' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
                             <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
                         </a>
                     </form>
 
-                    <form method="POST" class="ml-10">
+                    <form method="POST">
                         {% csrf_token %} 
-
-                        <div class="pb-5">
-                            <label for="id_time" class="font-semibold mr-3">Thời gian:</label>
+                        
+                        <label for="id_time" class="font-semibold ml-7">Thời gian:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.time }}
                         </div>
-                        <div class="pb-5">
-                            <label for="id_country" class="font-semibold mr-3">Địa điểm:</label>
+                        
+                        <label for="id_country" class="font-semibold ml-7">Địa điểm:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.country }}
                         </div>
-                        <div>
-                            <label for="id_purpose" class="font-semibold mr-3">Mục đích:</label>
+                        
+                        <label for="id_purpose" class="font-semibold ml-7">Mục đích:</label>
+                        <div class="form-group mt-3 mx-5">
                             {{ form.purpose }}
                         </div>
                         
                         <div class="modal-action">
-                            <button type="submit" class="btn">
+                            <button type="submit" class="btn mr-3 rounded-lg">
                                 Lưu
                             </button>
                         </div>
