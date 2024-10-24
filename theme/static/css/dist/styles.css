@@ -1544,7 +1544,7 @@ html {
 
 .modal-action {
   display: flex;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
   justify-content: flex-end;
 }
 
