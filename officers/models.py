@@ -36,22 +36,27 @@ class Officer(models.Model):
     )
     # Ngày sinh
     date_of_birth = models.DateField(
-        null=True, blank=True,
+        null=True, blank=False,
     )  # handle the case just the month and year
-    birth_year = models.IntegerField(null=True, blank=True, default=1800)
-
+    # Năm sinh # added field
+    birth_year = models.IntegerField(null=True, blank=True)
     # Tháng năm vào Đoàn
     month_join_group = models.CharField(max_length=7, null=True, blank=True)
     # Đoàn thể
     group = models.CharField(
         max_length=255, null=True, blank=True,
     )
+
     # Tháng năm vào Đảng
     month_join_party = models.CharField(max_length=7, null=True, blank=True)
+    # Năm vào Đảng # added field
+    year_join_party = models.IntegerField(null=True, blank=True)
     # Tháng năm chính thức
     month_join_party_official = models.CharField(
         max_length=7, null=True, blank=True
     )
+    # Năm chính thức # added field
+    year_join_party_official = models.IntegerField(null=True, blank=True)
     # Số thẻ Đảng
     party_card_number = models.CharField(
         max_length=255, null=True, blank=True,
@@ -60,10 +65,13 @@ class Officer(models.Model):
     party_position = models.CharField(
         max_length=255, null=True, blank=True, default="Đảng viên"
     )
+    
     # Tháng năm tuyển dụng
     month_recruit = models.CharField(max_length=7, null=True, blank=True)
     # Tháng năm vào CA
     month_join_CA = models.CharField(max_length=7, null=True, blank=True)
+    # Năm vào CA # added field
+    year_join_CA = models.IntegerField(null=True, blank=True)
     # Đơn vị tuyển
     recruit_unit = models.CharField(
         max_length=255, null=True, blank=True, default="Công an tỉnh Phú Yên"
@@ -85,7 +93,7 @@ class Officer(models.Model):
         max_length=255, null=True, blank=True, 
     )
     # Hệ số lương
-    salary_coefficient = models.FloatField(null=True, blank=True, default=4.2)
+    salary_coefficient = models.FloatField(null=True, blank=True)
     # Quyết định lương
     salary_decision = models.CharField(
         max_length=255, null=True, blank=True, 
@@ -96,7 +104,7 @@ class Officer(models.Model):
     )
     # Hệ số lương tiếp theo
     next_salary_coefficient = models.FloatField(
-        null=True, blank=True, default=4.6
+        null=True, blank=True
     )
     # Năm quyết định lương tiếp theo
     next_salary_decision_year = models.IntegerField(
@@ -208,11 +216,16 @@ class Officer(models.Model):
         # Extract birth year from date of birth
         if self.date_of_birth:
             self.birth_year = self.date_of_birth.year
-
-        # add label for birth_year
-        self._meta.get_field("birth_year").verbose_name = "Năm sinh"
         
-        # Normalize name fields to NFC
+        # Extract year
+        if self.month_join_party:
+            self.year_join_party = int(self.month_join_party.split("/")[1])
+        if self.month_join_party_official:
+            self.year_join_party_official = int(self.month_join_party_official.split("/")[1])
+        if self.month_join_CA:
+            self.year_join_CA = int(self.month_join_CA.split("/")[1])
+
+        # Normalize name fields to NFC # normalize all the fields to NFC # other models
         if self.birth_name:
             self.birth_name = unicodedata.normalize("NFC", self.birth_name)
         if self.current_name:

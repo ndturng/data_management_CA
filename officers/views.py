@@ -17,7 +17,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
-from officers.constants import GENERAL_INFO_FIELDS, REQUIRED_FIELDS
+from officers.constants import FILTER_FIELDS, GENERAL_INFO_FIELDS, REQUIRED_FIELDS, SEARCH_FIELDS
 from officers.utils import (
     create_officer_related_objects,
     export_related_data,
@@ -30,76 +30,34 @@ from . import models as m
 
 @login_required
 def officer_list(request):
-    filter_fields = {
-        "military_type": "military_type",
-        "military_rank": "military_rank",
-        "work_unit": "work_unit",
-        "blood_type": "blood_type",
-        "size_of_hat": "size_of_hat",
-        "political_theory": "political_theory",
-        "position": "position",
-        "year_of_birth": "birth_year",
-        "education": "education",
-        "current_residence": "current_residence",
-        "birth_place": "birth_place",
-    }
+    context = {}
 
     officers = m.Officer.objects.all()  # Start with all officers
 
-    # Search by birth_name
-    query = request.GET.get("q")
-    if query:
-        normalized_query = unicodedata.normalize("NFC", query)
-        officers = officers.filter(birth_name__icontains=normalized_query)
-
-    # Search by ID
-    id_ca_query = request.GET.get("id_ca")
-    if id_ca_query:
-        # Trim the whitespace
-        id_ca_query = id_ca_query.strip()
-        officers = officers.filter(id_ca__icontains=id_ca_query)
+    # Search by multiple fields
+    for field in SEARCH_FIELDS:
+        query = request.GET.get(field)
+        if query:
+            query = query.strip()
+            normalized_query = unicodedata.normalize("NFC", query)
+            officers = officers.filter(
+                **{f"{field}__icontains": normalized_query}
+            )
+            context[field] = query
 
     # Apply filters
-    for field, filter_action in filter_fields.items():
+    for field in FILTER_FIELDS:
         value = request.GET.get(field)
-        if value:
-            # If the filter action is a callable (e.g., lambda), call it
-            if callable(filter_action):
-                officers = filter_action(officers, value)
-            else:
-                # Otherwise, apply a simple filter
-                officers = officers.filter(**{filter_action: value})
-
-        if field == "year_of_birth":
-            selected_year_of_birth = int(value) if value else None
-
-    # Get unique sorted values for filter dropdowns
-    dropdown_fields = {
-        "military_types": "military_type",
-        "military_ranks": "military_rank",
-        "work_units": "work_unit",
-        "blood_types": "blood_type",
-        "political_theories": "political_theory",
-        "hat_sizes": "size_of_hat",
-        "positions": "position",
-        "years_of_birth": "birth_year",
-        "birth_places": "birth_place",
-        "educations": "education",
-        "current_residences": "current_residence",
-    }
-
-    context = {}
-    for context_key, field in dropdown_fields.items():
-        context[context_key] = sorted(
+        context[field] = sorted(
             filter(
-                None, m.Officer.objects.values_list(field, flat=True).distinct()
+                None,
+                m.Officer.objects.values_list(field, flat=True).distinct(),
             )
         )
+        if value:
+            officers = officers.filter(**{field: value})
 
     context["officers"] = officers
-    context["query"] = query
-    context["id_ca_query"] = id_ca_query
-    context["selected_year_of_birth"] = selected_year_of_birth
 
     # Handle export functionality
     if request.method == "POST" and "export" in request.POST:
@@ -344,7 +302,7 @@ class OfficerRelatedMixin(LoginRequiredMixin):
         context[self.related_context_field] = getattr(
             officer, self.related_context_field
         ).all()
-        
+
         try:
             singular_field = self.get_singular_field_name(
                 self.related_context_field
