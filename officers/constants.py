@@ -1,3 +1,42 @@
+SEARCH_FIELDS = [
+    "birth_name",
+    "id_ca",
+    "birth_year",
+    "current_residence",
+    "salary_decision_year",
+    "work_unit",
+    "specialized_work",
+    "other_work",
+    "most_work",
+    "phone_number",
+    "bank_account_BIDV",
+    "id_citizen",
+    "year_join_party",
+    "year_join_party_official",
+    "year_join_CA",
+]
+
+FILTER_FIELDS = [
+    "military_type",
+    "military_rank",
+    "blood_type",
+    "size_of_hat",
+    "political_theory",
+    "position",
+    "birth_place",
+    "gender",
+    "party_position",
+    "salary_coefficient",
+    "equipment_type",
+    "size_of_shoes",
+    "size_of_hat",
+    "size_of_clothes",
+    "certi_of_IT",
+    "certi_of_foreign_language",
+    "blood_type",
+    "profile_address",
+]
+
 REQUIRED_FIELDS = [
     "birth_name",
     "id_ca",
@@ -26,7 +65,7 @@ GENERAL_INFO_FIELDS = {
     "recruit_source": "Nguồn tuyển",
     "unit_notation": "Ký hiệu đơn vị",
     "position": "Chức vụ",
-    "military_rank": "Cấp bậc",
+    "military_rank": "Cấp bậc hàm",
     "salary_coefficient": "Hệ số lương",
     "salary_decision": "Quyết định lương",
     "salary_decision_year": "Năm quyết định lương",
@@ -60,7 +99,16 @@ GENERAL_INFO_FIELDS = {
 GENERAL_INFO_ADDED_FIELDS = {
     "next_salary_coefficient": "Hệ số lương tiếp theo",
     "next_salary_decision_year": "Năm quyết định lương tiếp theo",
+    "birth_year": "Năm sinh",
+    "year_join_party": "Năm vào Đảng",
+    "year_join_party_official": "Năm chính thức",
+    "year_join_CA": "Năm vào CA",
 }
+
+GENERAL_INFO_DATE_FIELDS = [
+    "date_of_birth",
+    "date_update",
+]
 
 GENERAL_INFO_MONTH_FIELDS = [
     "month_join_group",
@@ -167,7 +215,7 @@ RANK_SCALE = {
 
 SALARY_SCALE = {
     # salary_coefficient: (military_rank, next_salary_coefficient, promotion_year)
-    3.2: ("Hạ sĩ", 3.5, 1),  
+    3.2: ("Hạ sĩ", 3.5, 1),
     3.5: ("Trung sĩ", 3.8, 1),
     3.8: ("Thượng sĩ", 4.2, 2),
     4.2: ("Thiếu úy", 4.6, 2),
