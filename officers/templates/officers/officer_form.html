@@ -1,4 +1,12 @@
-<h2>{% if form.instance.pk %}Cập nhật{% else %}Thêm{% endif %}Thông tin cán bộ</h2>
+<h2>
+
+    {% if form.instance.pk %}
+        Cập nhật thông tin cán bộ: {{ form.instance.birth_name }}
+    {% else %}
+        Thêm mới thông tin cán bộ
+    {% endif %}
+
+</h2>
 <form method="post">
     {% csrf_token %}
     <a href="{% url 'officer_list' %}">Quay lại</a>

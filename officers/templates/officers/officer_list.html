@@ -371,7 +371,7 @@
 {% endif %}
 
 
-<!-- Display messages -->
+<!-- Display messages when there's an error during the process of file upload -->
 
 {% if messages %}
 
@@ -415,7 +415,7 @@
         {% csrf_token %}
         <h3>Chọn cán bộ và thông tin cần trích xuất</h3>
 
-        <!-- Officer Selection -->
+        <!-- Officers Selection -->
         <div>
             <strong>Chọn cán bộ:</strong>
             <br />
@@ -442,7 +442,7 @@
             </ol>
         </div>
 
-        <!-- Field Selection -->
+        <!-- Fields Selection -->
         <div>
             <strong>Chọn thông tin:</strong>
             <br />
