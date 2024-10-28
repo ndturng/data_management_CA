@@ -8,13 +8,21 @@
     margin-bottom: 25px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    -webkit-transition: 0.5s;
-    transition: 0.5s;
-    
-    
+    transition: 0.3s;
 }
 
-.form-group input:hover {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+.hoverable-item {
+    @apply hover:bg-base-300 hover:border-black border rounded-lg;
 }
 
+.highlight-item {
+    @apply bg-base-300 font-semibold rounded-lg hover:border-black border;
+}
+
+.hoverable-link {
+    @apply flex space-x-3 py-3 pl-11;
+}
+
+.hoverable-link-secondary {
+    @apply flex space-x-3 py-3 pl-20;
+}

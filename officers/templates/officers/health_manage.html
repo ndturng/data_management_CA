@@ -15,24 +15,65 @@
         </script>
     </head>
     <body>
-        <div class="drawer">
-            <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-            <div class="drawer-content">
-                <!-- Page content here -->
-                <label for="my-drawer" class="btn btn-ghost btn-circle ml-10 mt-5">
-                    <img src="{% static 'src/menu.png' %}" alt="Menu" class="w-10 h-10">
-                </label>
-
-                <h1 class="text-4xl text-center">Sức khỏe: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
-
-                <div class="flex justify-between mb-7 mt-10 mx-10">
-                    <a href="{% url 'officer_detail' officer.pk %}"
-                    class="btn shadow-inner drop-shadow-lg text-lg rounded-lg"
-                    >
+        <div class="flex">
+            <div class="w-1/5 bg-base-200 py-5">
+                <div class="hoverable-item">
+                    <a href="{% url 'officer_list' %}" class="hoverable-link">
+                        <img src="{% static 'src/home-icon.png' %}" alt="Home Icon" class="w-6 h-6">
+                        <span>Trang chủ</span>
+                    </a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_title_view' officer.pk %}" class="hoverable-link-secondary">Chức danh</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_position_plan' officer.pk %}" class="hoverable-link-secondary">Quy hoạch</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_learning_path' officer.pk %}" class="hoverable-link-secondary">Đào tạo</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_work_process' officer.pk %}" class="hoverable-link-secondary">Quá trình công tác</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_salary_process' officer.pk %}" class="hoverable-link-secondary">Quá trình lương</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_laudatory' officer.pk %}" class="hoverable-link-secondary">Khen thưởng</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_discipline' officer.pk %}" class="hoverable-link-secondary">Kỷ luật</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_relative' officer.pk %}" class="hoverable-link-secondary">Thân nhân</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_abroad' officer.pk %}" class="hoverable-link-secondary">Ra nước ngoài</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_army_join_history' officer.pk %}" class="hoverable-link-secondary">Tham gia quân đội</a>
+                </div>
+                <div class="highlight-item">
+                    <a href="{% url 'url_health' officer.pk %}" class="hoverable-link-secondary">Sức khoẻ</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'url_image' officer.pk %}" class="hoverable-link-secondary">Ảnh</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'officer_update' officer.pk %}" class="hoverable-link-secondary">Cập nhật</a>
+                </div>
+                <div class="hoverable-item">
+                    <a href="{% url 'officer_detail' officer.pk %}" class="hoverable-link">
                         <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
                         <span>Quay lại</span>
                     </a>
-                    
+                </div>
+            </div>
+
+            <div class="w-4/5 h-full mt-20 mx-10">
+                <h1 class="text-4xl text-center">Sức khỏe: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+
+                <div class="flex justify-end mb-7 mt-10">
                     <!-- Create New Position Plan Button -->
                     <a href="{% url 'url_position_plan_create' officer.pk %}">
                         <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10">
@@ -41,131 +82,108 @@
                         </button>
                     </a>
                 </div>
-            </div>
-            <div class="drawer-side">
-                <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4 text-lg">
-                    <!-- Sidebar content here -->
-                    <li><a href="{% url 'url_title_view' officer.pk %}">Chức danh</a></li>
-                    <li><a href="{% url 'url_position_plan' officer.pk %}">Quy hoạch</a></li>
-                    <li><a href="{% url 'url_learning_path' officer.pk %}">Đào tạo</a></li> 
-                    <li><a href="{% url 'url_work_process' officer.pk %}">Quá trình công tác</a></li> 
-                    <li><a href="{% url 'url_salary_process' officer.pk %}">Quá trình lương</a></li>
-                    <li><a href="{% url 'url_laudatory' officer.pk %}">Khen thưởng</a></li>
-                    <li><a href="{% url 'url_discipline' officer.pk %}">Kỷ luật</a></li> 
-                    <li><a href="{% url 'url_relative' officer.pk %}">Thân nhân</a></li> 
-                    <li><a href="{% url 'url_abroad' officer.pk %}">Ra nước ngoài</a></li>
-                    <li><a href="{% url 'url_army_join_history' officer.pk %}">Tham gia quân đội</a></li>
-                    <li><a href="{% url 'url_health' officer.pk %}">Sức khoẻ</a> 
-                    
-                    <a href="{% url 'officer_update' officer.pk %}">Cập nhật</a> 
-                    <a href="{% url 'officer_list' %}">Quay lại danh sách</a>
-                </ul>
-            </div>
-        </div>
+                <div>
+                    <table class="table-auto border-collapse w-full text-center">
+                        <thead>
+                            <tr class="bg-gray-600 text-white text-xl">
+                                <th class="py-2 px-4">Cân nặng</th>
+                                <th class="py-2 px-4">Chiều cao</th>
+                                <th class="py-2 px-4">Lịch sử bệnh</th>
+                                <th class="py-2 px-4">Khác</th>
+                                <th class="py-2 px-4"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for health in healths %}
+                            <tr class="border-t border-gray-300 bg-gray-100 text-lg">
+                                <td class="py-2 px-4">{{ health.weight }}kg</td>
+                                <td class="py-2 px-4">{{ health.height }}cm</td>
+                                <td class="py-2 px-4">{{ health.medical_history }}</td>
+                                <td class="py-2 px-4">{{ health.other }}</td>
+                                <td class="py-2 px-4">
+                                    <!-- Update Button -->
+                                    <a href="{% url 'url_health_update' officer.pk health.id %}"
+                                    class="text-green-500 hover:text-green-600 underline mx-2"
+                                    >
+                                        Cập nhật
+                                    </a>
 
-        <div>
-            <div class="mx-10">
-                <table class="table-auto border-collapse w-full text-center">
-                    <thead>
-                        <tr class="bg-gray-600 text-white text-xl">
-                            <th class="py-2 px-4">Cân nặng</th>
-                            <th class="py-2 px-4">Chiều cao</th>
-                            <th class="py-2 px-4">Lịch sử bệnh</th>
-                            <th class="py-2 px-4">Khác</th>
-                            <th class="py-2 px-4"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for health in healths %}
-                        <tr class="border-t border-gray-300 bg-gray-100 text-lg">
-                            <td class="py-2 px-4">{{ health.weight }}kg</td>
-                            <td class="py-2 px-4">{{ health.height }}cm</td>
-                            <td class="py-2 px-4">{{ health.medical_history }}</td>
-                            <td class="py-2 px-4">{{ health.other }}</td>
-                            <td class="py-2 px-4">
-                                <!-- Update Button -->
-                                <a href="{% url 'url_health_update' officer.pk health.id %}"
-                                class="text-green-500 hover:text-green-600 underline mx-2"
-                                >
-                                    Cập nhật
-                                </a>
+                                    <span>/</span>
 
-                                <span>/</span>
-
-                                <!-- Delete Button with confirmation -->
-                                <form
-                                    method="POST"
-                                    action="{% url 'url_health_delete' officer.pk health.id %}"
-                                    style="display: inline"
-                                    onsubmit="return confirmDelete();"
-                                >
-                                    {% csrf_token %}
-                                    <button type="submit" class="text-red-600 hover:text-red-700 underline mx-2">Xoá</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Create or Update Health Form -->
-            {% if form %}
-            <dialog class="modal" id="modal">
-                <div class="modal-box">
-                    <h1 class="text-xl text-center font-semibold mb-7 ml-2">
-                        {% if edit_health_id %}Cập nhật thông tin{% else %}Thêm mới thông tin
-                        {% endif %}
-                    </h1>
-                    <form method="dialog">
-                        <a href="{% url 'url_health' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
-                            <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
-                        </a>
-                    </form>
-
-                    <form method="POST">
-                        {% csrf_token %} 
-                        
-                        <label for="id_weight" class="font-semibold ml-7">Cân nặng:</label>
-                        <div class="form-group mt-3 mx-5">
-                            {{ form.weight }}
-                        </div>
-                        
-                        <label for="id_height" class="font-semibold ml-7">Chiều cao:</label>
-                        <div class="form-group mt-3 mx-5">
-                            {{ form.height }}
-                        </div>
-                        
-                        <label for="id_medical_history" class="font-semibold ml-7">Lịch sử bệnh:</label>
-                        <div class="form-group mt-3 mx-5">
-                            {{ form.medical_history }}
-                        </div>
-                        
-                        <label for="id_other" class="font-semibold ml-7">Khác:</label>
-                        <div class="form-group mt-3 mx-5">
-                            {{ form.other }}
-                        </div>
-                        
-                        <div class="modal-action">
-                            <button type="submit" class="btn mr-3 rounded-lg">
-                                Lưu
-                            </button>
-                        </div>
-                    </form>
+                                    <!-- Delete Button with confirmation -->
+                                    <form
+                                        method="POST"
+                                        action="{% url 'url_health_delete' officer.pk health.id %}"
+                                        style="display: inline"
+                                        onsubmit="return confirmDelete();"
+                                    >
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-red-600 hover:text-red-700 underline mx-2">Xoá</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <form method="dialog" class="modal-backdrop">
-                    <a href="{% url 'url_health' officer.pk %}">close</a>
-                </form>
-            </dialog>
-            {% endif %}
 
-            <script>
-                // Automatically show the modal when the page loads
-                document.addEventListener("DOMContentLoaded", function() {
-                    document.getElementById('modal').showModal();
-                });
-            </script>
+                <!-- Create or Update Health Form -->
+                {% if form %}
+                <dialog class="modal" id="modal">
+                    <div class="modal-box">
+                        <h1 class="text-xl text-center font-semibold mb-7 ml-2">
+                            {% if edit_health_id %}Cập nhật thông tin{% else %}Thêm mới thông tin
+                            {% endif %}
+                        </h1>
+                        <form method="dialog">
+                            <a href="{% url 'url_health' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-2 mt-4">
+                                <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
+                            </a>
+                        </form>
+
+                        <form method="POST">
+                            {% csrf_token %} 
+                            
+                            <label for="id_weight" class="font-semibold ml-7">Cân nặng:</label>
+                            <div class="form-group mt-3 mx-5">
+                                {{ form.weight }}
+                            </div>
+                            
+                            <label for="id_height" class="font-semibold ml-7">Chiều cao:</label>
+                            <div class="form-group mt-3 mx-5">
+                                {{ form.height }}
+                            </div>
+                            
+                            <label for="id_medical_history" class="font-semibold ml-7">Lịch sử bệnh:</label>
+                            <div class="form-group mt-3 mx-5">
+                                {{ form.medical_history }}
+                            </div>
+                            
+                            <label for="id_other" class="font-semibold ml-7">Khác:</label>
+                            <div class="form-group mt-3 mx-5">
+                                {{ form.other }}
+                            </div>
+                            
+                            <div class="modal-action">
+                                <button type="submit" class="btn mr-3 rounded-lg">
+                                    Lưu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <a href="{% url 'url_health' officer.pk %}">close</a>
+                    </form>
+                </dialog>
+                {% endif %}
+
+                <script>
+                    // Automatically show the modal when the page loads
+                    document.addEventListener("DOMContentLoaded", function() {
+                        document.getElementById('modal').showModal();
+                    });
+                </script>
+            </div>
         </div>
     </body>
 </html>
