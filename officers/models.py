@@ -209,6 +209,18 @@ class Officer(models.Model):
     # Ngày cập nhật
     date_update = models.DateField(null=True, blank=True)
 
+    def clean(self):
+        """
+        Normalize and trim the whitespace of the fields before saving the object
+        """
+        for field in self._meta.fields:
+            if isinstance(field, (models.CharField, models.TextField)):
+                value = getattr(self, field.name)
+                if value and isinstance(value, str):
+                    normalized_value = unicodedata.normalize("NFC", value.strip())
+                    setattr(self, field.name, normalized_value)
+        
+
     def save(self, *args, **kwargs):
         """
         Override the save method to normalize and calculate the additional fields before saving the object
@@ -224,12 +236,6 @@ class Officer(models.Model):
             self.year_join_party_official = int(self.month_join_party_official.split("/")[1])
         if self.month_join_CA:
             self.year_join_CA = int(self.month_join_CA.split("/")[1])
-
-        # Normalize name fields to NFC # normalize all the fields to NFC # other models
-        if self.birth_name:
-            self.birth_name = unicodedata.normalize("NFC", self.birth_name)
-        if self.current_name:
-            self.current_name = unicodedata.normalize("NFC", self.current_name)
 
         # Calculate next salary coefficient and decision year
         if self.salary_coefficient and self.salary_decision_year:
