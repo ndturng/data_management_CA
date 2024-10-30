@@ -15,8 +15,8 @@
         </script>
     </head>
     <body>
-        <div class="flex">
-            <div class="w-1/5 bg-base-200 py-5">
+        <div class="flex h-screen">
+            <div class="w-1/5 bg-base-200 min-h-screen py-5">
                 <div class="hoverable-item">
                     <a href="{% url 'officer_list' %}" class="hoverable-link">
                         <img src="{% static 'src/home-icon.png' %}" alt="Home Icon" class="w-6 h-6">
@@ -70,12 +70,12 @@
                 </div>
             </div>
 
-            <div class="w-4/5 h-full mt-20 mx-10">
+            <div class="w-4/5 h-screen overflow-y-auto px-10 pb-5 pt-16">
                 <h1 class="text-4xl text-center">Sức khỏe: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
 
                 <div class="flex justify-end mb-7 mt-10">
                     <!-- Create New Position Plan Button -->
-                    <a href="{% url 'url_position_plan_create' officer.pk %}">
+                    <a href="{% url 'url_health_create' officer.pk %}">
                         <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10">
                             <span class="mr-2">Thêm mới</span>
                             <img src="{% static 'src/new-folder.png' %}" alt="New Folder" class="w-5 h-5">
@@ -100,26 +100,31 @@
                                 <td class="py-2 px-4">{{ health.height }}cm</td>
                                 <td class="py-2 px-4">{{ health.medical_history }}</td>
                                 <td class="py-2 px-4">{{ health.other }}</td>
-                                <td class="py-2 px-4">
-                                    <!-- Update Button -->
-                                    <a href="{% url 'url_health_update' officer.pk health.id %}"
-                                    class="text-green-500 hover:text-green-600 underline mx-2"
-                                    >
-                                        Cập nhật
-                                    </a>
+                                <td class="py-2">
+                                    <div class="flex items-center space-x-7">
+                                        <!-- Update Button -->
+                                        <div class="flex-none tooltip tooltip-top" data-tip="Cập nhật">
+                                            <a href="{% url 'url_health_update' officer.pk health.id %}">
+                                                <button class="transform motion-safe:hover:scale-110">
+                                                    <img src="{% static 'src/update-icon.png' %}" alt="Update icon" class="w-7 h-7">
+                                                </button>
+                                            </a>
+                                        </div>
 
-                                    <span>/</span>
-
-                                    <!-- Delete Button with confirmation -->
-                                    <form
-                                        method="POST"
-                                        action="{% url 'url_health_delete' officer.pk health.id %}"
-                                        style="display: inline"
-                                        onsubmit="return confirmDelete();"
-                                    >
-                                        {% csrf_token %}
-                                        <button type="submit" class="text-red-600 hover:text-red-700 underline mx-2">Xoá</button>
-                                    </form>
+                                        <!-- Delete Button with confirmation -->
+                                        <div class="flex-none tooltip tooltip-top" data-tip="Xoá">
+                                            <form
+                                                method="POST"
+                                                action="{% url 'url_health_delete' officer.pk health.id %}"
+                                                onsubmit="return confirmDelete();"
+                                            >
+                                                {% csrf_token %}
+                                                <button type="submit" class="transform motion-safe:hover:scale-110">
+                                                    <img src="{% static 'src/delete-icon.png' %}" alt="Delete icon" class="w-6 h-6">
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
