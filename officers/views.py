@@ -1,3 +1,4 @@
+import os
 import unicodedata
 import zipfile
 from io import BytesIO
@@ -1078,3 +1079,28 @@ class ImageDeleteView(LoginRequiredMixin, DeleteView):
         return reverse_lazy(
             "url_image", kwargs={"pk": self.kwargs[self.officer_url_kwarg]}
         )
+
+
+# Download selected images
+def download_selected_images(request, officer_pk):
+    if request.method == "POST":
+        selected_image_ids = request.POST.getlist("selected_images")
+        images = m.Image.objects.filter(
+            pk__in=selected_image_ids, officer_id=officer_pk
+        )
+
+        # Create a ZIP file in memory
+        response = HttpResponse(content_type="application/zip")
+        zip_filename = f"officer_{officer_pk}_images.zip"
+        response["Content-Disposition"] = (
+            f'attachment; filename="{zip_filename}"'
+        )
+
+        with zipfile.ZipFile(response, "w") as zip_file:
+            for image in images:
+                image_path = image.image.path
+                zip_file.write(image_path, os.path.basename(image_path))
+
+        return response
+
+    return redirect("url_image", pk=officer_pk)

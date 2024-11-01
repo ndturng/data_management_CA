@@ -275,4 +275,9 @@ urlpatterns = [
         views.ImageDeleteView.as_view(),
         name="url_image_delete",
     ),
+    path(
+        "<int:officer_pk>/images/download_selected",
+        views.download_selected_images,
+        name="url_download_selected_images",
+    ),
 ]
