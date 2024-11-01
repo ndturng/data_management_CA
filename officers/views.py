@@ -14,12 +14,14 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
 from officers.constants import (
     FILTER_FIELDS,
     GENERAL_INFO_FIELDS,
+    IMAGES_CATEGORY,
     REQUIRED_FIELDS,
     SEARCH_FIELDS,
 )
@@ -979,61 +981,72 @@ class ImageListView(LoginRequiredMixin, ListView):
     pk_url_kwarg = "pk"  # Officer's pk
 
     def get_queryset(self):
+        # Retrieve the officer and filter images for the specific officer
         self.officer = get_object_or_404(
             m.Officer, pk=self.kwargs[self.pk_url_kwarg]
         )
-        return self.officer.images.all()
+        queryset = self.officer.images.all()
+
+        # Filter images by category if specified in query parameters
+        category = self.request.GET.get("category")
+        if category in dict(IMAGES_CATEGORY):
+            queryset = queryset.filter(category=category)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["officer"] = self.officer
+        context["category_labels"] = {
+            choice[0]: choice[1] for choice in IMAGES_CATEGORY
+        }
         return context
 
 
 # Create Image View
-class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = m.Image
+class ImageCreateView(LoginRequiredMixin, View):
     form_class = f.ImageForm
-    template_name = "officers/image_form.html"
-    pk_url_kwarg = "pk"  # Officer's pk
+    template_name = "officers/image_upload.html"  # Use the new upload template
 
-    def form_valid(self, form):
-        officer = get_object_or_404(
-            m.Officer, pk=self.kwargs[self.pk_url_kwarg]
-        )
-        form.instance.officer = officer
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["pk"])
+        return render(request, self.template_name, {"form": form, "officer": officer})
 
-    def get_context_data(self, **kwargs):
-        # Pass the officer's pk to the template
-        context = super().get_context_data(**kwargs)
-        context["pk"] = self.kwargs[self.pk_url_kwarg]
-        return context
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["pk"])
 
-    def get_success_url(self):
-        return reverse_lazy(
-            "url_image",
-            kwargs={self.pk_url_kwarg: self.kwargs[self.pk_url_kwarg]},
-        )
+        if form.is_valid():
+            category = form.cleaned_data["category"]
+            description = form.cleaned_data["description"]
+            images = request.FILES.getlist("image")  # Get list of uploaded files
 
+            for image_file in images:
+                m.Image.objects.create(
+                    officer=officer,
+                    image=image_file,
+                    description=description,
+                    category=category
+                )
+
+            return redirect("url_image", pk=officer.pk)
+
+        return render(request, self.template_name, {"form": form, "officer": officer})
 
 # Update Image View
 class ImageUpdateView(LoginRequiredMixin, UpdateView):
     model = m.Image
     form_class = f.ImageForm
-    template_name = "officers/image_form.html"
-    pk_url_kwarg = "image_pk"  # Image's pk
-    officer_url_kwarg = "officer_pk"  # Officer's pk
+    template_name = "officers/image_update.html"  # Use the new update template
+    pk_url_kwarg = 'image_pk'
+    context_object_name = 'image'
 
     def get_object(self):
         # Ensure the image belongs to the correct officer
-        officer = get_object_or_404(
-            m.Officer, pk=self.kwargs[self.officer_url_kwarg]
-        )
-        return get_object_or_404(
-            m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer
-        )
-
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["officer_pk"])
+        return get_object_or_404(m.Image, pk=self.kwargs["image_pk"], officer=officer)
+    
     def get_success_url(self):
         return reverse_lazy(
             "url_image", kwargs={"pk": self.kwargs["officer_pk"]}
@@ -1041,8 +1054,7 @@ class ImageUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add officer's pk to the context so the template can use it
-        context["pk"] = self.kwargs[self.officer_url_kwarg]
+        context["officer"] = self.get_object().officer
         return context
 
 

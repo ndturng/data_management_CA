@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
+from officers.constants import IMAGES_CATEGORY
 from officers.utils import cal_next_rank
 
 
@@ -359,14 +360,23 @@ class Health(models.Model):  # Sức khoẻ
     other = models.CharField(max_length=255, null=True, blank=True)
 
 
+def image_upload_path(instance, filename):
+    officer_id = instance.officer.pk
+    # Get the category and use it as the folder name
+    category_folder = instance.category or "other"
+    # Combine to make the full path
+    return os.path.join("officer_images", f"{officer_id}", category_folder, filename)
+
+
 class Image(models.Model):  # Hình ảnh
     officer = models.ForeignKey(
         Officer, on_delete=models.CASCADE, related_name="images"
     )
     image = models.ImageField(
-        upload_to="officer_images/", null=True, blank=True
+        upload_to=image_upload_path, null=True, blank=True
     )
-    description = models.CharField(max_length=255, null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True, default="Chưa có mô tả")
+    category = models.CharField(max_length=255, choices=IMAGES_CATEGORY, default="other")
 
     def save(self, *args, **kwargs):
         # If replacing an image, delete the old file
