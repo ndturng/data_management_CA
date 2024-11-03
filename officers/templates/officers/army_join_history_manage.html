@@ -24,6 +24,11 @@
                     </a>
                 </div>
                 <div class="hoverable-item">
+                    <a href="{% url 'officer_detail' officer.pk %}" class="hoverable-link-secondary">
+                        Thông tin chung
+                    </a>
+                </div>
+                <div class="hoverable-item">
                     <a href="{% url 'url_title_view' officer.pk %}" class="hoverable-link-secondary">Chức danh</a>
                 </div>
                 <div class="hoverable-item">
@@ -61,12 +66,6 @@
                 </div>
                 <div class="hoverable-item">
                     <a href="{% url 'officer_update' officer.pk %}" class="hoverable-link-secondary">Cập nhật</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'officer_detail' officer.pk %}" class="hoverable-link">
-                        <img src="{% static 'src/back-icon.png' %}" alt="Back Icon" class="w-7 h-7">
-                        <span>Quay lại</span>
-                    </a>
                 </div>
             </div>
 
