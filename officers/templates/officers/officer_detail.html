@@ -119,14 +119,14 @@
                                 <p class="text-right">Nhóm máu:</p>
                                 <div class="flex space-x-2">
                                     <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
-                                    <p>
+                                    <label class="flex items-center">
                                         <input type="radio" name="radio-1" class="radio-xs radio-secondary" disabled checked="checked" />
-                                        Nam
-                                    </p>
-                                    <p>
+                                        <span class="ml-1">Nam</span>
+                                    </label>
+                                    <label class="flex items-center">
                                         <input type="radio" name="radio-1" class="radio-xs radio-secondary" disabled />
-                                        Nữ
-                                    </p>
+                                        <span class="ml-1">Nữ</span>
+                                    </label>
                                 </div>
                                 <p class="text-right">Số TK BIDV:</p>
                                 <p class="bg-base-200 px-2 py-1 rounded-md">{{officer.bank_account_BIDV }}</p>
