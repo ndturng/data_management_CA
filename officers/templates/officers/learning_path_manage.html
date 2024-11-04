@@ -4,7 +4,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
         <title>{{ officer.birth_name }} - Đào tạo</title>
         {% tailwind_css %}
 
@@ -18,66 +19,85 @@
         <div class="flex h-screen">
             <div class="w-1/5 bg-base-200 min-h-screen py-5">
                 <div class="hoverable-item">
-                    <a href="{% url 'officer_list' %}" class="hoverable-link">
-                        <img src="{% static 'src/home-icon.png' %}" alt="Home Icon" class="w-6 h-6">
+                    <a href="{% url 'officer_list' %}"
+                       class="hoverable-link">
+                        <img src="{% static 'src/home-icon.png' %}"
+                             alt="Home Icon"
+                             class="w-6 h-6" />
                         <span>Trang chủ</span>
                     </a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'officer_detail' officer.pk %}" class="hoverable-link-secondary">
-                        Thông tin chung
-                    </a>
+                    <a href="{% url 'officer_detail' officer.pk %}"
+                       class="hoverable-link-secondary">Thông tin chung</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_title_view' officer.pk %}" class="hoverable-link-secondary">Chức danh</a>
+                    <a href="{% url 'url_title_view' officer.pk %}"
+                       class="hoverable-link-secondary">Chức danh</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_position_plan' officer.pk %}" class="hoverable-link-secondary">Quy hoạch</a>
+                    <a href="{% url 'url_position_plan' officer.pk %}"
+                       class="hoverable-link-secondary">Quy hoạch</a>
                 </div>
                 <div class="highlight-item">
-                    <a href="{% url 'url_learning_path' officer.pk %}" class="hoverable-link-secondary">Đào tạo</a>
+                    <a href="{% url 'url_learning_path' officer.pk %}"
+                       class="hoverable-link-secondary">Đào tạo</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_work_process' officer.pk %}" class="hoverable-link-secondary">Quá trình công tác</a>
+                    <a href="{% url 'url_work_process' officer.pk %}"
+                       class="hoverable-link-secondary">Quá trình công tác</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_salary_process' officer.pk %}" class="hoverable-link-secondary">Quá trình lương</a>
+                    <a href="{% url 'url_salary_process' officer.pk %}"
+                       class="hoverable-link-secondary">Quá trình lương</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_laudatory' officer.pk %}" class="hoverable-link-secondary">Khen thưởng</a>
+                    <a href="{% url 'url_laudatory' officer.pk %}"
+                       class="hoverable-link-secondary">Khen thưởng</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_discipline' officer.pk %}" class="hoverable-link-secondary">Kỷ luật</a>
+                    <a href="{% url 'url_discipline' officer.pk %}"
+                       class="hoverable-link-secondary">Kỷ luật</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_relative' officer.pk %}" class="hoverable-link-secondary">Thân nhân</a>
+                    <a href="{% url 'url_relative' officer.pk %}"
+                       class="hoverable-link-secondary">Thân nhân</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_abroad' officer.pk %}" class="hoverable-link-secondary">Ra nước ngoài</a>
+                    <a href="{% url 'url_abroad' officer.pk %}"
+                       class="hoverable-link-secondary">Ra nước ngoài</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_army_join_history' officer.pk %}" class="hoverable-link-secondary">Tham gia quân đội</a>
+                    <a href="{% url 'url_army_join_history' officer.pk %}"
+                       class="hoverable-link-secondary">Tham gia quân đội</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_health' officer.pk %}" class="hoverable-link-secondary">Sức khoẻ</a>
+                    <a href="{% url 'url_health' officer.pk %}"
+                       class="hoverable-link-secondary">Sức khoẻ</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'url_image' officer.pk %}" class="hoverable-link-secondary">Ảnh</a>
+                    <a href="{% url 'url_image' officer.pk %}"
+                       class="hoverable-link-secondary">Ảnh</a>
                 </div>
                 <div class="hoverable-item">
-                    <a href="{% url 'officer_update' officer.pk %}" class="hoverable-link-secondary">Cập nhật</a>
+                    <a href="{% url 'officer_update' officer.pk %}"
+                       class="hoverable-link-secondary">Cập nhật</a>
                 </div>
             </div>
 
             <div class="w-4/5 h-screen overflow-y-auto px-10 pb-5 pt-16">
-                <h1 class="text-4xl text-center">Thông tin đào tạo: <strong class="ml-3">{{ officer.birth_name }}</strong></h1>
+                <h1 class="text-4xl text-center">
+                    Thông tin đào tạo: <strong class="ml-3">{{ officer.birth_name }}</strong>
+                </h1>
 
                 <div class="flex justify-end mb-7 mt-10">
                     <!-- Create New Position Plan Button -->
                     <a href="{% url 'url_learning_path_create' officer.pk %}">
                         <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10">
                             <span class="mr-2">Thêm mới</span>
-                            <img src="{% static 'src/new-folder.png' %}" alt="New Folder" class="w-5 h-5">
+                            <img src="{% static 'src/new-folder.png' %}"
+                                 alt="New Folder"
+                                 class="w-5 h-5" />
                         </button>
                     </a>
                 </div>
@@ -91,79 +111,102 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for learning_path in learning_paths %}
-                            <tr class="border-t border-gray-300 bg-gray-100 text-lg">
-                                <td class="py-2 px-4">{{ learning_path.period }}</td>
-                                <td class="py-2 px-4">{{ learning_path.learning_content }}</td>
-                                <td class="py-2">
-                                    <div class="flex items-center space-x-7">
-                                        <!-- Update Button -->
-                                        <div class="flex-none tooltip tooltip-top" data-tip="Cập nhật">
-                                            <a href="{% url 'url_learning_path_update' officer.pk learning_path.id %}" >
-                                                <button class="transform motion-safe:hover:scale-110">
-                                                    <img src="{% static 'src/update-icon.png' %}" alt="Update icon" class="w-7 h-7">
-                                                </button>
-                                            </a>
-                                        </div>
 
-                                        <!-- Delete Button with confirmation -->
-                                        <div class="flex-none tooltip tooltip-top" data-tip="Xoá">
-                                            <form
-                                                method="POST"
-                                                action="{% url 'url_learning_path_delete' officer.pk learning_path.id %}"
-                                                onsubmit="return confirmDelete();"
-                                            >
-                                                {% csrf_token %}
-                                                <button type="submit" class="transform motion-safe:hover:scale-110">
-                                                    <img src="{% static 'src/delete-icon.png' %}" alt="Delete icon" class="w-6 h-6">
-                                                </button>
-                                            </form>
+                            {% for learning_path in learning_paths %}
+                                <tr class="border-t border-gray-300 bg-gray-100 text-lg">
+                                    <td class="py-2 px-4">{{ learning_path.period }}</td>
+                                    <td class="py-2 px-4">{{ learning_path.learning_content }}</td>
+                                    <td class="py-2">
+                                        <div class="flex items-center space-x-7">
+                                            <!-- Update Button -->
+                                            <div class="flex-none tooltip tooltip-top"
+                                                 data-tip="Cập nhật">
+                                                <a href="{% url 'url_learning_path_update' officer.pk learning_path.id %}">
+                                                    <button class="transform motion-safe:hover:scale-110">
+                                                        <img src="{% static 'src/update-icon.png' %}"
+                                                             alt="Update icon"
+                                                             class="w-7 h-7" />
+                                                    </button>
+                                                </a>
+                                            </div>
+
+                                            <!-- Delete Button with confirmation -->
+                                            <div class="flex-none tooltip tooltip-top"
+                                                 data-tip="Xoá">
+                                                <form method="POST"
+                                                      action="{% url 'url_learning_path_delete' officer.pk learning_path.id %}"
+                                                      onsubmit="return confirmDelete();">
+                                                    {% csrf_token %}
+                                                    <button type="submit"
+                                                            class="transform motion-safe:hover:scale-110">
+                                                        <img src="{% static 'src/delete-icon.png' %}"
+                                                             alt="Delete icon"
+                                                             class="w-6 h-6" />
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             {% endfor %}
+
                         </tbody>
-                    </table>     
+                    </table>
                 </div>
 
                 <!-- Create or Update Learning Path Form -->
-                {% if form %}
-                <dialog class="modal" id="modal">
-                    <div class="modal-box">
-                        <h1 class="text-xl text-center font-bold mb-7 ml-2">
-                            {% if edit_learning_path_id %}Cập nhật thông tin{% else %}Thêm mới thông tin{% endif %}
-                        </h1>
-                        <form method="dialog">
-                            <a href="{% url 'url_learning_path' officer.pk %}" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
-                                <img src="{% static 'src/close.png' %}" alt="Close Form" class="w-5 h-5">
-                            </a>
-                        </form>
 
-                        <form method="POST">
-                            {% csrf_token %} 
-                            
-                            <label for="period" class="font-semibold ml-7">Giai đoạn:</label>
-                            <div class="form-group mt-3 mx-5">
-                                {{ form.period }}
-                            </div>
-                            
-                            <label for="learning_content" class="font-semibold ml-7">Nội dung đào tạo:</label>
-                            <div class="form-group mt-3 mx-5">
-                                {{ form.learning_content }}
-                            </div>
-                            <div class="modal-action">
-                                <button type="submit" class="btn mr-3 rounded-lg">
-                                    Lưu
-                                </button>
-                            </div>
+                {% if form %}
+                    <dialog class="modal"
+                            id="modal">
+                        <div class="modal-box">
+                            <h1 class="text-xl text-center font-bold mb-7 ml-2">
+
+                                {% if edit_learning_path_id %}
+                                    Cập nhật thông tin
+                                {% else %}
+                                    Thêm mới thông tin
+                                {% endif %}
+
+                            </h1>
+                            <form method="dialog">
+                                <a href="{% url 'url_learning_path' officer.pk %}"
+                                   class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 mr-5 mt-4">
+                                    <img src="{% static 'src/close.png' %}"
+                                         alt="Close Form"
+                                         class="w-5 h-5" />
+                                </a>
+                            </form>
+
+                            <form method="POST">
+                                {% csrf_token %}
+
+                                <label for="period"
+                                       class="font-semibold ml-7">
+                                    Giai đoạn:
+                                </label>
+                                <div class="form-group mt-3 mx-5">{{ form.period }}</div>
+
+                                <label for="learning_content"
+                                       class="font-semibold ml-7">
+                                    Nội dung đào tạo:
+                                </label>
+                                <div class="form-group mt-3 mx-5">{{ form.learning_content }}</div>
+                                <div class="modal-action">
+                                    <button type="submit"
+                                            class="btn mr-3 rounded-lg">
+                                        Lưu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <form method="dialog"
+                              class="modal-backdrop">
+                            <a href="{% url 'url_learning_path' officer.pk %}">close</a>
                         </form>
-                    </div>
-                    <form method="dialog" class="modal-backdrop">
-                        <a href="{% url 'url_learning_path' officer.pk %}">close</a>
-                    </form>
-                </dialog>
+                    </dialog>
                 {% endif %}
+
 
                 <script>
                     // Automatically show the modal when the page loads
@@ -175,5 +218,3 @@
         </div>
     </body>
 </html>
-                
-                
