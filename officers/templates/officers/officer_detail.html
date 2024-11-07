@@ -92,16 +92,15 @@
                     </button>
                 </a>
                
-                <div class="flex flex-grow-0 space-x-1">
+                <div class="flex space-x-1">
+                    <div class="avatar w-40">
+                        <div class="w-40 h-48 rounded bg-base-200">
+                            <img src="{% static 'src/army-avatar.png' %}"
+                                alt="Army avatar" />
+                        </div>
+                    </div>
                     <div class="w-2/3">
-                        <div class="flex flex-grow-0 space-x-1">
-                            <div class="avatar">
-                                <div class="w-40 rounded bg-base-200">
-                                    <img src="{% static 'src/army-avatar.png' %}"
-                                        alt="Army avatar" />
-                                </div>
-                            </div>
-
+                        <div class="flex">
                             <div class="flex-grow">
                                 <div class="flex mb-3">
                                     <div class="w-1/2">
@@ -149,9 +148,9 @@
                             </div>
                         </div>
 
-                        <div class="my-3 flex space-x-5">
-                            <div class="flex-grow">
-                                <div class="grid grid-cols-2 gap-4 items-center">
+                        <div class="flex my-3">
+                            <div class="flex-grow w-1/2">
+                                <div class="grid grid-cols-2 gap-3 items-center">
                                     <p class="text-right">Tháng năm vào Đoàn:</p>
                                     <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_group }}</p>
 
@@ -195,8 +194,8 @@
                                 </div>
                             </div>
 
-                            <div class="flex-grow">
-                                <div class="grid grid-cols-2 gap-4 items-center">
+                            <div class="flex-grow w-1/2">
+                                <div class="grid grid-cols-2 gap-3 items-center">
                                     <p class="text-right">Đơn vị công tác:</p>
                                     <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.work_unit }}</p>
 
@@ -250,24 +249,12 @@
                             <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_ca }}</p>
 
                             <p class="text-right">Nhóm máu:</p>
-                            <div class="flex space-x-2">
+                            <div class="flex justify-between">
                                 <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
-                                <label class="flex items-center">
-                                    <input type="radio"
-                                        name="disabled-radio"
-                                        class="radio-xs radio-secondary"
-                                        disabled
-                                        checked="checked" 
-                                    />
-                                    <span class="ml-1">Nam</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio"
-                                        name="radio-1"
-                                        class="radio-xs radio-secondary"
-                                        disabled />
-                                    <span class="ml-1">Nữ</span>
-                                </label>
+                                <div class="grid grid-cols-2 gap-3 items-center"> 
+                                    <p class="text-right">Giới tính:</p>
+                                    <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.gender }}</p>
+                                </div>
                             </div>
 
                             <p class="text-right">Số TK BIDV:</p>

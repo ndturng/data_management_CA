@@ -10,7 +10,7 @@
         margin-bottom: 25px;
         border: 1px solid #ccc;
         border-radius: 10px;
-        transition: 0.3s;
+        transition: 0.3s;    
     }
 
     .hoverable-item {
@@ -27,5 +27,12 @@
 
     .hoverable-link-secondary {
         @apply flex space-x-3 py-3 pl-20;
+    }
+
+    .officer-form input {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        transition: 0.3s;
     }
 }
