@@ -15,7 +15,7 @@
     </head>
     <body>
         <div class="flex h-screen">
-            <div class="w-1/5 bg-base-200 min-h-screen py-5">
+            <div class="w-80 bg-base-200 min-h-screen py-5">
                 <div class="hoverable-item">
                     <a href="{% url 'officer_list' %}"
                        class="hoverable-link">
@@ -77,199 +77,205 @@
                     <a href="{% url 'url_image' officer.pk %}"
                        class="hoverable-link-secondary">Ảnh</a>
                 </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'officer_update' officer.pk %}"
-                       class="hoverable-link-secondary">Cập nhật</a>
-                </div>
             </div>
 
-            <div class="w-4/5 h-screen overflow-y-auto px-7 pb-5 pt-10">
-                <h1 class="text-4xl font-semibold text-center mb-10">Tóm tắt lý lịch</h1>
-
+            <div class="w-full h-screen overflow-y-auto px-7 pb-5 pt-10">
+                <h1 class="text-4xl font-semibold text-center">Tóm tắt lý lịch</h1>
+            
+                <a href="{% url 'officer_update' officer.pk %}"
+                    class="flex justify-end pb-10">
+                    <button class="btn bg-base-100 rounded-lg">
+                        <img src="{% static 'src/compose.png' %}"
+                             alt="Compose icon"
+                             class="w-5 h-5" />
+                        <span>Cập nhật</span>
+                    </button>
+                </a>
+               
                 <div class="flex flex-grow-0 space-x-1">
-                    <div class="avatar">
-                        <div class="w-40 rounded bg-base-200">
-                            <img src="{% static 'src/army-avatar.png' %}"
-                                 alt="Army avatar" />
+                    <div class="w-2/3">
+                        <div class="flex flex-grow-0 space-x-1">
+                            <div class="avatar">
+                                <div class="w-40 rounded bg-base-200">
+                                    <img src="{% static 'src/army-avatar.png' %}"
+                                        alt="Army avatar" />
+                                </div>
+                            </div>
+
+                            <div class="flex-grow">
+                                <div class="flex mb-3">
+                                    <div class="w-1/2">
+                                        <div class="grid grid-cols-2 gap-3 items-center">
+                                            <p class="text-right">Họ và tên khai sinh:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_name }}</p>
+
+                                            <p class="text-right">Tên đang dùng:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.current_name }}</p>
+
+                                            <p class="text-right">Ngày sinh:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">
+                                                {{ officer.date_of_birth|date:"d/m/Y" }}
+                                            </p>
+
+                                            <p class="text-right">Nơi sinh:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_place }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-1/2">
+                                        <div class="grid grid-cols-2 gap-3 items-center">
+                                            <p class="text-right">Dân tộc:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.folk }}</p>
+
+                                            <p class="text-right">Tôn giáo:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.religion }}</p>
+
+                                            <p class="text-right">Số CCCD:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_citizen }}</p>
+
+                                            <p class="text-right">Số ĐT:</p>
+                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.phone_number }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="grid grid-cols-4 gap-2 items-center">
+                                        <p class="text-right">Chỗ ở hiện nay:</p>
+                                        <p class="bg-base-200 pl-2 ml-1 col-span-3 py-1 rounded-md">
+                                            {{ officer.current_residence }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="flex-grow">
-                        <div class="flex mb-3">
-                            <div class="w-1/3">
-                                <div class="grid grid-cols-2 gap-3 items-center">
-                                    <p class="text-right">Họ và tên khai sinh:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_name }}</p>
+                        <div class="my-3 flex space-x-5">
+                            <div class="flex-grow">
+                                <div class="grid grid-cols-2 gap-4 items-center">
+                                    <p class="text-right">Tháng năm vào Đoàn:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_group }}</p>
 
-                                    <p class="text-right">Tên đang dùng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_name }}</p>
+                                    <p class="text-right">Đoàn thể:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.group }}</p>
 
-                                    <p class="text-right">Ngày sinh:</p>
+                                    <p class="text-right">Tháng năm vào Đảng:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_party }}</p>
+
+                                    <p class="text-right">Tháng năm chính thức:</p>
                                     <p class="bg-base-200 px-2 py-1 rounded-md">
-                                        {{ officer.date_of_birth|date:"d/m/Y" }}
+                                        {{ officer.month_join_party_official }}
                                     </p>
 
-                                    <p class="text-right">Nơi sinh:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_place }}</p>
+                                    <p class="text-right">Số thẻ Đảng:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_card_number }}</p>
+
+                                    <p class="text-right">Chức vụ Đảng:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_position }}</p>
+
+                                    <p class="text-right">Tháng năm tuyển dụng:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_recruit }}</p>
+
+                                    <p class="text-right">Tháng năm vào CA:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_CA }}</p>
+
+                                    <p class="text-right">Lực lượng:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_type }}</p>
+
+                                    <p class="text-right">Loại hàm:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.rank_type }}</p>
+
+                                    <p class="text-right">Tháng năm đến ĐVCQ:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
+
+                                    <p class="text-right">Tháng năm đến ĐVTT:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
+
+                                    <p class="text-right">Tháng năm đến ĐVCS:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
                                 </div>
                             </div>
 
-                            <div class="w-1/3">
-                                <div class="grid grid-cols-2 gap-3 items-center">
-                                    <p class="text-right">Dân tộc:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.folk }}</p>
+                            <div class="flex-grow">
+                                <div class="grid grid-cols-2 gap-4 items-center">
+                                    <p class="text-right">Đơn vị công tác:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.work_unit }}</p>
 
-                                    <p class="text-right">Tôn giáo:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.religion }}</p>
+                                    <p class="text-right">Chức vụ:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.position }}</p>
 
-                                    <p class="text-right">Số CCCD:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_citizen }}</p>
+                                    <p class="text-right">Cấp bậc hàm:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_rank }}</p>
 
-                                    <p class="text-right">Số ĐT:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.phone_number }}</p>
+                                    <p class="text-right">Hệ số lương:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">
+                                        {{ officer.salary_coefficient }}
+                                    </p>
+
+                                    <p class="text-right">Quyết định lương:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.salary_decision }}</p>
+
+                                    <p class="text-right">Năm quyết định lương:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">
+                                        {{ officer.salary_decision_year }}
+                                    </p>
+
+                                    <p class="text-right">Công tác làm nhiều nhất:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.most_work }}</p>
+
+                                    <p class="text-right">Công tác chuyên trách:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.specialized_work }}</p>
+
+                                    <p class="text-right">Công tác khác:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.other_work }}</p>
+
+                                    <p class="text-right">Quyết định điều động:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.maneuver_decision }}</p>
+
+                                    <p class="text-right">Đơn vị tuyển:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_unit }}</p>
+
+                                    <p class="text-right">Nguồn tuyển:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_source }}</p>
+
+                                    <p class="text-right">Gia đình chính sách:</p>
+                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.policy_family }}</p>
                                 </div>
                             </div>
-
-                            <div class="w-1/3">
-                                <div class="grid grid-cols-2 gap-3 items-center">
-                                    <p class="text-right">Số hồ sơ:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_ca }}</p>
-
-
-                                    <p class="text-right">Nhóm máu:</p>
-                                    <div class="flex space-x-2">
-                                        <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
-                                        <label class="flex items-center">
-                                            <input type="radio"
-                                                   name="radio-1"
-                                                   class="radio-xs radio-secondary"
-                                                   disabled
-                                                   checked="checked" />
-                                            <span class="ml-1">Nam</span>
-                                        </label>
-                                        <label class="flex items-center">
-                                            <input type="radio"
-                                                   name="radio-1"
-                                                   class="radio-xs radio-secondary"
-                                                   disabled />
-                                            <span class="ml-1">Nữ</span>
-                                        </label>
-                                    </div>
-                                    <p class="text-right">Số TK BIDV:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.bank_account_BIDV }}</p>
-
-                                    <p class="text-right">Số sổ bảo hiểm:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.insurance_number }}</p>
-                                </div>
-                            </div>
                         </div>
-                        <div class="w-full">
-                            <div class="grid grid-cols-6 gap-2 items-center">
-                                <p class="text-right">Chỗ ở hiện nay:</p>
-                                <p class="bg-base-200 pl-2 ml-1 col-span-5 py-1 rounded-md">
-                                    {{ officer.current_residence }}
-                                </p>
+                    </div>
+
+                    <div class="flex-grow w-1/3">    
+                        <div class="grid grid-cols-2 gap-3 items-center">
+                            <p class="text-right">Số hồ sơ:</p>
+                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_ca }}</p>
+
+                            <p class="text-right">Nhóm máu:</p>
+                            <div class="flex space-x-2">
+                                <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
+                                <label class="flex items-center">
+                                    <input type="radio"
+                                        name="disabled-radio"
+                                        class="radio-xs radio-secondary"
+                                        disabled
+                                        checked="checked" 
+                                    />
+                                    <span class="ml-1">Nam</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio"
+                                        name="radio-1"
+                                        class="radio-xs radio-secondary"
+                                        disabled />
+                                    <span class="ml-1">Nữ</span>
+                                </label>
                             </div>
 
-                        </div>
-                    </div>
-                </div>
+                            <p class="text-right">Số TK BIDV:</p>
+                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.bank_account_BIDV }}</p>
 
-                <div class="my-10 flex space-x-5">
-                    <div class="flex-grow">
-                        <div class="grid grid-cols-2 gap-4 items-center">
-                            <p class="text-right">Tháng năm vào Đoàn:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_group }}</p>
+                            <p class="text-right">Số sổ bảo hiểm:</p>
+                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.insurance_number }}</p>
 
-                            <p class="text-right">Đoàn thể:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.group }}</p>
-
-                            <p class="text-right">Tháng năm vào Đảng:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_party }}</p>
-
-                            <p class="text-right">Tháng năm chính thức:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">
-                                {{ officer.month_join_party_official }}
-                            </p>
-
-                            <p class="text-right">Số thẻ Đảng:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_card_number }}</p>
-
-                            <p class="text-right">Chức vụ Đảng:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_position }}</p>
-
-                            <p class="text-right">Tháng năm tuyển dụng:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_recruit }}</p>
-
-                            <p class="text-right">Tháng năm vào CA:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_CA }}</p>
-
-                            <p class="text-right">Lực lượng:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_type }}</p>
-
-                            <p class="text-right">Loại hàm:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.rank_type }}</p>
-
-                            <p class="text-right">Tháng năm đến ĐVCQ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md"></p>
-
-                            <p class="text-right">Tháng năm đến ĐVTT:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md"></p>
-
-                            <p class="text-right">Tháng năm đến ĐVCS:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md"></p>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow">
-                        <div class="grid grid-cols-2 gap-4 items-center">
-                            <p class="text-right">Đơn vị công tác:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.work_unit }}</p>
-
-                            <p class="text-right">Chức vụ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.position }}</p>
-
-                            <p class="text-right">Cấp bậc hàm:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_rank }}</p>
-
-                            <p class="text-right">Hệ số lương:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">
-                                {{ officer.salary_coefficient }}
-                            </p>
-
-                            <p class="text-right">Quyết định lương:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.salary_decision }}</p>
-
-                            <p class="text-right">Năm quyết định lương:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">
-                                {{ officer.salary_decision_year }}
-                            </p>
-
-                            <p class="text-right">Công tác làm nhiều nhất:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.most_work }}</p>
-
-                            <p class="text-right">Công tác chuyên trách:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.specialized_work }}</p>
-
-                            <p class="text-right">Công tác khác:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.other_work }}</p>
-
-                            <p class="text-right">Quyết định điều động:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.maneuver_decision }}</p>
-
-                            <p class="text-right">Đơn vị tuyển:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_unit }}</p>
-
-                            <p class="text-right">Nguồn tuyển:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_source }}</p>
-
-                            <p class="text-right">Gia đình chính sách:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.policy_family }}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow">
-                        <div class="grid grid-cols-2 gap-4 items-center">
                             <p class="text-right">Ký hiệu đơn vị:</p>
                             <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.unit_notation }}</p>
 

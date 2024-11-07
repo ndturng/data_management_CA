@@ -1,7 +1,39 @@
-<h2>{% if form.instance.pk %}Cập nhật{% else %}Thêm{% endif %}Thông tin cán bộ</h2>
+{% load static tailwind_tags %}
+
+<h2 class="text-4xl font-semibold text-center my-5">
+    {% if form.instance.pk %}
+        Cập nhật thông tin cán bộ: {{ form.instance.birth_name }}
+    {% else %}
+        Thêm mới thông tin cán bộ
+    {% endif %}
+</h2>
+
 <form method="post">
     {% csrf_token %}
-    <a href="{% url 'officer_list' %}">Quay lại</a>
-    <button type="submit">Lưu</button>
-    {{ form.as_p }}
+    {% tailwind_css %}
+    <div class="mx-10">
+        <div class="flex justify-between mb-5">
+            <a href="{% url 'officer_list' %}" class="btn">Quay lại</a>
+            <button type="submit" class="btn">Lưu</button>
+        </div>
+        <div class="grid grid-cols-2 gap-3 items-center">
+            
+            <label for="birth_name">Họ và tên khai sinh:</label>
+            <div class="form-group">{{ form.birth_name }}</div>
+            
+            <label for="current_name">Tên đang dùng:</label>
+            <div class="form-group">{{ form.current_name }}</div>
+
+            <label for="date_of_birth">Ngày sinh:</label>
+            {{ form.date_of_birth }}
+            
+            <label for="gender">Giới tính:</label>
+            {{ form.gender }}
+        
+            <label for="current_residence">Nơi ở hiện tại:</label>
+            {{ form.current_residence }} 
+        </div>
+    </div>
+    
 </form>
+
