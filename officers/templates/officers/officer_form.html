@@ -13,7 +13,7 @@
     {% tailwind_css %}
     <div class="mx-10">
         <div class="flex justify-between mb-10 mx-5">
-            <a href="{% url 'officer_list' %}" class="btn rounded-lg">
+            <a href="{% url 'officer_detail' pk=form.instance.pk %}" class="btn rounded-lg">
                 <img src="{% static 'src/back-icon.png' %}"
                         alt="Back icon" class="w-5 h-5"/>
                 <span>Quay lại</span>
