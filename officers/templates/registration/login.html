@@ -9,14 +9,27 @@
     {% tailwind_css %}
 </head>
 
-<body class="text-center my-32">
-    <h2 class="text-4xl font-semibold mb-10">Đăng nhập</h2>
+<body class="my-32">
+    <h2 class="text-center text-4xl font-semibold mb-10">Đăng nhập</h2>
 
-    <div class="border">
-        <form method="post" class="mt-10">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn rounded-lg my-10 shadow-lg drop-shadow-lg">Đăng nhập</button>
-        </form>
+    <div class="flex justify-center text-center">
+        <div class="py-10 w-2/5 border rounded-xl">
+            <form method="post" class="mt-10">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-3 gap-3 items-top">              
+                    <label for="id_username" class="pt-2 text-right">Tên đăng nhập:</label>
+                    <div class="form-group">{{ form.username }}</div>
+                    
+                    <div class="col-span-3"></div>
+                
+                    <label for="id_password" class="pt-2 text-right">Mật khẩu:</label>
+                    <div class="form-group">{{ form.password }}</div>
+
+                    <div class="col-span-2"></div>
+                </div>
+                <button type="submit" class="btn rounded-lg shadow-lg drop-shadow-lg">Đăng nhập</button>
+            </form>
+        </div>
     </div>
 </body>

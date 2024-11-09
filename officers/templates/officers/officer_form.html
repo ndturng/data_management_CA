@@ -13,11 +13,20 @@
     {% tailwind_css %}
     <div class="mx-10">
         <div class="flex justify-between mb-10 mx-5">
-            <a href="{% url 'officer_detail' pk=form.instance.pk %}" class="btn rounded-lg">
-                <img src="{% static 'src/back-icon.png' %}"
-                        alt="Back icon" class="w-5 h-5"/>
-                <span>Quay lại</span>
-            </a>
+            {% if form.instance.pk %}
+                <a href="{% url 'officer_detail' pk=form.instance.pk %}" class="btn rounded-lg">
+                    <img src="{% static 'src/back-icon.png' %}"
+                            alt="Back icon" class="w-5 h-5"/>
+                    <span>Quay lại</span>
+                </a>
+            {% else %}
+                <a href="{% url 'officer_list' %}" class="btn rounded-lg">
+                    <img src="{% static 'src/back-icon.png' %}"
+                            alt="Back icon" class="w-5 h-5"/>
+                    <span>Quay lại</span>
+                </a>
+            {% endif %}
+            
             <button type="submit" class="btn rounded-lg">Lưu</button>
         </div>
 
@@ -60,7 +69,7 @@
                                     <div class="officer-form">{{ form.religion }}</div>
 
                                     <label for="id_citizen" class="text-right pt-2">Số CCCD:</label>
-                                    <div class="officer-form">{{ from.id_citizen }}</div>
+                                    <div class="officer-form">{{ form.id_citizen }}</div>
 
                                     <label for="phone_number" class="text-right pt-2">Số ĐT:</label>
                                     <div class="officer-form">{{ form.phone_number }}</div>
@@ -69,7 +78,7 @@
                         </div>
                         <div class="w-full">
                             <div class="grid grid-cols-4 gap-2 items-start">
-                                <label for="current_residence" class="text-right pt-2">Chỗ ở hiện tại:</label>
+                                <label for="current_residence" class="text-right pt-2">Chỗ ở hiện nay:</label>
                                 <div class="officer-form col-span-3">{{ form.current_residence }}</div>
                             </div>
                         </div>
