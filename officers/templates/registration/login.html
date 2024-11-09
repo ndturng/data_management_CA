@@ -2,34 +2,41 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logout</title>
-    {% tailwind_css %}
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+        <title>Logout</title>
+        {% tailwind_css %}
+    </head>
 
-<body class="my-32">
-    <h2 class="text-center text-4xl font-semibold mb-10">Đăng nhập</h2>
+    <body class="my-32">
+        <h2 class="text-center text-4xl font-semibold mb-10">Đăng nhập</h2>
 
-    <div class="flex justify-center text-center">
-        <div class="py-10 w-2/5 border rounded-xl">
-            <form method="post" class="mt-10">
-                {% csrf_token %}
-                
-                <div class="grid grid-cols-3 gap-3 items-top">              
-                    <label for="id_username" class="pt-2 text-right">Tên đăng nhập:</label>
-                    <div class="form-group">{{ form.username }}</div>
-                    
-                    <div class="col-span-3"></div>
-                
-                    <label for="id_password" class="pt-2 text-right">Mật khẩu:</label>
-                    <div class="form-group">{{ form.password }}</div>
+        <div class="flex justify-center text-center">
+            <div class="py-10 w-2/5 border rounded-xl">
+                <form method="post"
+                      class="mt-10">
+                    {% csrf_token %}
 
-                    <div class="col-span-2"></div>
-                </div>
-                <button type="submit" class="btn rounded-lg shadow-lg drop-shadow-lg">Đăng nhập</button>
-            </form>
+                    <div class="grid grid-cols-3 gap-3 items-top">
+                        <label for="id_username"
+                               class="pt-2 text-right">Tên đăng nhập:</label>
+                        <div class="form-group">{{ form.username }}</div>
+
+                        <div class="col-span-3"></div>
+
+                        <label for="id_password"
+                               class="pt-2 text-right">Mật khẩu:</label>
+                        <div class="form-group">{{ form.password }}</div>
+
+                        <div class="col-span-2"></div>
+                    </div>
+                    <button type="submit"
+                            class="btn rounded-lg shadow-lg drop-shadow-lg">
+                        Đăng nhập
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
-</body>
+    </body>

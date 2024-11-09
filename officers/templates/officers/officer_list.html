@@ -1,50 +1,70 @@
 {% load static tailwind_tags %}
 
-<div class="navbar bg-base-200 mb-10 shadow-inner drop-shadow-md"> 
+<div class="navbar bg-base-200 mb-10 shadow-inner drop-shadow-md">
     {% tailwind_css %}
     <div class="flex-1">
         <h2 class="font-semibold text-2xl ml-20">THÔNG TIN CÁN BỘ</h2>
     </div>
     <div class="flex-none">
-        <div class="flex-none tooltip tooltip-bottom" data-tip="Tìm kiếm">
+        <div class="flex-none tooltip tooltip-bottom"
+             data-tip="Tìm kiếm">
             <button class="btn btn-md btn-circle btn-ghost">
-              <img src="{% static 'src/search.png' %}" alt="Search Icon" class="w-5 h-5">
+                <img src="{% static 'src/search.png' %}"
+                     alt="Search Icon"
+                     class="w-5 h-5" />
             </button>
-          </div>
-        <a href="{% url 'officer_create' %}" class="btn btn-ghost rounded-md">
+        </div>
+        <a href="{% url 'officer_create' %}"
+           class="btn btn-ghost rounded-md">
             <span class="text-lg">Thêm mới cán bộ</span>
-            <img src="{% static 'src/add-user.png' %}" alt="Add user" class="w-5 h-5">
+            <img src="{% static 'src/add-user.png' %}"
+                 alt="Add user"
+                 class="w-5 h-5" />
         </a>
 
-        <a href="{% url 'excel_upload' %}" class="btn btn-ghost rounded-md">
+        <a href="{% url 'excel_upload' %}"
+           class="btn btn-ghost rounded-md">
             <span class="text-lg">Tải lên từ Excel</span>
-            <img src="{% static 'src/upload.png' %}" alt="Upload icon" class="w-5 h-5">
+            <img src="{% static 'src/upload.png' %}"
+                 alt="Upload icon"
+                 class="w-5 h-5" />
         </a>
-        
+
         {% if officers %}
-            <a href="{% url 'delete_all_officers' %}" class="btn btn-ghost rounded-md text-red-600 text-lg">Xoá tất cả</a>
+            <a href="{% url 'delete_all_officers' %}"
+               class="btn btn-ghost rounded-md text-red-600 text-lg">Xoá tất cả</a>
         {% endif %}
 
-      <button>
+        <button>
+
             {% if user.is_authenticated %}
-            <!-- <p>Chào mừng, {{ user.username }}! </p> -->
-            <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-ghost rounded-md text-lg">Đăng xuất</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">Đăng nhập</a>
-        {% endif %}   
-      </button>
+                <!-- <p>Chào mừng, {{ user.username }}! </p> -->
+                <form method="POST"
+                      action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-ghost rounded-md text-lg">
+                        Đăng xuất
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Đăng nhập</a>
+            {% endif %}
+
+        </button>
     </div>
-  </div>
+</div>
 
 <!-- Display messages -->
+
 {% if messages %}
+
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }} mb-10">{{ message }}</div>
     {% endfor %}
+
 {% endif %}
+
 
 <!-- Checkbox to toggle between officer list and export form -->
 <label class="font-semibold ml-10 text-lg">
@@ -56,13 +76,15 @@
 
 <div class="flex divide-x">
     <!-- Officer List and Filter Form -->
-    <div id="officerList" class="mx-20 w-3/5">
+    <div id="officerList"
+         class="mx-20 w-3/5">
         <table class="table">
             <thead>
                 <tr>
                     <th></th>
                 </tr>
             </thead>
+
             {% for officer in officers %}
                 <tbody class="mx-10 text-lg">
                     <tr>
@@ -71,384 +93,323 @@
                         <td>{{ officer.birth_year }}</td>
                         <td>{{ officer.work_unit }}</td>
                         <td>
-                            <a href="{% url 'officer_detail' officer.pk %}" class="text-green-500 hover:text-green-600 underline mx-2">
+                            <a href="{% url 'officer_detail' officer.pk %}"
+                               class="text-green-500 hover:text-green-600 underline mx-2">
                                 Xem
                             </a>
                             <span class="px-2"></span>
-                            <a href="{% url 'officer_delete' officer.pk %}" class="text-red-600 hover:text-red-700 underline mx-2">
+                            <a href="{% url 'officer_delete' officer.pk %}"
+                               class="text-red-600 hover:text-red-700 underline mx-2">
                                 Xoá
                             </a>
                         </td>
                     </tr>
                 </tbody>
             {% endfor %}
+
         </table>
     </div>
 
-    <div id="searchOfficer" class="w-2/5">
-        <form method="GET" action="{% url 'officer_list' %}">  
+    <div id="searchOfficer"
+         class="w-2/5">
+        <form method="GET"
+              action="{% url 'officer_list' %}">
             <div class="flex mx-16 space-x-2">
                 <!-- Search by name -->
                 <div class="mt-9">
                     <input type="text"
-                        name="birth_name"
-                        placeholder="Tìm theo tên"
-                        value="{{ birth_name|default_if_none:'' }}"
-                        class="rounded-lg input-sm"
-                    />
+                           name="birth_name"
+                           placeholder="Tìm theo tên"
+                           value="{{ birth_name|default_if_none:'' }}"
+                           class="rounded-lg input-sm" />
                 </div>
 
                 <!-- Search by id_ca -->
                 <div class="mt-9">
                     <input type="text"
-                        name="id_ca"
-                        placeholder="Tìm theo số hiệu"
-                        value="{{ id_ca|default_if_none:'' }}"
-                        class="rounded-lg input-sm"
-                    />
+                           name="id_ca"
+                           placeholder="Tìm theo số hiệu"
+                           value="{{ id_ca|default_if_none:'' }}"
+                           class="rounded-lg input-sm" />
                 </div>
 
-                <div class="tooltip tooltip-top mt-7" data-tip="Lọc">
-                    <button type="submit" class="btn btn-md btn-square btn-ghost">
-                        <img src="{% static 'src/filter.png' %}" alt="Filter Icon" class="w-9 h-9">
+                <div class="tooltip tooltip-top mt-7"
+                     data-tip="Lọc">
+                    <button type="submit"
+                            class="btn btn-md btn-square btn-ghost">
+                        <img src="{% static 'src/filter.png' %}"
+                             alt="Filter Icon"
+                             class="w-9 h-9" />
                     </button>
                 </div>
 
-                <div class="flex-none tooltip tooltip-top mt-10" data-tip="Xoá bộ lọc">
+                <div class="flex-none tooltip tooltip-top mt-10"
+                     data-tip="Xoá bộ lọc">
+
                     {% if request.GET %}
-                        
+
                         <a href="{% url 'officer_list' %}">
-                            <img src="{% static 'src/delete-icon.png' %}" alt="Delete icon" class="w-6 h-6">
+                            <img src="{% static 'src/delete-icon.png' %}"
+                                 alt="Delete icon"
+                                 class="w-6 h-6" />
                         </a>
-                        
+
                     {% endif %}
+
                 </div>
             </div>
-            
+
             <div class="flex mx-16 space-x-2 mt-3">
                 <!--Search by birth_year-->
-                <div>  
+                <div>
                     <!-- <p>Tìm theo năm sinh</p>
-                    <input type="text"
-                    name="birth_year"
-                    placeholder="Tìm theo năm sinh"
-                    value="{{ birth_year|default_if_none:'' }}"
-                    class="rounded-lg input-sm max-w-xs" /> -->        
+<input type="text" name="birth_year" placeholder="Tìm theo năm sinh" value="{{ birth_year|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
                 </div>
 
                 <!-- Search by year_join_party -->
                 <div>
                     <!-- <p>Tìm theo năm vào Đảng</p>
-                    <input type="text"
-                        name="year_join_party"
-                        placeholder="Tìm theo năm vào Đảng"
-                        value="{{ year_join_party|default_if_none:'' }}"
-                        class="rounded-lg input-sm max-w-xs" 
-                    /> -->      
+<input type="text" name="year_join_party" placeholder="Tìm theo năm vào Đảng" value="{{ year_join_party|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
                 </div>
             </div>
-            
+
             <!-- Search by year_join_party_official -->
             <!-- <input type="text"
-                name="year_join_party_official"
-                placeholder="Tìm theo năm vào Đảng chính thức"
-                value="{{ year_join_party_official|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="year_join_party_official"
+        placeholder="Tìm theo năm vào Đảng chính thức"
+        value="{{ year_join_party_official|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by year_join_CA -->
             <!-- <input type="text"
-                name="year_join_CA"
-                placeholder="Tìm theo năm vào CA"
-                value="{{ year_join_CA|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="year_join_CA"
+        placeholder="Tìm theo năm vào CA"
+        value="{{ year_join_CA|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by current_residence -->
             <!-- <input type="text"
-                name="current_residence"
-                placeholder="Tìm theo chỗ ở hiện nay"
-                value="{{ current_residence|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="current_residence"
+        placeholder="Tìm theo chỗ ở hiện nay"
+        value="{{ current_residence|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by salary_decision_year -->
             <!-- <input type="text"
-                name="salary_decision_year"
-                placeholder="Tìm theo năm quyết định lương"
-                value="{{ salary_decision_year|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="salary_decision_year"
+        placeholder="Tìm theo năm quyết định lương"
+        value="{{ salary_decision_year|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by work_unit -->
             <!-- <input type="text"
-                name="work_unit"
-                placeholder="Tìm theo đơn vị công tác"
-                value="{{ work_unit|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="work_unit"
+        placeholder="Tìm theo đơn vị công tác"
+        value="{{ work_unit|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by specialized_work -->
             <!-- <input type="text"
-                name="specialized_work"
-                placeholder="Tìm theo công tác chuyên trách"
-                value="{{ specialized_work|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="specialized_work"
+        placeholder="Tìm theo công tác chuyên trách"
+        value="{{ specialized_work|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by other_work -->
             <!-- <input type="text"
-                name="other_work"
-                placeholder="Tìm theo công tác khác"
-                value="{{ other_work|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="other_work"
+        placeholder="Tìm theo công tác khác"
+        value="{{ other_work|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by most_work -->
             <!-- <input type="text"
-                name="most_work"
-                placeholder="Tìm theo công tác làm nhiều nhất"
-                value="{{ most_work|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
-            
+        name="most_work"
+        placeholder="Tìm theo công tác làm nhiều nhất"
+        value="{{ most_work|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
+
             <!-- Search by phone_number -->
             <!-- <input type="text"
-                name="phone_number"
-                placeholder="Tìm theo số điện thoại"
-                value="{{ phone_number|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="phone_number"
+        placeholder="Tìm theo số điện thoại"
+        value="{{ phone_number|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by bank_account_BIDV -->
             <!-- <input type="text"
-                name="bank_account_BIDV"
-                placeholder="Tìm theo số tài khoản BIDV"
-                value="{{ bank_account_BIDV|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="bank_account_BIDV"
+        placeholder="Tìm theo số tài khoản BIDV"
+        value="{{ bank_account_BIDV|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
             <!-- Search by id_citizen -->
             <!-- <input type="text"
-                name="id_citizen"
-                placeholder="Tìm theo số CMND"
-                value="{{ id_citizen|default_if_none:'' }}"
-                style="flex: 1;
-                        min-width: 150px" /> -->
+        name="id_citizen"
+        placeholder="Tìm theo số CMND"
+        value="{{ id_citizen|default_if_none:'' }}"
+        style="flex: 1;
+               min-width: 150px" /> -->
 
-            
+
 
             <!-- <label for="gender">Giới tính:</label>
-            <select name="gender"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="gender" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
                 
                 {% for g in gender %}
-                    <option value="{{ g }}"
-                        {% if request.GET.gender == g %}selected{% endif %}
-                        >{{ g }}</option>
+                    <option value="{{ g }}" {% if request.GET.gender == g %}selected{% endif %}>{{ g }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="military_type">Lực lượng:</label>
-            <select name="military_type"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="military_type" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for mt in military_type %}
-                    <option value="{{ mt }}" 
-                        {% if request.GET.military_type == mt %}selected{% endif %}
-                        >{{ mt }}</option>
+                    <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="military_rank">Cấp bậc hàm:</label>
-            <select name="military_rank"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="military_rank" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for mr in military_rank %}
-                    <option value="{{ mr }}" 
-                        {% if request.GET.military_rank == mr %}selected{% endif %}
-                        >{{ mr }}</option>
+                    <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="salary_coefficient">Hệ số lương:</label>
-            <select name="salary_coefficient"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="salary_coefficient" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for sc in salary_coefficient %}
-                    <option value="{{ sc }}" 
-                        {% if request.GET.salary_coefficient == sc %}selected{% endif %}
-                        >{{ sc }}</option>
+                    <option value="{{ sc }}" {% if request.GET.salary_coefficient == sc %}selected{% endif %}>{{ sc }}</option>
                 {% endfor %}
             </select>
 
             <label for="position">Chức vụ:</label>
-            <select name="position"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="position" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for p in position %}
-                    <option value="{{ p }}" 
-                        {% if request.GET.position == p %}selected{% endif %}
-                        >{{ p }}</option>
+                    <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="party_position">Chức vụ Đảng:</label>
-            <select name="party_position"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="party_position" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for pp in party_position %}
-                    <option value="{{ pp }}" 
-                        {% if request.GET.party_position == pp %}selected{% endif %}
-                        >{{ pp }}</option>
+                    <option value="{{ pp }}" {% if request.GET.party_position == pp %}selected{% endif %}>{{ pp }}</option>
                 {% endfor %}
             </select>
 
             <label for="political_theory">Trình độ chính trị:</label>
-            <select name="political_theory"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="political_theory" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for pt in political_theory %}
-                    <option value="{{ pt }}" 
-                        {% if request.GET.political_theory == pt %}selected{% endif %}
-                        >{{ pt }}</option>
+                    <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="birth_place">Nơi sinh:</label>
-            <select name="birth_place"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="birth_place" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for bp in birth_place %}
-                    <option value="{{ bp }}" 
-                        {% if request.GET.birth_place == bp %}selected{% endif %}
-                        >{{ bp }}</option>
+                    <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
                 {% endfor %}
 
             </select>
 
             <label for="equipment_type">Quân trang:</label>
-            <select name="equipment_type"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="equipment_type" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for et in equipment_type %}
-                    <option value="{{ et }}" 
-                        {% if request.GET.equipment_type == et %}selected{% endif %}
-                        >{{ et }}</option>
+                    <option value="{{ et }}" {% if request.GET.equipment_type == et %}selected{% endif %}>{{ et }}</option>
                 {% endfor %}
             </select>
 
             <label for="size_of_shoes">Giày:</label>
-            <select name="size_of_shoes"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="size_of_shoes" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for sos in size_of_shoes %}
-                    <option value="{{ sos }}" 
-                        {% if request.GET.size_of_shoes == sos %}selected{% endif %}
-                        >{{ sos }}</option>
+                    <option value="{{ sos }}" {% if request.GET.size_of_shoes == sos %}selected{% endif %}>{{ sos }}</option>
                 {% endfor %}
             </select>
 
             <label for="size_of_hat">Mũ:</label>
-            <select name="size_of_hat"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="size_of_hat" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for soh in size_of_hat %}
-                    <option value="{{ soh }}" 
-                        {% if request.GET.size_of_hat == soh %}selected{% endif %}
-                        >{{ soh }}</option>
+                    <option value="{{ soh }}" {% if request.GET.size_of_hat == soh %}selected{% endif %}>{{ soh }}</option>
                 {% endfor %}
             </select>
 
             <label for="size_of_clothes">Quần áo:</label>
-            <select name="size_of_clothes"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="size_of_clothes" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for soc in size_of_clothes %}
-                    <option value="{{ soc }}" 
-                        {% if request.GET.size_of_clothes == soc %}selected{% endif %}
-                        >{{ soc }}</option>
+                    <option value="{{ soc }}" {% if request.GET.size_of_clothes == soc %}selected{% endif %}>{{ soc }}</option>
                 {% endfor %}
             </select>
 
             <label for="certi_of_IT">Tin học:</label>
-            <select name="certi_of_IT"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="certi_of_IT" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for cit in certi_of_IT %}
-                    <option value="{{ cit }}" 
-                        {% if request.GET.certi_of_IT == cit %}selected{% endif %}
-                        >{{ cit }}</option>
+                    <option value="{{ cit }}" {% if request.GET.certi_of_IT == cit %}selected{% endif %}>{{ cit }}</option>
                 {% endfor %}
             </select>
 
             <label for="certi_of_foreign_language">Ngoại ngữ:</label>
-            <select name="certi_of_foreign_language"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="certi_of_foreign_language" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for cofl in certi_of_foreign_language %}
-                    <option value="{{ cofl }}" 
-                        {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}
-                        >{{ cofl }}</option>
+                    <option value="{{ cofl }}" {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}>{{ cofl }}</option>
                 {% endfor %}
             </select>
 
             <label for="blood_type">Nhóm máu:</label>
-            <select name="blood_type"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="blood_type" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for bt in blood_type %}
-                    <option value="{{ bt }}" 
-                        {% if request.GET.blood_type == bt %}selected{% endif %}
-                        >{{ bt }}</option>
+                    <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
                 {% endfor %}
             </select>
 
             <label for="profile_address">Địa chỉ hồ sơ:</label>
-            <select name="profile_address"
-                    style="flex: 1;
-                        min-width: 150px">
+            <select name="profile_address" style="flex: 1; min-width: 150px">
                 <option value="">Tất cả</option>
 
                 {% for pa in profile_address %}
-                    <option value="{{ pa }}" 
-                        {% if request.GET.profile_address == pa %}selected{% endif %}
-                        >{{ pa }}</option>
+                    <option value="{{ pa }}" {% if request.GET.profile_address == pa %}selected{% endif %}>{{ pa }}</option>
                 {% endfor %}
             </select> -->
         </form>
@@ -461,34 +422,46 @@
     <form method="post"
           action="{% url 'officer_list' %}">
         {% csrf_token %}
-        <h3 class="my-10 text-3xl font-semibold text-center">Chọn cán bộ và thông tin cần trích xuất</h3>
+        <h3 class="my-10 text-3xl font-semibold text-center">
+            Chọn cán bộ và thông tin cần trích xuất
+        </h3>
 
         <!-- Officer Selection -->
         <div class="flex justify-around">
             <div>
-                <strong>Chọn cán bộ:</strong><br>
+                <strong>Chọn cán bộ:</strong>
+                <br />
 
                 <label>
-                    <input type="checkbox" id="select-all-officers">
+                    <input type="checkbox"
+                           id="select-all-officers" />
                     Chọn tất cả
-                </label> <br>
+                </label>
+                <br />
                 <ol>
+
                     {% for officer in officers %}
-                        <input type="checkbox" name="officers" value="{{ officer.pk }}" id="officer_{{ officer.pk }}">
+                        <input type="checkbox"
+                               name="officers"
+                               value="{{ officer.pk }}"
+                               id="officer_{{ officer.pk }}" />
                         <label for="officer_{{ officer.pk }}">
-                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit}}
+                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
                         </label>
-                        <br>
+                        <br />
                     {% endfor %}
+
                 </ol>
             </div>
 
             <!-- Field Selection -->
             <div>
-                <strong>Chọn thông tin:</strong><br>
+                <strong>Chọn thông tin:</strong>
+                <br />
 
                 <label>
-                    <input type="checkbox" id="select-all-fields"> 
+                    <input type="checkbox"
+                           id="select-all-fields" />
                     Chọn tất cả
                 </label>
                 <ul>
@@ -498,10 +471,12 @@
 
             <!-- Related Tables Selection -->
             <div>
-                <strong>Chọn bảng liên quan:</strong><br>
-                
+                <strong>Chọn bảng liên quan:</strong>
+                <br />
+
                 <label>
-                    <input type="checkbox" id="select-all-related-tables">
+                    <input type="checkbox"
+                           id="select-all-related-tables" />
                     Chọn tất cả
                 </label>
                 <ul>
@@ -510,9 +485,9 @@
             </div>
         </div>
 
-        <button type="submit" name="export" class="btn">
-            Xuất dữ liệu
-        </button>
+        <button type="submit"
+                name="export"
+                class="btn">Xuất dữ liệu</button>
     </form>
 </div>
 

@@ -14,30 +14,33 @@
     <div class="mx-10">
         <div class="flex justify-between mb-10 mx-5">
             {% if form.instance.pk %}
-                <a href="{% url 'officer_detail' pk=form.instance.pk %}" class="btn rounded-lg">
+                <a href="{% url 'officer_detail' pk=form.instance.pk %}"
+                   class="btn rounded-lg">
                     <img src="{% static 'src/back-icon.png' %}"
-                            alt="Back icon" class="w-5 h-5"/>
+                         alt="Back icon"
+                         class="w-5 h-5" />
                     <span>Quay lại</span>
                 </a>
             {% else %}
-                <a href="{% url 'officer_list' %}" class="btn rounded-lg">
+                <a href="{% url 'officer_list' %}"
+                   class="btn rounded-lg">
                     <img src="{% static 'src/back-icon.png' %}"
-                            alt="Back icon" class="w-5 h-5"/>
+                         alt="Back icon"
+                         class="w-5 h-5" />
                     <span>Quay lại</span>
                 </a>
             {% endif %}
-            
-            <button type="submit" class="btn rounded-lg">Lưu</button>
+
+            <button type="submit"
+                    class="btn rounded-lg">Lưu</button>
         </div>
 
         <div class="flex space-x-1">
             <div class="avatar w-40">
-                <!-- <div class=""> -->
-                    <div class="w-40 h-48 rounded bg-base-200 fixed">
-                        <img src="{% static 'src/army-avatar.png' %}"
-                            alt="Army avatar" />
-                    </div>
-                <!-- </div> -->
+                <div class="w-40 h-48 rounded bg-base-200 fixed">
+                    <img src="{% static 'src/army-avatar.png' %}"
+                         alt="Army avatar" />
+                </div>
             </div>
 
             <div class="w-2/3">
@@ -46,128 +49,217 @@
                         <div class="flex mb-3">
                             <div class="w-1/2">
                                 <div class="grid grid-cols-2 gap-3 items-start">
-                                    <label for="birth_name" class="text-right pt-2">Họ và tên khai sinh:</label>
+                                    <label for="birth_name"
+                                           class="text-right pt-2">
+                                        Họ và tên khai sinh:
+                                    </label>
                                     <div class="officer-form">{{ form.birth_name }}</div>
-                                    
-                                    <label for="current_name" class="text-right pt-2">Tên đang dùng:</label>
+
+                                    <label for="current_name"
+                                           class="text-right pt-2">
+                                        Tên đang dùng:
+                                    </label>
                                     <div class="officer-form">{{ form.current_name }}</div>
-                        
-                                    <label for="date_of_birth" class="text-right pt-2">Ngày sinh:</label>
+
+                                    <label for="date_of_birth"
+                                           class="text-right pt-2">
+                                        Ngày sinh:
+                                    </label>
                                     <div class="officer-form">{{ form.date_of_birth }}</div>
-                
-                                    <label for="birth_place" class="text-right pt-2">Nơi sinh:</label>
+
+                                    <label for="birth_place"
+                                           class="text-right pt-2">
+                                        Nơi sinh:
+                                    </label>
                                     <div class="officer-form">{{ form.birth_place }}</div>
                                 </div>
                             </div>
 
                             <div class="w-1/2">
                                 <div class="grid grid-cols-2 gap-3 items-start">
-                                    <label for="folk" class="text-right pt-2">Dân tộc:</label>
+                                    <label for="folk"
+                                           class="text-right pt-2">
+                                        Dân tộc:
+                                    </label>
                                     <div class="officer-form">{{ form.folk }}</div>
 
-                                    <label for="religion" class="text-right pt-2">Tôn giáo:</label>
+                                    <label for="religion"
+                                           class="text-right pt-2">
+                                        Tôn giáo:
+                                    </label>
                                     <div class="officer-form">{{ form.religion }}</div>
 
-                                    <label for="id_citizen" class="text-right pt-2">Số CCCD:</label>
+                                    <label for="id_citizen"
+                                           class="text-right pt-2">
+                                        Số CCCD:
+                                    </label>
                                     <div class="officer-form">{{ form.id_citizen }}</div>
 
-                                    <label for="phone_number" class="text-right pt-2">Số ĐT:</label>
+                                    <label for="phone_number"
+                                           class="text-right pt-2">
+                                        Số ĐT:
+                                    </label>
                                     <div class="officer-form">{{ form.phone_number }}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="w-full">
                             <div class="grid grid-cols-4 gap-2 items-start">
-                                <label for="current_residence" class="text-right pt-2">Chỗ ở hiện nay:</label>
+                                <label for="current_residence"
+                                       class="text-right pt-2">
+                                    Chỗ ở hiện nay:
+                                </label>
                                 <div class="officer-form col-span-3">{{ form.current_residence }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex my-3">
                     <div class="flex-grow w-1/2">
                         <div class="grid grid-cols-2 gap-3 items-start">
-                            <label for="month_join_group" class="text-right pt-2">Tháng năm vào Đoàn:</label>
+                            <label for="month_join_group"
+                                   class="text-right pt-2">
+                                Tháng năm vào Đoàn:
+                            </label>
                             <div class="officer-form">{{ form.month_join_group }}</div>
 
-                            <label for="group" class="text-right pt-2">Đoàn thể:</label>
+                            <label for="group"
+                                   class="text-right pt-2">Đoàn thể:</label>
                             <div class="officer-form">{{ form.group }}</div>
 
-                            <label for="month_join_party" class="text-right pt-2">Tháng năm vào Đảng:</label>
+                            <label for="month_join_party"
+                                   class="text-right pt-2">
+                                Tháng năm vào Đảng:
+                            </label>
                             <div class="officer-form">{{ form.month_join_party }}</div>
 
-                            <label for="month_join_party_official" class="text-right pt-2">Tháng năm chính thức:</label>
+                            <label for="month_join_party_official"
+                                   class="text-right pt-2">
+                                Tháng năm chính thức:
+                            </label>
                             <div class="officer-form">{{ form.month_join_party_official }}</div>
 
-                            <label for="party_card_number" class="text-right pt-2">Số thẻ Đảng:</label>
+                            <label for="party_card_number"
+                                   class="text-right pt-2">Số thẻ Đảng:</label>
                             <div class="officer-form">{{ form.party_card_number }}</div>
 
-                            <label for="party_position" class="text-right pt-2">Chức vụ Đảng:</label>
+                            <label for="party_position"
+                                   class="text-right pt-2">
+                                Chức vụ Đảng:
+                            </label>
                             <div class="officer-form">{{ form.party_position }}</div>
 
-                            <label for="month_recruit" class="text-right pt-2">Tháng năm tuyển dụng:</label>
+                            <label for="month_recruit"
+                                   class="text-right pt-2">
+                                Tháng năm tuyển dụng:
+                            </label>
                             <div class="officer-form">{{ form.month_recruit }}</div>
 
-                            <label for="month_join_CA" class="text-right pt-2">Tháng năm vào CA:</label>
+                            <label for="month_join_CA"
+                                   class="text-right pt-2">
+                                Tháng năm vào CA:
+                            </label>
                             <div class="officer-form">{{ form.month_join_CA }}</div>
 
-                            <label for="military_type" class="text-right pt-2">Lực lượng:</label>
+                            <label for="military_type"
+                                   class="text-right pt-2">Lực lượng:</label>
                             <div class="officer-form">{{ form.military_type }}</div>
 
-                            <label for="rank_type" class="text-right pt-2">Loại hàm:</label>
+                            <label for="rank_type"
+                                   class="text-right pt-2">Loại hàm:</label>
                             <div class="officer-form">{{ form.rank_type }}</div>
 
-                            <label for="" class="text-right pt-2">Tháng năm đến ĐVCQ:</label>
+                            <label for=""
+                                   class="text-right pt-2">
+                                Tháng năm đến ĐVCQ:
+                            </label>
                             <div class="officer-form"></div>
 
-                            <label for="" class="text-right pt-2">Tháng năm đến ĐVTT:</label>
+                            <label for=""
+                                   class="text-right pt-2">
+                                Tháng năm đến ĐVTT:
+                            </label>
                             <div class="officer-form"></div>
 
-                            <label for="" class="text-right pt-2">Tháng năm đến ĐVCS</label>
+                            <label for=""
+                                   class="text-right pt-2">
+                                Tháng năm đến ĐVCS
+                            </label>
                             <div class="officer-form"></div>
                         </div>
                     </div>
 
                     <div class="flex-grow w-1/2">
                         <div class="grid grid-cols-2 gap-3 items-start">
-                            <label for="work_unit" class="text-right pt-2">Đơn vị công tác:</label>
+                            <label for="work_unit"
+                                   class="text-right pt-2">
+                                Đơn vị công tác:
+                            </label>
                             <div class="officer-form">{{ form.work_unit }}</div>
 
-                            <label for="position" class="text-right pt-2">Chức vụ:</label>
+                            <label for="position"
+                                   class="text-right pt-2">Chức vụ:</label>
                             <div class="officer-form">{{ form.position }}</div>
 
-                            <label for="military_rank" class="text-right pt-2">Cấp bậc hàm:</label>
+                            <label for="military_rank"
+                                   class="text-right pt-2">Cấp bậc hàm:</label>
                             <div class="officer-form">{{ form.military_rank }}</div>
 
-                            <label for="salary_coefficient" class="text-right pt-2">Hệ số lương:</label>
+                            <label for="salary_coefficient"
+                                   class="text-right pt-2">Hệ số lương:</label>
                             <div class="officer-form">{{ form.salary_coefficient }}</div>
 
-                            <label for="salary_decision" class="text-right pt-2">Quyết định lương:</label>
+                            <label for="salary_decision"
+                                   class="text-right pt-2">
+                                Quyết định lương:
+                            </label>
                             <div class="officer-form">{{ form.salary_decision }}</div>
 
-                            <label for="salary_decision_year" class="text-right pt-2">Năm quyết định lương:</label>
+                            <label for="salary_decision_year"
+                                   class="text-right pt-2">
+                                Năm quyết định lương:
+                            </label>
                             <div class="officer-form">{{ form.salary_decision_year }}</div>
 
-                            <label for="most_work" class="text-right pt-2">Công tác làm nhiều nhất:</label>
+                            <label for="most_work"
+                                   class="text-right pt-2">
+                                Công tác làm nhiều nhất:
+                            </label>
                             <div class="officer-form">{{ form.most_work }}</div>
 
-                            <label for="specialized_work" class="text-right pt-2">Công tác chuyên trách:</label>
+                            <label for="specialized_work"
+                                   class="text-right pt-2">
+                                Công tác chuyên trách:
+                            </label>
                             <div class="officer-form">{{ form.specialized_work }}</div>
 
-                            <label for="other_work" class="text-right pt-2">Công tác khác:</label>
+                            <label for="other_work"
+                                   class="text-right pt-2">
+                                Công tác khác:
+                            </label>
                             <div class="officer-form">{{ form.other_work }}</div>
 
-                            <label for="maneuver_decision" class="text-right pt-2">Quyết định điều động:</label>
+                            <label for="maneuver_decision"
+                                   class="text-right pt-2">
+                                Quyết định điều động:
+                            </label>
                             <div class="officer-form">{{ form.maneuver_decision }}</div>
 
-                            <label for="recruit_unit" class="text-right pt-2">Đơn vị tuyển:</label>
+                            <label for="recruit_unit"
+                                   class="text-right pt-2">
+                                Đơn vị tuyển:
+                            </label>
                             <div class="officer-form">{{ form.recruit_unit }}</div>
 
-                            <label for="recruit_source" class="text-right pt-2">Nguồn tuyển:</label>
+                            <label for="recruit_source"
+                                   class="text-right pt-2">Nguồn tuyển:</label>
                             <div class="officer-form">{{ form.recruit_source }}</div>
 
-                            <label for="policy_family" class="text-right pt-2">Gia đình chính sách:</label>
+                            <label for="policy_family"
+                                   class="text-right pt-2">
+                                Gia đình chính sách:
+                            </label>
                             <div class="officer-form">{{ form.policy_family }}</div>
                         </div>
                     </div>
@@ -176,65 +268,82 @@
 
             <div class="flex-grow w-1/3">
                 <div class="grid grid-cols-2 gap-3 items-start">
-                    <label for="id_ca" class="text-right pt-2">Số hồ sơ:</label>
+                    <label for="id_ca"
+                           class="text-right pt-2">Số hồ sơ:</label>
                     <div class="officer-form">{{ form.id_ca }}</div>
 
-                    <label for="blood_type" class="text-right pt-2">Nhóm máu:</label>
+                    <label for="blood_type"
+                           class="text-right pt-2">Nhóm máu:</label>
                     <div class="flex justify-between">
                         <div class="officer-form">{{ form.blood_type }}</div>
                         <div class="grid grid-cols-2 gap-3 items-start">
-                            <label for="gender" class="text-right pt-2">Giới tính:</label>
+                            <label for="gender"
+                                   class="text-right pt-2">Giới tính:</label>
                             <div class="officer-form">{{ form.gender }}</div>
                         </div>
                     </div>
 
-                    <label for="bank_account_BIDV" class="text-right pt-2">Số TK BIDV:</label>
+                    <label for="bank_account_BIDV"
+                           class="text-right pt-2">Số TK BIDV:</label>
                     <div class="officer-form">{{ form.bank_account_BIDV }}</div>
 
-                    <label for="insurance_number" class="text-right pt-2">Số sổ bảo hiểm:</label>
+                    <label for="insurance_number"
+                           class="text-right pt-2">Số sổ bảo hiểm:</label>
                     <div class="officer-form">{{ form.insurance_number }}</div>
 
-                    <label for="unit_notation" class="text-right pt-2">Ký hiệu đơn vị:</label>
+                    <label for="unit_notation"
+                           class="text-right pt-2">Ký hiệu đơn vị:</label>
                     <div class="officer-form">{{ form.unit_notation }}</div>
 
-                    <label for="compete_title" class="text-right pt-2">Danh hiệu:</label>
+                    <label for="compete_title"
+                           class="text-right pt-2">Danh hiệu:</label>
                     <div class="officer-form">{{ form.compete_title }}</div>
 
-                    <label for="equipment_type" class="text-right pt-2">Quân trang:</label>
+                    <label for="equipment_type"
+                           class="text-right pt-2">Quân trang:</label>
                     <div class="officer-form">{{ form.equipment_type }}</div>
 
-                    <label for="size_of_shoes" class="text-right pt-2">Giày:</label>
+                    <label for="size_of_shoes"
+                           class="text-right pt-2">Giày:</label>
                     <div class="officer-form">{{ form.size_of_shoes }}</div>
 
-                    <label for="size_of_hat" class="text-right pt-2">Mũ:</label>
+                    <label for="size_of_hat"
+                           class="text-right pt-2">Mũ:</label>
                     <div class="officer-form">{{ form.size_of_hat }}</div>
 
-                    <label for="size_of_clothes" class="text-right pt-2">Quần áo:</label>
+                    <label for="size_of_clothes"
+                           class="text-right pt-2">Quần áo:</label>
                     <div class="officer-form">{{ form.size_of_clothes }}</div>
 
-                    <label for="certi_of_IT" class="text-right pt-2">Tin học:</label>
+                    <label for="certi_of_IT"
+                           class="text-right pt-2">Tin học:</label>
                     <div class="officer-form">{{ form.certi_of_IT }}</div>
 
-                    <label for="certi_of_foreign_language" class="text-right pt-2">Ngoại ngữ:</label>
+                    <label for="certi_of_foreign_language"
+                           class="text-right pt-2">Ngoại ngữ:</label>
                     <div class="officer-form">{{ form.certi_of_foreign_language }}</div>
 
-                    <label for="political_theory" class="text-right pt-2">Trình độ chính trị:</label>
+                    <label for="political_theory"
+                           class="text-right pt-2">Trình độ chính trị:</label>
                     <div class="officer-form">{{ form.political_theory }}</div>
 
-                    <label for="strength" class="text-right pt-2">Năng lực sở trường:</label>
+                    <label for="strength"
+                           class="text-right pt-2">Năng lực sở trường:</label>
                     <div class="officer-form">{{ form.strength }}</div>
 
-                    <label for="education" class="text-right pt-2">Trình độ học vấn:</label>
+                    <label for="education"
+                           class="text-right pt-2">Trình độ học vấn:</label>
                     <div class="officer-form">{{ form.education }}</div>
 
-                    <label for="profile_address" class="text-right pt-2">Địa chỉ hồ sơ:</label>
+                    <label for="profile_address"
+                           class="text-right pt-2">Địa chỉ hồ sơ:</label>
                     <div class="officer-form">{{ form.profile_address }}</div>
 
-                    <label for="date_update" class="text-right pt-2">Ngày cập nhật:</label>
+                    <label for="date_update"
+                           class="text-right pt-2">Ngày cập nhật:</label>
                     <div class="officer-form">{{ form.date_update }}</div>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </form>
-
