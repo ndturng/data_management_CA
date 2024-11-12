@@ -1,7 +1,14 @@
-<h2>XÁC NHẬN XOÁ TẤT CẢ</h2>
-<p>Bạn có muốn xoá thông tin của tất cả cán bộ?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">XOÁ TẤT CẢ</button>
-</form>
-<a href="{% url 'officer_list' %}">Cancel</a>
+{% load static tailwind_tags %}
+
+<div class="text-center mt-40">
+    {% tailwind_css %}
+    <h2 class="text-4xl text-red-500 font-semibold mb-10">XÁC NHẬN XOÁ TẤT CẢ</h2>
+    <p class="text-lg">Bạn có muốn xoá thông tin của tất cả cán bộ?</p>
+    <div class="flex justify-center space-x-5 mt-10">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn rounded-lg btn-error text-white">XOÁ TẤT CẢ</button>
+        </form>
+        <a href="{% url 'officer_list' %}" class="btn rounded-lg">Cancel</a>
+    </div>
+</div>

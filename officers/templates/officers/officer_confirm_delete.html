@@ -1,13 +1,18 @@
-<h2>XÁC NHẬN XOÁ</h2>
-<p>
-    Bạn có muốn xoá thông tin của cán bộ 
-    <strong>{{ officer.birth_name }}</strong>, 
-    số hiệu <strong>{{ officer.id_ca }}</strong> không?
+{% load static tailwind_tags %}
 
-</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">ĐỒNG Ý XOÁ</button>
-</form>
-<a href="{% url 'officer_list' %}">Cancel</a>
+<div class="text-center mt-40">
+    {% tailwind_css %}
+    <h2 class="text-red-500 text-4xl font-semibold mb-10">XÁC NHẬN XOÁ</h2>
+    <p class="text-lg">
+        Bạn có muốn xoá thông tin của cán bộ 
+        <strong>{{ officer.birth_name }}</strong>, 
+        số hiệu <strong>{{ officer.id_ca }}</strong> không?
+    </p>
+    <div class="flex justify-center space-x-5 mt-10">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn rounded-lg text-white btn-error">ĐỒNG Ý XOÁ</button>
+        </form>
+        <a href="{% url 'officer_list' %}" class="btn rounded-lg">Cancel</a>
+    </div>
+</div>

@@ -1,20 +1,44 @@
-<h2>Tải dữ liệu lên từ tệp Excel</h2>
-<form method="post" enctype="multipart/form-data" id="uploadForm">
-    {% csrf_token %}
-    <label for="fileInput" id="fileLabel">Chọn một hoặc nhiều tệp Excel:</label>
-    <input id="fileInput" type="file" name="files" multiple style="display: none;" required>
-    <em id="fileName">Không có tệp nào được chọn</em>
+{% load static tailwind_tags %}
 
-    <!-- Container for displaying selected file names in a column -->
-    <div id="fileListContainer"></div>
+<div class="text-center mt-32">
+    {% tailwind_css %}
+    <h2 class="text-4xl font-semibold mb-10">Tải dữ liệu lên từ tệp Excel</h2>
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        {% csrf_token %}
+        <label for="fileInput" id="fileLabel" class="text-lg">Chọn một hoặc nhiều tệp Excel:</label>
+        <input id="fileInput" type="file" name="files" multiple style="display: none;" required>
+        <em id="fileName">Không có tệp nào được chọn</em>
 
-    <!-- Toggle button to show more or hide file names -->
-    <button type="button" id="toggleButton" style="display:none;">Hiển thị tất cả tệp đã chọn</button><br>
+        <!-- Container for displaying selected file names in a column -->
+        <div id="fileListContainer"></div>
 
-    <button type="button" id="customButton">Chọn tệp</button>
-    <button type="button" id="submitButton">Tải lên</button> <br><br>
-    <a href="{% url 'officer_list' %}">Quay lại</a>
-</form>
+        <!-- Toggle button to show more or hide file names -->
+        <button type="button" id="toggleButton" style="display:none;">Hiển thị tất cả tệp đã chọn</button><br>
+
+        <div class="flex justify-center space-x-40 mt-10">
+            <a href="{% url 'officer_list' %}" class="btn rounded-lg">
+                <img src="{% static 'src/back-icon.png' %}"
+                         alt="Back icon"
+                         class="w-5 h-5" />
+                <span>Quay lại</span>
+            </a>
+            <div class="space-x-5">
+                <button type="button" id="customButton" class="btn rounded-lg bg-base-100">
+                    <img src="{% static 'src/add-file.png' %}"
+                         alt="Add file"
+                         class="w-5 h-5" />
+                    <span>Chọn tệp</span>
+                </button>
+                <button type="button" id="submitButton" class="btn rounded-lg btn-accent">
+                    <img src="{% static 'src/upload.png' %}"
+                         alt="Upload"
+                         class="w-5 h-5" />
+                    <span>Tải lên</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
 <script>
     // Trigger the file selection dialog when "Chọn tệp" button is clicked
