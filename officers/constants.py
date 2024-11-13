@@ -1,3 +1,12 @@
+IMAGES_CATEGORY = (
+    ("selection", "Tuyển chọn cán bộ"),
+    ("resume", "Lý lịch"),
+    ("work", "Công tác"),
+    ("learn_review", "Học tập - Kiểm thảo"),
+    ("laudatory_discipline", "Khen thưởng - Kỷ luật"),
+    ("other", "Các tài liệu khác"),
+)
+
 SEARCH_FIELDS = [
     "birth_name",
     "id_ca",

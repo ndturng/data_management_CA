@@ -419,7 +419,8 @@
 <div id="exportForm"
      style="display: none">
     <form method="post"
-          action="{% url 'officer_list' %}">
+          action="{% url 'export_officers_data' %}"
+          onsubmit="return validateSelection()">
         {% csrf_token %}
         <h3 class="mb-10 mt-5 text-3xl font-semibold text-center">
             Chọn cán bộ và thông tin cần trích xuất
@@ -538,4 +539,43 @@
             checkbox.checked = this.checked;
         });
     });
+
+    function validateSelection() {
+        // Get all officer checkboxes
+        const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
+        const isAnyOfficerSelected = Array.from(officerCheckboxes).some(checkbox => checkbox.checked);
+    
+        // Get all field checkboxes in the "Chọn thông tin" section
+        const fieldCheckboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        const isAnyFieldSelected = Array.from(fieldCheckboxes).some(checkbox => checkbox.checked);
+    
+        // Determine which warning to show based on selection
+        if (!isAnyOfficerSelected && !isAnyFieldSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một cán bộ và một trường thông tin để xuất dữ liệu!");
+            return false; 
+        } else if (!isAnyOfficerSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một cán bộ để xuất dữ liệu!");
+            return false; 
+        } else if (!isAnyFieldSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một trường thông tin để xuất dữ liệu!");
+            return false; 
+        }
+    
+        return true; // Allow form submission if all validations pass
+    }
+    
+    // Show the warning modal with a custom message
+    function showWarningModal(message) {
+        const warningModal = document.getElementById('warningModal');
+        warningModal.querySelector('p').innerText = message; // Set custom message
+        warningModal.style.display = 'block';
+    }
+    
+    // Close the warning modal
+    function closeWarningModal() {
+        document.getElementById('warningModal').style.display = 'none';
+    }
+    
+    
 </script>
+

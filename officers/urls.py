@@ -6,6 +6,7 @@ urlpatterns = [
     path("", views.officer_list, name="officer_list"),
     path("new/", views.officer_create, name="officer_create"),
     path("upload-excel/", views.excel_upload, name="excel_upload"),
+    path("export/", views.export_officers_data, name="export_officers_data"),
     path("<int:pk>/", views.officer_detail, name="officer_detail"),
     path("<int:pk>/edit/", views.officer_update, name="officer_update"),
     path("<int:pk>/delete/", views.officer_delete, name="officer_delete"),
@@ -255,8 +256,8 @@ urlpatterns = [
     ############################################################
     # Hình ảnh
     path(
-        "<int:pk>/images", 
-        views.ImageListView.as_view(), 
+        "<int:pk>/images",
+        views.ImageListView.as_view(),
         name="url_image",
     ),
     path(
@@ -273,5 +274,10 @@ urlpatterns = [
         "<int:officer_pk>/images/delete/<int:image_pk>",
         views.ImageDeleteView.as_view(),
         name="url_image_delete",
+    ),
+    path(
+        "<int:officer_pk>/images/download_selected",
+        views.download_selected_images,
+        name="url_download_selected_images",
     ),
 ]

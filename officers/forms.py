@@ -220,14 +220,16 @@ class HealthForm(RelatedBaseForm):
 class ImageForm(forms.ModelForm):
     class Meta:
         model = m.Image
-        fields = ["image", "description"]  # Fields to be displayed in the form
+        fields = ["image", "description", "category"]  
 
         widgets = {
             "description": forms.TextInput(attrs={"class": "form-control"}),
             "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-control"}),
         }
 
     def __init__(self, *args, **kwargs):
         super(ImageForm, self).__init__(*args, **kwargs)
         self.fields["image"].label = "Tệp ảnh"
         self.fields["description"].label = "Mô tả"
+        self.fields["category"].label = "Danh mục"

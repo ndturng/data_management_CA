@@ -1,3 +1,4 @@
+import os
 import unicodedata
 import zipfile
 from io import BytesIO
@@ -14,10 +15,17 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from officers.config import SHEET_TO_MODEL_FIELDS
-from officers.constants import FILTER_FIELDS, GENERAL_INFO_FIELDS, REQUIRED_FIELDS, SEARCH_FIELDS
+from officers.constants import (
+    FILTER_FIELDS,
+    GENERAL_INFO_FIELDS,
+    IMAGES_CATEGORY,
+    REQUIRED_FIELDS,
+    SEARCH_FIELDS,
+)
 from officers.utils import (
     create_officer_related_objects,
     export_related_data,
@@ -59,7 +67,15 @@ def officer_list(request):
 
     context["officers"] = officers
 
-    # Handle export functionality
+    # Initialize form for the template
+    form = f.OfficerExportForm(initial={"officers": officers})
+    context["form"] = form
+
+    return render(request, "officers/officer_list.html", context)
+
+
+@login_required
+def export_officers_data(request):
     if request.method == "POST" and "export" in request.POST:
         form = f.OfficerExportForm(request.POST)
         if form.is_valid():
@@ -68,50 +84,86 @@ def officer_list(request):
             selected_related_tables = form.cleaned_data["related_tables"]
 
             # Create an in-memory ZIP file to store the officer Excel files
+            # no matter if related tables are selected
             in_memory_zip = BytesIO()
             with zipfile.ZipFile(in_memory_zip, "w") as zip_file:
-                for officer in selected_officers:
-                    officers_data = []
-                    row = {}
+
+                # Export general information of all selected officers to an Excel file
+                officers_data_stack = []
+                for index, officer in enumerate(selected_officers, start=1):
+                    row = {
+                        "STT": index
+                    }  # Add numerical order as the first column
                     for field in selected_fields:
                         row[field] = getattr(officer, field)
-                    officers_data.append(row)
+                    officers_data_stack.append(row)
 
-                    # Create an in-memory Excel file for the current officer
-                    officer_file = BytesIO()
-                    officer_filename = (
-                        f"{officer.birth_name.replace(' ', '_')}.xlsx"
+                # Create an in-memory Excel file for the selected officers
+                officers_file = BytesIO()
+                officers_filename = "thong_tin_CB.xlsx"
+
+                with pd.ExcelWriter(officers_file, engine="openpyxl") as writer:
+                    field_labels = ["STT"] + [
+                        GENERAL_INFO_FIELDS.get(field, field)
+                        for field in selected_fields
+                    ]
+                    df_officers = pd.DataFrame(officers_data_stack)
+                    df_officers.columns = field_labels
+                    df_officers.to_excel(
+                        writer, index=False, sheet_name="Thông tin chung"
                     )
 
-                    with pd.ExcelWriter(
-                        officer_file, engine="openpyxl"
-                    ) as writer:
-                        # Write general officer info to "Officers" sheet
-                        field_labels = [
-                            GENERAL_INFO_FIELDS.get(field, field)
-                            for field in selected_fields
-                        ]
-                        df_officer = pd.DataFrame(officers_data)
-                        df_officer.columns = field_labels
-                        df_officer.to_excel(
-                            writer, index=False, sheet_name="Thông tin chung"
+                # Ensure the Excel file is saved in memory
+                officers_file.seek(0)
+                zip_file.writestr(officers_filename, officers_file.read())
+
+                # Export data to separate Excel files for each officer if related tables are selected
+                if selected_related_tables:
+                    for officer in selected_officers:
+                        officer_data = []
+                        row = {}
+                        for field in selected_fields:
+                            row[field] = getattr(officer, field)
+                        officer_data.append(row)
+
+                        # Create an in-memory Excel file for the current officer
+                        officer_file = BytesIO()
+                        officer_filename = (
+                            f"{officer.birth_name.replace(' ', '_')}.xlsx"
                         )
 
-                        # Export related tables based on selection
-                        for table_key in selected_related_tables:
-                            sheet_config = SHEET_TO_MODEL_FIELDS.get(table_key)
-                            if sheet_config:
-                                export_related_data(
-                                    writer=writer,
-                                    officer=officer,
-                                    sheet_config=sheet_config,
-                                    sheet_name=table_key,
+                        with pd.ExcelWriter(
+                            officer_file, engine="openpyxl"
+                        ) as writer:
+                            # Write general officer info to "Officers" sheet
+                            field_labels = [
+                                GENERAL_INFO_FIELDS.get(field, field)
+                                for field in selected_fields
+                            ]
+                            df_officer = pd.DataFrame(officer_data)
+                            df_officer.columns = field_labels
+                            df_officer.to_excel(
+                                writer,
+                                index=False,
+                                sheet_name="Thông tin chung",
+                            )
+
+                            # Export related tables based on selection
+                            for table_key in selected_related_tables:
+                                sheet_config = SHEET_TO_MODEL_FIELDS.get(
+                                    table_key
                                 )
+                                if sheet_config:
+                                    export_related_data(
+                                        writer=writer,
+                                        officer=officer,
+                                        sheet_config=sheet_config,
+                                        sheet_name=table_key,
+                                    )
 
-                    # Ensure the Excel file is saved in memory
-                    officer_file.seek(0)
-
-                    zip_file.writestr(officer_filename, officer_file.read())
+                        # Ensure the Excel file is saved in memory
+                        officer_file.seek(0)
+                        zip_file.writestr(officer_filename, officer_file.read())
 
             # Prepare the response as a ZIP file
             in_memory_zip.seek(0)
@@ -121,13 +173,10 @@ def officer_list(request):
             response["Content-Disposition"] = (
                 "attachment; filename=thong_tin_CB.zip"
             )
-
             return response
-    else:
-        form = f.OfficerExportForm(initial={"officers": officers})
 
-    context["form"] = form
-    return render(request, "officers/officer_list.html", context)
+    # Redirect back if form is not valid or if method is GET
+    return redirect("officer_list")
 
 
 @login_required
@@ -924,76 +973,134 @@ class HealthDeleteView(
 ########################################################
 # Officer Images
 
+
 # List View
 class ImageListView(LoginRequiredMixin, ListView):
     model = m.Image
-    template_name = 'officers/image_list.html'
-    context_object_name = 'images'
-    pk_url_kwarg = 'pk'  # Officer's pk
+    template_name = "officers/image_list.html"
+    context_object_name = "images"
+    pk_url_kwarg = "pk"  # Officer's pk
 
     def get_queryset(self):
-        self.officer = get_object_or_404(m.Officer, pk=self.kwargs[self.pk_url_kwarg])
-        return self.officer.images.all()
+        # Retrieve the officer and filter images for the specific officer
+        self.officer = get_object_or_404(
+            m.Officer, pk=self.kwargs[self.pk_url_kwarg]
+        )
+        queryset = self.officer.images.all()
+
+        # Filter images by category if specified in query parameters
+        category = self.request.GET.get("category")
+        if category in dict(IMAGES_CATEGORY):
+            queryset = queryset.filter(category=category)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['officer'] = self.officer
+        context["officer"] = self.officer
+        context["category_labels"] = {
+            choice[0]: choice[1] for choice in IMAGES_CATEGORY
+        }
         return context
+
 
 # Create Image View
-class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = m.Image
+class ImageCreateView(LoginRequiredMixin, View):
     form_class = f.ImageForm
-    template_name = 'officers/image_form.html'
-    pk_url_kwarg = 'pk'  # Officer's pk
+    template_name = "officers/image_upload.html"  # Use the new upload template
 
-    def form_valid(self, form):
-        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.pk_url_kwarg])
-        form.instance.officer = officer
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["pk"])
+        return render(request, self.template_name, {"form": form, "officer": officer})
 
-    def get_context_data(self, **kwargs):
-        # Pass the officer's pk to the template
-        context = super().get_context_data(**kwargs)
-        context['pk'] = self.kwargs[self.pk_url_kwarg]
-        return context
-    
-    def get_success_url(self):
-        return reverse_lazy('url_image', kwargs={self.pk_url_kwarg: self.kwargs[self.pk_url_kwarg]})
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["pk"])
+
+        if form.is_valid():
+            category = form.cleaned_data["category"]
+            description = form.cleaned_data["description"]
+            images = request.FILES.getlist("image")  # Get list of uploaded files
+
+            for image_file in images:
+                m.Image.objects.create(
+                    officer=officer,
+                    image=image_file,
+                    description=description,
+                    category=category
+                )
+
+            return redirect("url_image", pk=officer.pk)
+
+        return render(request, self.template_name, {"form": form, "officer": officer})
 
 # Update Image View
 class ImageUpdateView(LoginRequiredMixin, UpdateView):
     model = m.Image
     form_class = f.ImageForm
-    template_name = 'officers/image_form.html'
-    pk_url_kwarg = 'image_pk'  # Image's pk
-    officer_url_kwarg = 'officer_pk'  # Officer's pk
+    template_name = "officers/image_update.html"  # Use the new update template
+    pk_url_kwarg = 'image_pk'
+    context_object_name = 'image'
 
     def get_object(self):
         # Ensure the image belongs to the correct officer
-        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.officer_url_kwarg])
-        return get_object_or_404(m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer)
-
-    def get_success_url(self):
-        return reverse_lazy('url_image', kwargs={'pk': self.kwargs['officer_pk']})
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["officer_pk"])
+        return get_object_or_404(m.Image, pk=self.kwargs["image_pk"], officer=officer)
     
+    def get_success_url(self):
+        return reverse_lazy(
+            "url_image", kwargs={"pk": self.kwargs["officer_pk"]}
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add officer's pk to the context so the template can use it
-        context['pk'] = self.kwargs[self.officer_url_kwarg]
+        context["officer"] = self.get_object().officer
         return context
+
 
 # Delete Image View
 class ImageDeleteView(LoginRequiredMixin, DeleteView):
     model = m.Image
-    template_name = 'officers/image_confirm_delete.html'
-    pk_url_kwarg = 'image_pk'  # Image's pk
-    officer_url_kwarg = 'officer_pk'  # Officer's pk
+    template_name = "officers/image_confirm_delete.html"
+    pk_url_kwarg = "image_pk"  # Image's pk
+    officer_url_kwarg = "officer_pk"  # Officer's pk
 
     def get_object(self):
-        officer = get_object_or_404(m.Officer, pk=self.kwargs[self.officer_url_kwarg])
-        return get_object_or_404(m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer)
+        officer = get_object_or_404(
+            m.Officer, pk=self.kwargs[self.officer_url_kwarg]
+        )
+        return get_object_or_404(
+            m.Image, pk=self.kwargs[self.pk_url_kwarg], officer=officer
+        )
 
     def get_success_url(self):
         # Use pk instead of officer_pk to match the URL pattern
-        return reverse_lazy('url_image', kwargs={'pk': self.kwargs[self.officer_url_kwarg]})
+        return reverse_lazy(
+            "url_image", kwargs={"pk": self.kwargs[self.officer_url_kwarg]}
+        )
+
+
+# Download selected images
+def download_selected_images(request, officer_pk):
+    if request.method == "POST":
+        selected_image_ids = request.POST.getlist("selected_images")
+        images = m.Image.objects.filter(
+            pk__in=selected_image_ids, officer_id=officer_pk
+        )
+
+        # Create a ZIP file in memory
+        response = HttpResponse(content_type="application/zip")
+        zip_filename = f"officer_{officer_pk}_images.zip"
+        response["Content-Disposition"] = (
+            f'attachment; filename="{zip_filename}"'
+        )
+
+        with zipfile.ZipFile(response, "w") as zip_file:
+            for image in images:
+                image_path = image.image.path
+                zip_file.write(image_path, os.path.basename(image_path))
+
+        return response
+
+    return redirect("url_image", pk=officer_pk)
