@@ -106,7 +106,6 @@
                     </tr>
                 </tbody>
             {% endfor %}
-
         </table>
     </div>
 
@@ -422,72 +421,84 @@
     <form method="post"
           action="{% url 'officer_list' %}">
         {% csrf_token %}
-        <h3 class="my-10 text-3xl font-semibold text-center">
+        <h3 class="mb-10 mt-5 text-3xl font-semibold text-center">
             Chọn cán bộ và thông tin cần trích xuất
         </h3>
 
-        <!-- Officer Selection -->
-        <div class="grid grid-cols-4 gap-4 justify-center">
-            <div class="col-span-2 ml-10">
-                <strong>Chọn cán bộ:</strong>
-                <br />
+        <div class="container mx-auto">
+            <table class="min-w-full border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn cán bộ </th>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn thông tin </th>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn bảng liên quan </th>
+                    </tr>
+                </thead>
 
-                <label>
-                    <input type="checkbox"
-                           id="select-all-officers" />
-                    Chọn tất cả
-                </label>
-                <br />
-                <ol>
-
-                    {% for officer in officers %}
-                        <input type="checkbox"
-                               name="officers"
-                               value="{{ officer.pk }}"
-                               id="officer_{{ officer.pk }}" />
-                        <label for="officer_{{ officer.pk }}">
-                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
-                        </label>
-                        <br />
-                    {% endfor %}
-
-                </ol>
-            </div>
-
-            <!-- Field Selection -->
-            <div>
-                <strong>Chọn thông tin:</strong>
-                <br />
-
-                <label>
-                    <input type="checkbox"
-                           id="select-all-fields" />
-                    Chọn tất cả
-                </label>
-                <ul>
-                    {{ form.fields }}
-                </ul>
-            </div>
-
-            <!-- Related Tables Selection -->
-            <div>
-                <strong>Chọn bảng liên quan:</strong>
-                <br />
-
-                <label>
-                    <input type="checkbox"
-                           id="select-all-related-tables" />
-                    Chọn tất cả
-                </label>
-                <ul>
-                    {{ form.related_tables }}
-                </ul>
-            </div>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 p-4 pl-8 h-20 overflow-y-auto align-top">
+                            <div class="space-y-3">
+                                <label class="font-semibold">
+                                    <input type="checkbox"
+                                        id="select-all-officers" />
+                                    Chọn tất cả
+                                </label>
+                                <ol class="pl-10">
+            
+                                    {% for officer in officers %}
+                                        <input type="checkbox"
+                                            name="officers"
+                                            value="{{ officer.pk }}"
+                                            id="officer_{{ officer.pk }}" />
+                                        <label for="officer_{{ officer.pk }}">
+                                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
+                                        </label>
+                                        <br />
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 p-4 h-20 overflow-y-auto">
+                            <div class="space-y-3">
+                                <label class="font-semibold">
+                                    <input type="checkbox"
+                                        id="select-all-fields" />
+                                    Chọn tất cả
+                                </label>
+                                <ul class="pl-10">
+                                    {{ form.fields }}
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 p-4 h-20 overflow-y-autoauto align-top">
+                            <div class="space-y-3">
+                                <label class="font-semibold">
+                                    <input type="checkbox"
+                                        id="select-all-related-tables" />
+                                    Chọn tất cả
+                                </label>
+                                <ul class="pl-10">
+                                    {{ form.related_tables }}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <button type="submit"
-                name="export"
-                class="btn">Xuất dữ liệu</button>
+        <div class="flex justify-center">
+            <button type="submit"
+                    name="export"
+                    class="btn text-lg mb-10 mt-5 rounded-lg w-2/5 space-x-2">
+                    <span>Xuất dữ liệu</span>
+                    <img src="{% static 'src/export-file.png' %}"
+                        alt="Export File"
+                        class="w-5 h-5" />
+                
+            </button>
+        </div>
     </form>
 </div>
 
