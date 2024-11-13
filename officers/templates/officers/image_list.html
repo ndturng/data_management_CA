@@ -1,30 +1,94 @@
-{% block content %}
-  <div class="container">
+<div class="container">
     <h2>Bộ ảnh của {{ officer.birth_name }}</h2>
 
-    <ul class="list-group">
-      {% for image in images %}
-      <li class="list-group-item">
-          {% if image.image %}
-            <img src="{{ image.image.url }}" alt="{{ image.description }}" style="max-width: 100px;">
-            <!-- Download Button: Links to the image file, adding the 'download' attribute -->
-            <a href="{{ image.image.url }}" download class="btn btn-sm btn-success">Download</a>
-          {% else %}
-            <p>Không có ảnh khả dụng</p>
-          {% endif %}
-          
-          <p><strong>Mô tả:</strong> {{ image.description }}</p>
+    <!-- Form for selecting and downloading images -->
+    <form id="downloadForm"
+          method="post"
+          action="{% url 'url_download_selected_images' officer.pk %}">
+        {% csrf_token %}
 
-          <!-- Edit and Delete Buttons -->
-          <a href="{% url 'url_image_update' officer.pk image.pk %}" class="btn btn-sm btn-warning">Cập nhật</a>
-          <a href="{% url 'url_image_delete' officer.pk image.pk %}" class="btn btn-sm btn-danger">Xoá</a>
-      </li>
-      {% empty %}
-      <em class="list-group-item">Chưa có ảnh nào được tải lên.</em>
-      {% endfor %}
-    </ul>
+        <!-- Upload and Back Buttons -->
+        <div class="mb-3">
+            <a href="{% url 'officer_detail' officer.pk %}"
+               class="btn btn-secondary">Quay lại</a>
+            <a href="{% url 'url_image_create' officer.pk %}"
+               class="btn btn-primary">Tải ảnh lên</a>
+        </div>
 
-    <a href="{% url 'officer_detail' officer.pk %}" class="btn btn-secondary mt-3">Quay lại</a> |
-    <a href="{% url 'url_image_create' officer.pk %}" class="btn btn-primary mb-3">Tải ảnh mới</a>
-  </div>
-{% endblock %}
+        <!-- Category Filter Dropdown -->
+        <select id="categoryDropdown"
+                class="form-control mb-3"
+                onchange="filterCategory()">
+            <option value="">Tất cả</option>
+
+            {% for key, label in category_labels.items %}
+                <option value="{{ key }}" 
+                    {% if request.GET.category == key %}selected{% endif %}
+                    >{{ label }}</option>
+            {% endfor %}
+
+        </select>
+
+        <!-- Select All Checkbox -->
+        <div class="form-check mb-3">
+            <input type="checkbox"
+                   id="selectAllCheckbox"
+                   class="form-check-input"
+                   onclick="toggleSelectAll(this)" />
+            <label for="selectAllCheckbox"
+                   class="form-check-label">
+                Chọn tất cả ảnh trong danh mục này
+            </label>
+        </div>
+
+        <!-- Download Selected button -->
+        <button type="submit"
+                class="btn btn-success mb-3">Tải ảnh đã chọn</button>
+
+        <!-- Display images with checkboxes for selection -->
+        <div id="images"
+             class="image-grid mt-3">
+
+            {% for image in images %}
+                <div class="image-item">
+                    <!-- Checkbox to select image for download -->
+                    <input type="checkbox"
+                           name="selected_images"
+                           value="{{ image.pk }}"
+                           class="image-checkbox mr-2" />
+                    <img src="{{ image.image.url }}"
+                         alt="{{ image.description }}"
+                         class="img-thumbnail"
+                         style="max-width: 150px" />
+                    <p>{{ image.description }}</p>
+                    <a href="{{ image.image.url }}"
+                       download
+                       class="btn btn-sm btn-success">Download</a>
+                    <a href="{% url 'url_image_update' officer.pk image.pk %}"
+                       class="btn btn-sm btn-warning">Cập nhật</a>
+                    <a href="{% url 'url_image_delete' officer.pk image.pk %}"
+                       class="btn btn-sm btn-danger">Xoá</a>
+                </div>
+            {% empty %}
+                <p>Không có ảnh nào trong danh mục này.</p>
+            {% endfor %}
+
+        </div>
+    </form>
+</div>
+
+<script>
+    function filterCategory() {
+        const category = document.getElementById("categoryDropdown").value;
+        const url = new URL(window.location.href);
+        url.searchParams.set("category", category);
+        window.location.href = url.toString();
+    }
+
+    function toggleSelectAll(selectAllCheckbox) {
+        const imageCheckboxes = document.querySelectorAll(".image-checkbox");
+        imageCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    }
+</script>
