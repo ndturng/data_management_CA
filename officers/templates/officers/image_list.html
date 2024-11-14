@@ -1,5 +1,8 @@
-<div class="container">
-    <h2>Bộ ảnh của {{ officer.birth_name }}</h2>
+{% load static tailwind_tags %}
+
+<div class="my-10">
+    {% tailwind_css %}
+    <h2 class="text-4xl text-center font-semibold">Bộ ảnh của {{ officer.birth_name }}</h2>
 
     <!-- Form for selecting and downloading images -->
     <form id="downloadForm"
@@ -8,16 +11,50 @@
         {% csrf_token %}
 
         <!-- Upload and Back Buttons -->
-        <div class="mb-3">
+        <div class="mt-5 flex justify-between mx-10">
             <a href="{% url 'officer_detail' officer.pk %}"
-               class="btn btn-secondary">Quay lại</a>
-            <a href="{% url 'url_image_create' officer.pk %}"
-               class="btn btn-primary">Tải ảnh lên</a>
+               class="btn rounded-lg">
+                <img src="{% static 'src/back-icon.png' %}"
+                         alt="Back icon"
+                         class="w-5 h-5" />
+                <span>Quay lại</span>
+            </a>
+            
+            <div class="flex space-x-5">
+                <!-- Select All Checkbox -->
+                <div class="form-check mt-3 ml-10">
+                    <input type="checkbox"
+                        id="selectAllCheckbox"
+                        class="form-check-input"
+                        onclick="toggleSelectAll(this)" />
+                    <label for="selectAllCheckbox"
+                        class="form-check-label">
+                        Chọn tất cả ảnh
+                    </label>
+                </div>
+    
+                <!-- Download Selected button -->
+                <button type="submit"
+                    class="btn mb-5 bg-base-100 rounded-lg">
+                        <span>Tải ảnh xuống</span>
+                        <img src="{% static 'src/download-images.png' %}"
+                                alt="Download Images"
+                                class="w-6 h-6" />
+                </button>
+
+                <a href="{% url 'url_image_create' officer.pk %}"
+                    class="btn rounded-lg">
+                    <span>Tải ảnh lên</span>
+                    <img src="{% static 'src/upload-images.png' %}"
+                                alt="Upload Images"
+                                class="w-6 h-6" />
+                </a>
+            </div>
         </div>
 
         <!-- Category Filter Dropdown -->
         <select id="categoryDropdown"
-                class="form-control mb-3"
+                class="rounded-lg ml-10"
                 onchange="filterCategory()">
             <option value="">Tất cả</option>
 
@@ -29,50 +66,35 @@
 
         </select>
 
-        <!-- Select All Checkbox -->
-        <div class="form-check mb-3">
-            <input type="checkbox"
-                   id="selectAllCheckbox"
-                   class="form-check-input"
-                   onclick="toggleSelectAll(this)" />
-            <label for="selectAllCheckbox"
-                   class="form-check-label">
-                Chọn tất cả ảnh trong danh mục này
-            </label>
-        </div>
-
-        <!-- Download Selected button -->
-        <button type="submit"
-                class="btn btn-success mb-3">Tải ảnh đã chọn</button>
-
         <!-- Display images with checkboxes for selection -->
         <div id="images"
-             class="image-grid mt-3">
-
+             class="mt-10 ml-10">
             {% for image in images %}
-                <div class="image-item">
+                <div class="inline-block">
+                    <div class="avatar w-44">
                     <!-- Checkbox to select image for download -->
-                    <input type="checkbox"
-                           name="selected_images"
-                           value="{{ image.pk }}"
-                           class="image-checkbox mr-2" />
-                    <img src="{{ image.image.url }}"
-                         alt="{{ image.description }}"
-                         class="img-thumbnail"
-                         style="max-width: 150px" />
-                    <p>{{ image.description }}</p>
-                    <a href="{{ image.image.url }}"
+                        <input type="checkbox"
+                            name="selected_images"
+                            value="{{ image.pk }}"
+                            class="mr-2" />
+                    
+                        <img src="{{ image.image.url }}"
+                            alt="{{ image.description }}"
+                            class="py-4 px-3 hover:bg-base-200 rounded-lg"
+                        />
+                    </div>
+                    <p class="px-14 mt-3">{{ image.description }}</p>
+                    <!-- <a href="{{ image.image.url }}"
                        download
                        class="btn btn-sm btn-success">Download</a>
                     <a href="{% url 'url_image_update' officer.pk image.pk %}"
                        class="btn btn-sm btn-warning">Cập nhật</a>
                     <a href="{% url 'url_image_delete' officer.pk image.pk %}"
-                       class="btn btn-sm btn-danger">Xoá</a>
+                       class="btn btn-sm btn-danger">Xoá</a> -->
                 </div>
             {% empty %}
                 <p>Không có ảnh nào trong danh mục này.</p>
             {% endfor %}
-
         </div>
     </form>
 </div>
