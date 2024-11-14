@@ -76,11 +76,11 @@
                         <input type="checkbox"
                             name="selected_images"
                             value="{{ image.pk }}"
-                            class="mr-2" />
+                            class="image-checkbox mr-2" />
                     
                         <img src="{{ image.image.url }}"
                             alt="{{ image.description }}"
-                            class="py-4 px-3 hover:bg-base-200 rounded-lg"
+                            class="img-thumbnail py-4 px-3 hover:bg-base-200 rounded-lg"
                         />
                     </div>
                     <p class="px-14 mt-3">{{ image.description }}</p>
