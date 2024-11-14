@@ -7,7 +7,7 @@ officers/migrations/*.py
 **/__pycache__/
 
 # ignore all image files
-*.png
+# *.png
 *.jpg
 *.jpeg
 

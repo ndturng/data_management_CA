@@ -271,7 +271,7 @@ def officer_update(request, pk):
         form = f.OfficerInfoForm(request.POST, instance=officer)
         if form.is_valid():
             form.save()
-            return redirect("officer_list")
+            return redirect("officer_detail", pk=pk)
     else:
         form = f.OfficerInfoForm(instance=officer)
 

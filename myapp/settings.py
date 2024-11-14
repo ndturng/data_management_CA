@@ -40,7 +40,19 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "officers",
+
+    'tailwind',
+    'theme',
+    'django_browser_reload'
 ]
+
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+NPM_BIN_PATH = "/home/codespace/nvm/current/bin/npm"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -50,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "myapp.urls"
@@ -134,9 +147,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+import os
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / 'static'] 
+STATICFILES_DIRS = [
+    # BASE_DIR / 'static',
+    os.path.join(BASE_DIR, 'theme/static_src'),
+    
+] 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -144,10 +162,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 import os
-from decouple import config
+# from decouple import config
 
 # Check if in production environment
-IS_PRODUCTION = config('IS_PRODUCTION', default=False, cast=bool)
+# IS_PRODUCTION = config('IS_PRODUCTION', default=False, cast=bool)
+IS_PRODUCTION = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

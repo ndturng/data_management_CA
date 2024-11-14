@@ -34,3 +34,7 @@ check:
 
 # start mysql service and run the server
 start: start-mysql runserver
+
+# active virtual environment
+# active_env:
+# 	source venv/bin/activate

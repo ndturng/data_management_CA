@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+    .form-group input {
+        width: 100%;
+        margin-bottom: 25px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        transition: 0.3s;    
+    }
+
+    .hoverable-item {
+        @apply hover:bg-base-300 hover:border-black border rounded-lg;
+    }
+
+    .highlight-item {
+        @apply bg-base-300 font-semibold rounded-lg hover:border-black border;
+    }
+
+    .hoverable-link {
+        @apply flex space-x-3 py-3 pl-11;
+    }
+
+    .hoverable-link-secondary {
+        @apply flex space-x-3 py-3 pl-20;
+    }
+
+    .officer-form input {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+}
