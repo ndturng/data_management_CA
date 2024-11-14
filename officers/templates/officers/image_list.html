@@ -1,10 +1,38 @@
 <div class="container">
     <h2>Bộ ảnh của {{ officer.birth_name }}</h2>
 
+    <!-- Warning Modal for no selection -->
+    <div id="warningModal"
+         style="display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #f8d7da;
+                color: #721c24;
+                padding: 20px;
+                border: 1px solid #f5c6cb;
+                border-radius: 5px;
+                z-index: 1000">
+        <p>Please select at least one officer to export data.</p>
+        <div style="text-align: center;
+                    margin-top: 10px">
+
+            <button onclick="closeWarningModal()"
+                    style="background-color: #721c24;
+                           color: white;
+                           border: none;
+                           padding: 5px 10px;
+                           cursor: pointer;
+                           border-radius: 3px">OK</button>
+        </div>
+    </div>
+
     <!-- Form for selecting and downloading images -->
     <form id="downloadForm"
           method="post"
-          action="{% url 'url_download_selected_images' officer.pk %}">
+          action="{% url 'url_download_selected_images' officer.pk %}"
+          onsubmit="return validateImageSelection()">
         {% csrf_token %}
 
         <!-- Upload and Back Buttons -->
@@ -36,9 +64,7 @@
                    class="form-check-input"
                    onclick="toggleSelectAll(this)" />
             <label for="selectAllCheckbox"
-                   class="form-check-label">
-                Chọn tất cả ảnh trong danh mục này
-            </label>
+                   class="form-check-label">Chọn tất cả ảnh</label>
         </div>
 
         <!-- Download Selected button -->
@@ -90,5 +116,29 @@
         imageCheckboxes.forEach(checkbox => {
             checkbox.checked = selectAllCheckbox.checked;
         });
+    }
+
+    function validateImageSelection() {
+        const imageCheckboxes = document.querySelectorAll(".image-checkbox");
+        const isAnyImageSelected = Array.from(imageCheckboxes).some(checkbox => checkbox.checked);
+
+        if (!isAnyImageSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một ảnh để tải xuống.");
+            return false; // Prevent form submission
+        }
+
+        return true; 
+    }
+
+    // Function to show the warning modal with a custom message
+    function showWarningModal(message) {
+        const warningModal = document.getElementById("warningModal");
+        warningModal.querySelector("p").innerText = message; // Set custom message
+        warningModal.style.display = "block";
+    }
+
+    // Function to close the warning modal
+    function closeWarningModal() {
+        document.getElementById("warningModal").style.display = "none";
     }
 </script>
