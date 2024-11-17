@@ -68,7 +68,6 @@
             border: 1px solid #f5c6cb;
             border-radius: 5px;
             z-index: 1000">
-    <p>Please select at least one officer to export data.</p>
     <div style="text-align: center;
                 margin-top: 10px">
 
@@ -133,6 +132,7 @@
                     </tr>
                 </tbody>
             {% endfor %}
+
         </table>
     </div>
 
@@ -182,262 +182,54 @@
 
                     {% endif %}
 
+
                 </div>
             </div>
 
-            <div class="flex mx-16 space-x-2 mt-3">
-                <!--Search by birth_year-->
-                <div>
-                    <!-- <p>Tìm theo năm sinh</p>
-<input type="text" name="birth_year" placeholder="Tìm theo năm sinh" value="{{ birth_year|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
+            <div class="flex mx-16 space-x-2 mt-1">
+
+                <!-- Search by birth_year -->
+                <div class="filter-container mt-2">
+                    <input type="text"
+                           name="birth_year"
+                           placeholder="Tìm theo năm sinh"
+                           value="{{ birth_year|default_if_none:'' }}"
+                           class="rounded-lg input-sm filter-input" />
+                           <span class="trash-icon" onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}" alt="Trash Icon" width="20" height="20" />
+                        </span>
+                </div>
+            
+                <!-- Search by current_residence -->
+                <div class="">
+                    <input type="text"
+                           name="current_residence"
+                           placeholder="Tìm theo chỗ ở hiện nay"
+                           value="{{ current_residence|default_if_none:'' }}"
+                           class="rounded-lg input-sm" />
+
                 </div>
 
-                <!-- Search by year_join_party -->
-                <div>
-                    <!-- <p>Tìm theo năm vào Đảng</p>
-<input type="text" name="year_join_party" placeholder="Tìm theo năm vào Đảng" value="{{ year_join_party|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
-                </div>
             </div>
 
-            <!-- Search by year_join_party_official -->
-            <!-- <input type="text"
-        name="year_join_party_official"
-        placeholder="Tìm theo năm vào Đảng chính thức"
-        value="{{ year_join_party_official|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by year_join_CA -->
-            <!-- <input type="text"
-        name="year_join_CA"
-        placeholder="Tìm theo năm vào CA"
-        value="{{ year_join_CA|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by current_residence -->
-            <!-- <input type="text"
-        name="current_residence"
-        placeholder="Tìm theo chỗ ở hiện nay"
-        value="{{ current_residence|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by salary_decision_year -->
-            <!-- <input type="text"
-        name="salary_decision_year"
-        placeholder="Tìm theo năm quyết định lương"
-        value="{{ salary_decision_year|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by work_unit -->
-            <!-- <input type="text"
-        name="work_unit"
-        placeholder="Tìm theo đơn vị công tác"
-        value="{{ work_unit|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by specialized_work -->
-            <!-- <input type="text"
-        name="specialized_work"
-        placeholder="Tìm theo công tác chuyên trách"
-        value="{{ specialized_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by other_work -->
-            <!-- <input type="text"
-        name="other_work"
-        placeholder="Tìm theo công tác khác"
-        value="{{ other_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by most_work -->
-            <!-- <input type="text"
-        name="most_work"
-        placeholder="Tìm theo công tác làm nhiều nhất"
-        value="{{ most_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by phone_number -->
-            <!-- <input type="text"
-        name="phone_number"
-        placeholder="Tìm theo số điện thoại"
-        value="{{ phone_number|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by bank_account_BIDV -->
-            <!-- <input type="text"
-        name="bank_account_BIDV"
-        placeholder="Tìm theo số tài khoản BIDV"
-        value="{{ bank_account_BIDV|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by id_citizen -->
-            <!-- <input type="text"
-        name="id_citizen"
-        placeholder="Tìm theo số CMND"
-        value="{{ id_citizen|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-
-
-            <!-- <label for="gender">Giới tính:</label>
-            <select name="gender" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
+            <div class="filter-container">
+                <label for="position">Chức vụ:</label>
                 
-                {% for g in gender %}
-                    <option value="{{ g }}" {% if request.GET.gender == g %}selected{% endif %}>{{ g }}</option>
-                {% endfor %}
+                <div class="select-wrapper">
+                    <!-- Dropdown select -->
+                    <select name="position" data-filter-name="position">
+                        <option value="">Tất cả</option>
+                        {% for p in position %}
+                            <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <span class="trash-icon" onclick="removeFilter(this)">
+                    <img src="{% static 'svg/trash-icon.svg' %}" alt="Trash Icon" width="20" height="20" />
+                </span>
+            </div>
 
-            </select>
-
-            <label for="military_type">Lực lượng:</label>
-            <select name="military_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for mt in military_type %}
-                    <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="military_rank">Cấp bậc hàm:</label>
-            <select name="military_rank" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for mr in military_rank %}
-                    <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="salary_coefficient">Hệ số lương:</label>
-            <select name="salary_coefficient" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for sc in salary_coefficient %}
-                    <option value="{{ sc }}" {% if request.GET.salary_coefficient == sc %}selected{% endif %}>{{ sc }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="position">Chức vụ:</label>
-            <select name="position" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for p in position %}
-                    <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="party_position">Chức vụ Đảng:</label>
-            <select name="party_position" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pp in party_position %}
-                    <option value="{{ pp }}" {% if request.GET.party_position == pp %}selected{% endif %}>{{ pp }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="political_theory">Trình độ chính trị:</label>
-            <select name="political_theory" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pt in political_theory %}
-                    <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="birth_place">Nơi sinh:</label>
-            <select name="birth_place" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for bp in birth_place %}
-                    <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="equipment_type">Quân trang:</label>
-            <select name="equipment_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for et in equipment_type %}
-                    <option value="{{ et }}" {% if request.GET.equipment_type == et %}selected{% endif %}>{{ et }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_shoes">Giày:</label>
-            <select name="size_of_shoes" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for sos in size_of_shoes %}
-                    <option value="{{ sos }}" {% if request.GET.size_of_shoes == sos %}selected{% endif %}>{{ sos }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_hat">Mũ:</label>
-            <select name="size_of_hat" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for soh in size_of_hat %}
-                    <option value="{{ soh }}" {% if request.GET.size_of_hat == soh %}selected{% endif %}>{{ soh }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_clothes">Quần áo:</label>
-            <select name="size_of_clothes" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for soc in size_of_clothes %}
-                    <option value="{{ soc }}" {% if request.GET.size_of_clothes == soc %}selected{% endif %}>{{ soc }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="certi_of_IT">Tin học:</label>
-            <select name="certi_of_IT" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for cit in certi_of_IT %}
-                    <option value="{{ cit }}" {% if request.GET.certi_of_IT == cit %}selected{% endif %}>{{ cit }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="certi_of_foreign_language">Ngoại ngữ:</label>
-            <select name="certi_of_foreign_language" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for cofl in certi_of_foreign_language %}
-                    <option value="{{ cofl }}" {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}>{{ cofl }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="blood_type">Nhóm máu:</label>
-            <select name="blood_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for bt in blood_type %}
-                    <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="profile_address">Địa chỉ hồ sơ:</label>
-            <select name="profile_address" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pa in profile_address %}
-                    <option value="{{ pa }}" {% if request.GET.profile_address == pa %}selected{% endif %}>{{ pa }}</option>
-                {% endfor %}
-            </select> -->
         </form>
     </div>
 </div>
@@ -469,21 +261,22 @@
                             <div class="space-y-3">
                                 <label class="font-semibold">
                                     <input type="checkbox"
-                                        id="select-all-officers" />
+                                           id="select-all-officers" />
                                     Chọn tất cả
                                 </label>
                                 <ol class="pl-10">
-            
+
                                     {% for officer in officers %}
                                         <input type="checkbox"
-                                            name="officers"
-                                            value="{{ officer.pk }}"
-                                            id="officer_{{ officer.pk }}" />
+                                               name="officers"
+                                               value="{{ officer.pk }}"
+                                               id="officer_{{ officer.pk }}" />
                                         <label for="officer_{{ officer.pk }}">
                                             {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
                                         </label>
                                         <br />
                                     {% endfor %}
+
                                 </ol>
                             </div>
                         </td>
@@ -491,7 +284,7 @@
                             <div class="space-y-3">
                                 <label class="font-semibold">
                                     <input type="checkbox"
-                                        id="select-all-fields" />
+                                           id="select-all-fields" />
                                     Chọn tất cả
                                 </label>
                                 <ul class="pl-10">
@@ -503,7 +296,7 @@
                             <div class="space-y-3">
                                 <label class="font-semibold">
                                     <input type="checkbox"
-                                        id="select-all-related-tables" />
+                                           id="select-all-related-tables" />
                                     Chọn tất cả
                                 </label>
                                 <ul class="pl-10">
@@ -520,11 +313,11 @@
             <button type="submit"
                     name="export"
                     class="btn text-lg mb-10 mt-5 rounded-lg w-2/5 space-x-2">
-                    <span>Xuất dữ liệu</span>
-                    <img src="{% static 'src/export-file.png' %}"
-                        alt="Export File"
-                        class="w-5 h-5" />
-                
+                <span>Xuất dữ liệu</span>
+                <img src="{% static 'src/export-file.png' %}"
+                     alt="Export File"
+                     class="w-5 h-5" />
+
             </button>
         </div>
     </form>
@@ -603,6 +396,42 @@
         document.getElementById('warningModal').style.display = 'none';
     }
     
+    function removeFilter(closeButton) {
+        const filterContainer = closeButton.parentElement;
     
-</script>
+        // Check for an input or select element within the filter container
+        const filterElement = filterContainer.querySelector('input, select');
+    
+        if (filterElement) {
+            const filterName = filterElement.getAttribute('name');
+    
+            // Hide the filter container
+            filterContainer.style.display = 'none';
+    
+            // Store the hidden state in 
+            sessionStorage.setItem(`filter_${filterName}_hidden`, 'true');
+        } else {
+            console.error("Filter element not found within filter container");
+        }
+    }
 
+    function restoreFilterVisibility() {
+        document.querySelectorAll('.filter-container').forEach(container => {
+            const filterElement = container.querySelector('input, select');
+            
+            if (filterElement) {
+                const filterName = filterElement.getAttribute('name');
+                const isHidden = sessionStorage.getItem(`filter_${filterName}_hidden`) === 'true';
+                
+                // Hide the filter container if it was marked as hidden
+                if (isHidden) {
+                    container.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Call the restore function on page load
+    document.addEventListener('DOMContentLoaded', restoreFilterVisibility);
+
+</script>

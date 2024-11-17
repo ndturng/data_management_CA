@@ -3171,6 +3171,14 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 2.5rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mt-3 {
   margin-top: 0.75rem;
 }
@@ -3709,6 +3717,35 @@ details.collapse summary::-webkit-details-marker {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
+.filter-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.filter-input {
+  padding-right: 30px; 
+}
+
+.close-button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.4); /* Faded color */
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-button:hover {
+  color: rgba(0, 0, 0, 0.7); /* Darken color on hover */
+}
+
+.close-button img {
+  display: block;
+}
+
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -3729,4 +3766,49 @@ details.collapse summary::-webkit-details-marker {
     --tw-scale-y: 1.1;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
+}
+
+select {
+  width: 100%;
+  padding-right: 24px; /* Leave space for the custom arrow */
+  -webkit-appearance: none; /* Remove default arrow on Webkit browsers */
+  -moz-appearance: none; /* Remove default arrow on Firefox */
+  appearance: none; /* Remove default arrow on other browsers */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8; /* Light background color */
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.select-wrapper {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  appearance: none;
+}
+
+.trash-icon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.trash-icon:hover {
+  opacity: 1; /* Darken on hover */
 }
