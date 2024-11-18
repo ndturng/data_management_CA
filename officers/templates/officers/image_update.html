@@ -1,33 +1,51 @@
+{% load static tailwind_tags %}
+
 <!-- templates/officers/image_update.html -->
-<div class="container">
-    <h2>Cập nhật ảnh cho {{ officer.birth_name }}</h2>
-    
-    <!-- Display the current image -->
-    {% if image.image %}
-        <div class="mb-3">
-            <p><strong>Ảnh hiện tại:</strong></p>
-            <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-thumbnail" style="max-width: 200px;">
-        </div>
-    {% endif %}
+<div>
+    {% tailwind_css %}
+    <h2 class="text-4xl font-semibold text-center mt-10 mb-20">Cập nhật ảnh cho {{ officer.birth_name }}</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.category.label_tag }}
-            {{ form.category }}
-        </div>
-        <div class="form-group">
-            {{ form.description.label_tag }}
-            {{ form.description }}
-        </div>
-        <div class="form-group">
-            {{ form.image.label_tag }}
-            <input type="file" name="image" class="form-control">
-            <small class="form-text text-muted">Chọn một ảnh để thay thế ảnh hiện tại.</small>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
-    </form>
+    <div class="flex space-x-60 justify-center">
+        <!-- Display the current image -->
+        {% if image.image %}
+            <div class="mb-3">
+                <p class="mb-5"><strong>Ảnh hiện tại:</strong></p>
+                <img src="{{ image.image.url }}" alt="{{ image.description }}" class="img-thumbnail w-56 ml-5">
+            </div>
+        {% endif %}
 
-    <!-- Back button to go to the officer's image list -->
-    <a href="{% url 'url_image' officer.pk %}" class="btn btn-secondary mt-3">Quay lại</a>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.category.label_tag }}
+                {{ form.category }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+            <div class="form-group">
+                {{ form.image.label_tag }}
+                <input type="file" name="image" class="form-control">
+                <small class="form-text text-muted">Chọn một ảnh để thay thế ảnh hiện tại.</small>
+            </div>
+
+            <div class="space-x-40 mt-10">
+                <!-- Back button to go to the officer's image list -->
+                <a href="{% url 'url_image' officer.pk %}" class="btn rounded-lg">
+                    <img src="{% static 'src/back-icon.png' %}"
+                        alt="Back Icon"
+                        class="w-5 h-5" />
+                    <span>Quay lại</span>
+                </a>
+
+                <button type="submit" class="btn rounded-lg">
+                    <img src="{% static 'src/compose.png' %}"
+                        alt="Compose Icon"
+                        class="w-5 h-5" />
+                    <span>Cập nhật</span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

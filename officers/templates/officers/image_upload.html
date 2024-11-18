@@ -1,25 +1,43 @@
+{% load static tailwind_tags %}
+
 <!-- templates/officers/image_upload.html -->
-<div class="container">
-    <h2>Tải ảnh lên cho {{ officer.birth_name }}</h2>
+<div class="mt-10">
+    {% tailwind_css %}
+    <h2 class="text-4xl font-semibold text-center">Tải ảnh lên cho {{ officer.birth_name }}</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.category.label_tag }}
-            {{ form.category }}
-        </div>
-        <div class="form-group">
-            {{ form.description.label_tag }}
-            {{ form.description }}
-        </div>
-        <div class="form-group">
-            {{ form.image.label_tag }}
-            <input type="file" name="image" class="form-control" multiple>
-            <small class="form-text text-muted">Bạn có thể tải lên nhiều ảnh cùng lúc.</small>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Tải lên</button>
-    </form>
+    <div class="flex justify-center mt-20">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.category.label_tag }}
+                {{ form.category }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+            <div class="form-group">
+                {{ form.image.label_tag }}
+                <input type="file" name="image" class="form-control" multiple>
+                <small class="form-text text-muted">Bạn có thể tải lên nhiều ảnh cùng lúc.</small>
+            </div>
 
-    <!-- Back button to go to the officer's image list -->
-    <a href="{% url 'url_image' officer.pk %}" class="btn btn-secondary mt-3">Quay lại</a>
+            <div class="space-x-48 mt-10">        
+                <!-- Back button to go to the officer's image list -->
+                <a href="{% url 'url_image' officer.pk %}" class="btn rounded-lg">
+                    <img src="{% static 'src/back-icon.png' %}"
+                        alt="Back Icon"
+                        class="w-5 h-5" />
+                    <span>Quay lại</span>
+                </a>
+
+                <button type="submit" class="btn rounded-lg">
+                    <img src="{% static 'src/upload.png' %}"
+                            alt="Upload"
+                            class="w-5 h-5" />
+                    <span>Tải lên</span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
