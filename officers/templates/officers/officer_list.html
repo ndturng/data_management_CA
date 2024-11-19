@@ -162,77 +162,107 @@
                 <div class="tooltip tooltip-top mt-7"
                      data-tip="Lọc">
                     <button type="submit"
-                            class="btn btn-md btn-square btn-ghost">
+                            class="btn btn-md btn-square btn-ghost"
+                            onclick="applyFilter()">
                         <img src="{% static 'src/filter.png' %}"
                              alt="Filter Icon"
                              class="w-9 h-9" />
                     </button>
                 </div>
 
+                <!-- Reset all filter value -->
+                <div class="tooltip tooltip-top mt-7"
+                    data-tip="Reset bộ lọc"
+                    onclick="resetFilter()">
+                    <a href="{% url 'officer_list' %}">
+                        <img src="{% static 'src/reset_icon.png' %}"
+                            alt="Delete icon"
+                            class="w-6 h-6" />
+                    </a>
+                </div>
+
+
                 <div class="flex-none tooltip tooltip-top mt-10"
-                     data-tip="Xoá bộ lọc">
-
-                    {% if request.GET %}
-
-                        <a href="{% url 'officer_list' %}">
-                            <img src="{% static 'src/delete-icon.png' %}"
-                                 alt="Delete icon"
-                                 class="w-6 h-6" />
-                        </a>
-
-                    {% endif %}
-
+                        data-tip="Xoá bộ lọc"
+                        onclick="deleteFilters()">
+                    <a href="{% url 'officer_list' %}">
+                        <img src="{% static 'src/delete-icon.png' %}"
+                                alt="Delete icon"
+                                class="w-6 h-6" />
+                    </a>
 
                 </div>
+
             </div>
 
             <div class="flex mx-16 space-x-2 mt-1">
 
                 <!-- Search by birth_year -->
-                <div class="filter-container mt-2">
+                <div class="filter-container"
+                     data-filter-name="birth_year">
                     <input type="text"
                            name="birth_year"
-                           placeholder="Tìm theo năm sinh"
-                           value="{{ birth_year|default_if_none:'' }}"
-                           class="rounded-lg input-sm filter-input" />
-                           <span class="trash-icon" onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}" alt="Trash Icon" width="20" height="20" />
-                        </span>
+                           placeholder="Tìm theo năm sinh" />
+                    <span class="trash-icon"
+                          onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                             alt="Trash Icon"
+                             width="20"
+                             height="20" />
+                    </span>
                 </div>
-            
-                <!-- Search by current_residence -->
-                <div class="">
-                    <input type="text"
-                           name="current_residence"
-                           placeholder="Tìm theo chỗ ở hiện nay"
-                           value="{{ current_residence|default_if_none:'' }}"
-                           class="rounded-lg input-sm" />
-
-                </div>
-
             </div>
 
-            <div class="filter-container">
+            <div class="filter-container"
+                 data-filter-name="position">
                 <label for="position">Chức vụ:</label>
-                
                 <div class="select-wrapper">
-                    <!-- Dropdown select -->
-                    <select name="position" data-filter-name="position">
+                    <select name="position">
                         <option value="">Tất cả</option>
+
                         {% for p in position %}
-                            <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
+                            <option value="{{ p }}" 
+                                {% if request.GET.position == p %}selected{% endif %}
+                                >{{ p }}</option>
                         {% endfor %}
+
                     </select>
                 </div>
-            
-                <span class="trash-icon" onclick="removeFilter(this)">
-                    <img src="{% static 'svg/trash-icon.svg' %}" alt="Trash Icon" width="20" height="20" />
+                <span class="trash-icon"
+                      onclick="removeFilter(this)">
+                    <img src="{% static 'svg/trash-icon.svg' %}"
+                         alt="Trash Icon"
+                         width="20"
+                         height="20" />
                 </span>
             </div>
 
         </form>
+        <!-- "Thêm bộ lọc" Button -->
+        <button class="add-filter-button"
+                onclick="openFilterModal()">+ Thêm bộ lọc</button>
+
+        <!-- Filter Selection Modal -->
+        <div id="filterModal"
+             class="modal-overlay"
+             style="display: none">
+            <div class="modal-content">
+                <span class="close-modal"
+                      onclick="closeFilterModal()">&times;</span>
+                <h3 class="modal-title">Chọn các bộ lọc</h3>
+                <div class="filter-options">
+                    <button class="filter-option"
+                            onclick="showFilter('birth_year')">
+                        Tìm theo năm sinh
+                    </button>
+                    <button class="filter-option"
+                            onclick="showFilter('position')">Chức vụ</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <!-- Export Form -->
 <div id="exportForm"
@@ -249,9 +279,15 @@
             <table class="min-w-full border border-gray-300">
                 <thead>
                     <tr>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn cán bộ </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn thông tin </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn bảng liên quan </th>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
+                            Chọn cán bộ
+                        </th>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
+                            Chọn thông tin
+                        </th>
+                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
+                            Chọn bảng liên quan
+                        </th>
                     </tr>
                 </thead>
 
@@ -324,114 +360,166 @@
 </div>
 
 <script>
-    function toggleView() {
-        var isChecked = document.getElementById('toggleExportForm').checked;
-        var officerList = document.getElementById('officerList');
-        var exportForm = document.getElementById('exportForm');
-        var searchOfficer = document.getElementById('searchOfficer');
+    
 
-        if (isChecked) {
-            officerList.style.display = 'none';
-            searchOfficer.style.display = 'none';
-            exportForm.style.display = 'block';
-        } else {
-            officerList.style.display = 'block';
-            searchOfficer.style.display = 'block';
-            exportForm.style.display = 'none';
+    // Restore value of visible filters from sessionStorage
+    function restoreFilterValues() {
+        document.querySelectorAll(".filter-container input, .filter-container select").forEach(input => {
+            const filterName = input.getAttribute("name");
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            if (savedValue !== null) {
+                input.value = savedValue; // Restore the saved value
+            }
+        });
+    }
+
+    // When click on Reset Filter Button
+    function resetFilter() {
+        // Clear all filter values and their values in sessionStorage
+        document.querySelectorAll(".filter-container input, select").forEach(filterInput => {
+            filterInput.value = "";
+            const filterName = filterInput.closest(".filter-container").getAttribute("data-filter-name");
+            sessionStorage.removeItem(`filter_${filterName}_value`);
+
+        });
+
+
+    }
+
+    // When click on Delete All Filter Button
+    function deleteFilters() {
+        sessionStorage.clear();
+    }
+        
+
+
+
+    // When click on "Lọc" Button
+    function applyFilter() {
+        // Save filter values to sessionStorage if that filter is visible
+        document.querySelectorAll(".filter-container").forEach(container => {
+            const filterName = container.getAttribute("data-filter-name");
+            const filterInput = container.querySelector("input, select");
+            if (filterInput && container.style.display !== "none") {
+                sessionStorage.setItem(`filter_${filterName}_value`, filterInput.value);
+            }
+        });
+    }
+        
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Restore filter visibility and modal state on page load
+        restoreFilterVisibility();
+        restoreModalFilterState();
+        restoreFilterValues();
+    });
+    
+    // Restore filter visibility from sessionStorage
+    function restoreFilterVisibility() {
+        document.querySelectorAll(".filter-container").forEach(container => {
+            const filterName = container.getAttribute("data-filter-name");
+            console.log(filterName);
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            console.log(isVisible);
+            container.style.display = isVisible ? "flex" : "none"; // Restore visibility
+        });
+    }
+    
+    // Show a filter when selected in the modal
+    function showFilter(filterName) {
+        const filterElement = document.querySelector(`.filter-container[data-filter-name="${filterName}"]`);
+        if (filterElement) {
+            filterElement.style.display = "flex"; // Show the filter
+            sessionStorage.setItem(`filter_${filterName}_visible`, "true"); // Save visibility state
+            updateModalFilterState(filterName, true); // Mark as selected in the modal
         }
-    }
-    document.getElementById('select-all-officers').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="officers"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
-    document.getElementById('select-all-fields').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
-
-    document.getElementById('select-all-related-tables').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="{{ form.related_tables.name }}"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
-
-    function validateSelection() {
-        // Get all officer checkboxes
-        const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
-        const isAnyOfficerSelected = Array.from(officerCheckboxes).some(checkbox => checkbox.checked);
-    
-        // Get all field checkboxes in the "Chọn thông tin" section
-        const fieldCheckboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
-        const isAnyFieldSelected = Array.from(fieldCheckboxes).some(checkbox => checkbox.checked);
-    
-        // Determine which warning to show based on selection
-        if (!isAnyOfficerSelected && !isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ và một trường thông tin để xuất dữ liệu!");
-            return false; 
-        } else if (!isAnyOfficerSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ để xuất dữ liệu!");
-            return false; 
-        } else if (!isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một trường thông tin để xuất dữ liệu!");
-            return false; 
-        }
-    
-        return true; // Allow form submission if all validations pass
+        closeFilterModal(); // Close the modal after selection
     }
     
-    // Show the warning modal with a custom message
-    function showWarningModal(message) {
-        const warningModal = document.getElementById('warningModal');
-        warningModal.querySelector('p').innerText = message; // Set custom message
-        warningModal.style.display = 'block';
-    }
-    
-    // Close the warning modal
-    function closeWarningModal() {
-        document.getElementById('warningModal').style.display = 'none';
-    }
-    
+    // Hide a filter and update sessionStorage
     function removeFilter(closeButton) {
         const filterContainer = closeButton.parentElement;
-    
-        // Check for an input or select element within the filter container
-        const filterElement = filterContainer.querySelector('input, select');
-    
-        if (filterElement) {
-            const filterName = filterElement.getAttribute('name');
-    
-            // Hide the filter container
-            filterContainer.style.display = 'none';
-    
-            // Store the hidden state in 
-            sessionStorage.setItem(`filter_${filterName}_hidden`, 'true');
-        } else {
-            console.error("Filter element not found within filter container");
-        }
+        const filterName = filterContainer.getAttribute("data-filter-name");
+        filterContainer.style.display = "none"; // Hide the filter
+        sessionStorage.setItem(`filter_${filterName}_visible`, "false"); // Save hidden state
+        // Clear the saved value for the filter
+        sessionStorage.removeItem(`filter_${filterName}_value`);
+        // Reset the filter value
+        filterContainer.querySelector("input, select").value = "";
+        updateModalFilterState(filterName, false); // Unmark as active in the modal
     }
-
-    function restoreFilterVisibility() {
-        document.querySelectorAll('.filter-container').forEach(container => {
-            const filterElement = container.querySelector('input, select');
-            
-            if (filterElement) {
-                const filterName = filterElement.getAttribute('name');
-                const isHidden = sessionStorage.getItem(`filter_${filterName}_hidden`) === 'true';
-                
-                // Hide the filter container if it was marked as hidden
-                if (isHidden) {
-                    container.style.display = 'none';
-                }
+    
+    // Restore the selected state of filters in the modal
+    function restoreModalFilterState() {
+        document.querySelectorAll(".filter-option").forEach(option => {
+            const filterName = option.getAttribute("onclick").match(/'([^']+)'/)[1];
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            if (isVisible) {
+                option.classList.add("active"); // Mark as active
+            } else {
+                option.classList.remove("active"); // Remove active state
             }
         });
     }
     
-    // Call the restore function on page load
-    document.addEventListener('DOMContentLoaded', restoreFilterVisibility);
+    // Update the selected state of a filter in the modal
+    function updateModalFilterState(filterName, isVisible) {
+        const filterOption = document.querySelector(`.filter-option[onclick*="'${filterName}'"]`);
+        if (filterOption) {
+            if (isVisible) {
+                filterOption.classList.add("active"); // Mark as active
+            } else {
+                filterOption.classList.remove("active"); // Unmark as active
+            }
+        }
+    }
+    
+    // Open and close modal functions
+    function openFilterModal() {
+        const modal = document.getElementById("filterModal");
+        modal.style.display = "flex";
+    }
+    
+    function closeFilterModal() {
+        const modal = document.getElementById("filterModal");
+        modal.style.display = "none";
+    }
 
+    // Validate selection for export
+    function validateSelection() {
+        const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
+        const isAnyOfficerSelected = Array.from(officerCheckboxes).some(checkbox => checkbox.checked);
+    
+        const fieldCheckboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        const isAnyFieldSelected = Array.from(fieldCheckboxes).some(checkbox => checkbox.checked);
+    
+        if (!isAnyOfficerSelected && !isAnyFieldSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một cán bộ và một trường thông tin để xuất dữ liệu!");
+            return false;
+        } else if (!isAnyOfficerSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một cán bộ để xuất dữ liệu!");
+            return false;
+        } else if (!isAnyFieldSelected) {
+            showWarningModal("Vui lòng chọn ít nhất một trường thông tin để xuất dữ liệu!");
+            return false;
+        }
+    
+        return true; // All validations pass
+    }
+    
+    // Show and close warning modal
+    function showWarningModal(message) {
+        const warningModal = document.getElementById("warningModal");
+        const warningText = warningModal.querySelector("p");
+        if (warningText) {
+            warningText.innerText = message; // Set custom message
+        }
+        warningModal.style.display = "block"; // Show modal
+    }
+    
+    function closeWarningModal() {
+        const warningModal = document.getElementById("warningModal");
+        warningModal.style.display = "none"; // Hide modal
+    }
+    
 </script>
