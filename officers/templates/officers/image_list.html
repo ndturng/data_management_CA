@@ -74,13 +74,13 @@
              class="mt-10 ml-10 space-x-5">
             {% for image in images %}
                 <div class="inline-block">
-                    <div class="card w-48 bg-base-300 px-2 pb-2 shadow-md rounded-lg overflow-hidden relative group">
+                    <div class="card w-52 bg-base-300 px-3 pb-3 shadow-md rounded-lg overflow-hidden relative group">
                         <div class="p-2 flex space-x-4">
                             <!-- Checkbox to select image for download -->
                             <input type="checkbox"
                             name="selected_images"
                             value="{{ image.pk }}"
-                            class="image-checkbox mr-2" />
+                            class="image-checkbox mr-2 mt-0.5" />
 
                             <p class="text-center text-sm font-medium">{{ image.description }}</p>
                         </div>
@@ -122,15 +122,17 @@
         </div>
 
         <div id="FullImageView">
-            <div class="flex justify-center items-center py-5">
+            <div class="flex justify-center items-center h-full">
                 <img id="FullImage" alt=""/>
             </div>
-            <span id="CloseButton" onclick="CloseFullView()" 
-            class="hover:bg-slate-500 rounded-full ml-7 mt-3 px-3 py-3">
-                <img src="{% static 'src/close-full-image.svg' %}"
-                alt="Close Full Image"
-                class="w-5 h-5" />
-            </span>
+            <div class="flex justify-end items-end">
+                <span id="CloseButton" onclick="CloseFullView()" 
+                class="hover:bg-slate-500 rounded-full mr-7 mt-3 px-3 py-3">
+                    <img src="{% static 'src/close-full-image.svg' %}"
+                    alt="Close Full Image"
+                    class="w-5 h-5" />
+                </span>
+            </div>
         </div>
     </form>
 </div>
