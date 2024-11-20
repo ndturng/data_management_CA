@@ -3882,3 +3882,19 @@ select {
 .filter-option.active {
   background-color: #ccc;
 }
+
+.filter-options label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.filter-options input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}

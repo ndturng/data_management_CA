@@ -172,23 +172,23 @@
 
                 <!-- Reset all filter value -->
                 <div class="tooltip tooltip-top mt-7"
-                    data-tip="Reset bộ lọc"
-                    onclick="resetFilter()">
+                     data-tip="Reset bộ lọc"
+                     onclick="resetFilter()">
                     <a href="{% url 'officer_list' %}">
                         <img src="{% static 'src/reset_icon.png' %}"
-                            alt="Delete icon"
-                            class="w-6 h-6" />
+                             alt="Delete icon"
+                             class="w-6 h-6" />
                     </a>
                 </div>
 
 
                 <div class="flex-none tooltip tooltip-top mt-10"
-                        data-tip="Xoá bộ lọc"
-                        onclick="deleteFilters()">
+                     data-tip="Xoá bộ lọc"
+                     onclick="deleteFilters()">
                     <a href="{% url 'officer_list' %}">
                         <img src="{% static 'src/delete-icon.png' %}"
-                                alt="Delete icon"
-                                class="w-6 h-6" />
+                             alt="Delete icon"
+                             class="w-6 h-6" />
                     </a>
 
                 </div>
@@ -250,14 +250,26 @@
                 <span class="close-modal"
                       onclick="closeFilterModal()">&times;</span>
                 <h3 class="modal-title">Chọn các bộ lọc</h3>
+
+                <!-- Filter Options -->
                 <div class="filter-options">
-                    <button class="filter-option"
-                            onclick="showFilter('birth_year')">
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="birth_year" />
                         Tìm theo năm sinh
-                    </button>
-                    <button class="filter-option"
-                            onclick="showFilter('position')">Chức vụ</button>
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="position" />
+                        Chức vụ
+                    </label>
                 </div>
+
+                <!-- Apply Filters Button -->
+                <button class="btn btn-primary mt-5"
+                        onclick="applySelectedFilters()">Áp dụng</button>
             </div>
         </div>
     </div>
@@ -360,7 +372,39 @@
 </div>
 
 <script>
-    
+    // Function to apply selected filters from the modal
+    function applySelectedFilters() {
+        // Get all selected checkboxes in the modal
+        const selectedFilters = Array.from(
+            document.querySelectorAll(".filter-checkbox:checked")
+        ).map((checkbox) => checkbox.value);
+
+        // Show the selected filters on the main page
+        selectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(
+                `.filter-container[data-filter-name="${filterName}"]`
+            );
+            if (filterElement) {
+                filterElement.style.display = "flex"; // Show the filter
+                sessionStorage.setItem(`filter_${filterName}_visible`, "true"); // Save visibility state
+            }
+        });
+
+        // Close the modal after applying
+        closeFilterModal();
+    }
+
+    // Restore the checkbox state in the modal
+    function restoreModalCheckboxState() {
+        document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
+            const filterName = checkbox.value;
+            const isVisible = sessionStorage.getItem(
+                `filter_${filterName}_visible`
+            ) === "true";
+            checkbox.checked = isVisible; // Check the checkbox if the filter is visible
+        });
+    }
+
 
     // Restore value of visible filters from sessionStorage
     function restoreFilterValues() {
@@ -391,9 +435,6 @@
         sessionStorage.clear();
     }
         
-
-
-
     // When click on "Lọc" Button
     function applyFilter() {
         // Save filter values to sessionStorage if that filter is visible
@@ -412,6 +453,7 @@
         restoreFilterVisibility();
         restoreModalFilterState();
         restoreFilterValues();
+        restoreModalCheckboxState();
     });
     
     // Restore filter visibility from sessionStorage
@@ -440,13 +482,25 @@
     function removeFilter(closeButton) {
         const filterContainer = closeButton.parentElement;
         const filterName = filterContainer.getAttribute("data-filter-name");
+
         filterContainer.style.display = "none"; // Hide the filter
         sessionStorage.setItem(`filter_${filterName}_visible`, "false"); // Save hidden state
+
         // Clear the saved value for the filter
         sessionStorage.removeItem(`filter_${filterName}_value`);
-        // Reset the filter value
+        // Reset the filter value 
         filterContainer.querySelector("input, select").value = "";
+
+        // Uncheck the corresponding checkbox in the modal
+        const modalCheckbox = document.querySelector(
+            `.filter-checkbox[value="${filterName}"]`
+        );
+        if (modalCheckbox) {
+            modalCheckbox.checked = false; // Uncheck the checkbox
+        }
+
         updateModalFilterState(filterName, false); // Unmark as active in the modal
+
     }
     
     // Restore the selected state of filters in the modal
