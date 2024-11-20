@@ -68,12 +68,13 @@
 
         </select>
 
+        
         <!-- Display images with checkboxes for selection -->
         <div id="images"
              class="mt-10 ml-10 space-x-5">
             {% for image in images %}
                 <div class="inline-block">
-                    <div class="card w-44 bg-white shadow-md rounded-lg overflow-hidden relative group">
+                    <div class="card w-48 bg-base-300 px-2 pb-2 shadow-md rounded-lg overflow-hidden relative group">
                         <div class="p-2 flex space-x-4">
                             <!-- Checkbox to select image for download -->
                             <input type="checkbox"
@@ -84,27 +85,27 @@
                             <p class="text-center text-sm font-medium">{{ image.description }}</p>
                         </div>
                         
-                        <div class="relative">                    
-                            <img src="{{ image.image.url }}"
-                                alt="{{ image.description }}"
-                                class="img-thumbnail w-full h-48 object-cover"
-                            />
+                        <div class="relative">   
+                            <div class="Officers_image">               
+                                <img src="{{ image.image.url }}"
+                                    alt="{{ image.description }}"
+                                    class="img-thumbnail h-48 rounded-md"
+                                    onclick="FullView(this.src)"
+                                />
+                            </div>  
 
                             <!-- Background overlay that appears on hover, covering only the image -->
-                            <div class="absolute inset-0 top-0 left-0 w-full h-full bg-base-300 bg-opacity-50 
-                            ounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
-
-                            <div class="absolute inset-0 flex items-start justify-end top-0 right-0 space-x-3 w-full
+                            <div class="absolute inset-0 flex items-start justify-end top-0 right-0 space-x-3 h-4
                             opacity-0 group-hover:opacity-100 transition-opacity duration-300 pr-4 mt-2">
                                 <a class="tooltip tooltip-bottom" data-tip="Tải xuống" 
                                 href="{{ image.image.url }}"
                                 download>
-                                    <i class="fas fa-download"></i>
+                                    <i class="fas fa-download text-green-700"></i>
                                 </a>
 
                                 <a class="tooltip tooltip-bottom" data-tip="Chỉnh sửa" 
                                 href="{% url 'url_image_update' officer.pk image.pk %}">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-edit text-green-700"></i>
                                 </a>
 
                                 <a class="tooltip tooltip-bottom" data-tip="Xoá" 
@@ -118,6 +119,18 @@
             {% empty %}
                 <p>Không có ảnh nào trong danh mục này.</p>
             {% endfor %}
+        </div>
+
+        <div id="FullImageView">
+            <div class="flex justify-center items-center py-5">
+                <img id="FullImage" alt=""/>
+            </div>
+            <span id="CloseButton" onclick="CloseFullView()" 
+            class="hover:bg-slate-500 rounded-full ml-7 mt-3 px-3 py-3">
+                <img src="{% static 'src/close-full-image.svg' %}"
+                alt="Close Full Image"
+                class="w-5 h-5" />
+            </span>
         </div>
     </form>
 </div>
@@ -135,5 +148,14 @@
         imageCheckboxes.forEach(checkbox => {
             checkbox.checked = selectAllCheckbox.checked;
         });
+    }
+
+    function FullView(ImgLink) {
+        document.getElementById("FullImage").src = ImgLink;
+        document.getElementById("FullImageView").style.display = "block";
+    }
+
+    function CloseFullView() {
+        document.getElementById("FullImageView").style.display = "none";
     }
 </script>
