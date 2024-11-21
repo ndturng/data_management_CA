@@ -390,6 +390,22 @@
             }
         });
 
+        // Get all the unselected checkboxes in the modal
+        const unselectedFilters = Array.from(
+            document.querySelectorAll(".filter-checkbox:not(:checked)")
+        ).map((checkbox) => checkbox.value);
+
+        // Hide the unselected filters on the main page
+        unselectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(
+                `.filter-container[data-filter-name="${filterName}"]`
+            );
+            if (filterElement) {
+                filterElement.style.display = "none"; // Hide the filter
+                sessionStorage.setItem(`filter_${filterName}_visible`, "false"); // Save hidden state
+            }
+        });
+
         // Close the modal after applying
         closeFilterModal();
     }
