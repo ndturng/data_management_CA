@@ -138,7 +138,8 @@
 
     <div id="searchOfficer"
          class="w-2/5">
-        <form method="GET"
+        <form id="filterForm"
+              method="GET"
               action="{% url 'officer_list' %}">
             <div class="flex mx-16 space-x-2">
                 <!-- Search by name -->
@@ -406,6 +407,19 @@
             }
         });
 
+        // Reset hidden filters value
+        unselectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(
+                `.filter-container[data-filter-name="${filterName}"]`
+            );
+            if (filterElement) {
+                filterElement.querySelector("input, select").value = ""; 
+            }
+        });
+
+        // Reload the page to apply the filters
+        document.getElementById("filterForm").submit();
+
         // Close the modal after applying
         closeFilterModal();
     }
@@ -476,9 +490,7 @@
     function restoreFilterVisibility() {
         document.querySelectorAll(".filter-container").forEach(container => {
             const filterName = container.getAttribute("data-filter-name");
-            console.log(filterName);
             const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
-            console.log(isVisible);
             container.style.display = isVisible ? "flex" : "none"; // Restore visibility
         });
     }
