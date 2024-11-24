@@ -460,8 +460,10 @@
         document.querySelectorAll(".filter-container input, .filter-container select").forEach(input => {
             const filterName = input.getAttribute("name");
             const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
-            if (savedValue !== null) {
-                input.value = savedValue; // Restore the saved value
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            
+            if (savedValue && isVisible) {
+                input.value = savedValue;
             }
         });
     }
