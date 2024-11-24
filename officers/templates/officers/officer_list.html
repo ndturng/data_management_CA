@@ -385,11 +385,23 @@
             const filterElement = document.querySelector(
                 `.filter-container[data-filter-name="${filterName}"]`
             );
+
             if (filterElement) {
                 filterElement.style.display = "flex"; // Show the filter
                 sessionStorage.setItem(`filter_${filterName}_visible`, "true"); // Save visibility state
             }
         });
+
+        // Check if at least one selected filter has a value saved in sessionStorage, then reload the page
+        const hasSavedValue = selectedFilters.some((filterName) => {
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            // if savedValue is null or empty string, return false
+            return savedValue && savedValue.trim();
+        });
+        
+        if (hasSavedValue) {
+            document.getElementById("filterForm").submit();
+        }
 
         // Get all the unselected checkboxes in the modal
         const unselectedFilters = Array.from(
@@ -417,8 +429,15 @@
             }
         });
 
-        // Reload the page to apply the filters
-        document.getElementById("filterForm").submit();
+        const hasSavedValue_unchecked = unselectedFilters.some((filterName) => {
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            // if savedValue is null or empty string, return false
+            return savedValue && savedValue.trim();
+        });
+
+        if (hasSavedValue_unchecked) {
+            document.getElementById("filterForm").submit();
+        }
 
         // Close the modal after applying
         closeFilterModal();
@@ -514,11 +533,18 @@
         filterContainer.style.display = "none"; // Hide the filter
         sessionStorage.setItem(`filter_${filterName}_visible`, "false"); // Save hidden state
 
+        // Check if the value of the filter not empty
+        if (filterContainer.querySelector("input, select").value) {
         // Clear the saved value for the filter
         sessionStorage.removeItem(`filter_${filterName}_value`);
+
         // Reset the filter value 
         filterContainer.querySelector("input, select").value = "";
 
+            // Reload the page to apply the filters
+            document.getElementById("filterForm").submit();
+
+        }
         // Uncheck the corresponding checkbox in the modal
         const modalCheckbox = document.querySelector(
             `.filter-checkbox[value="${filterName}"]`
@@ -529,7 +555,6 @@
 
         updateModalFilterState(filterName, false); // Unmark as active in the modal
 
-        document.getElementById("filterForm").submit();
     }
     
     // Restore the selected state of filters in the modal
