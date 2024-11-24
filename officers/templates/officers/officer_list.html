@@ -505,6 +505,29 @@
         restoreModalFilterState();
         restoreFilterValues();
         restoreModalCheckboxState();
+
+        let hasFilters = false;
+        // Check if there are any filter visible and its value was saved in sessionStorage
+        document.querySelectorAll(".filter-container").forEach(container => {
+            const filterName = container.getAttribute("data-filter-name");
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            const hasSavedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            if (isVisible && hasSavedValue) {
+                hasFilters = true;
+                // Break the loop if at least one filter has a saved value
+                return;
+            }
+        });
+        const filtersAlreadyApplied = sessionStorage.getItem("filters_applied");
+
+        if (hasFilters && !filtersAlreadyApplied) {
+            // Apply filters if there are saved values and filters are not already applied
+            document.getElementById("filterForm").submit();
+            sessionStorage.setItem("filters_applied", "true");
+        } else {
+            // Clear the sessionStorage key if there are no saved values
+            sessionStorage.removeItem("filters_applied");
+        }
     });
     
     // Restore filter visibility from sessionStorage
