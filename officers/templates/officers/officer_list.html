@@ -618,6 +618,24 @@
         modal.style.display = "none";
     }
 
+    // Show export form
+    function toggleView() {
+        var isChecked = document.getElementById('toggleExportForm').checked;
+        var officerList = document.getElementById('officerList');
+        var exportForm = document.getElementById('exportForm');
+        var searchOfficer = document.getElementById('searchOfficer');
+    
+        if (isChecked) {
+            officerList.style.display = 'none';
+            searchOfficer.style.display = 'none';
+            exportForm.style.display = 'block';
+        } else {
+            officerList.style.display = 'block';
+            searchOfficer.style.display = 'block';
+            exportForm.style.display = 'none';
+        }
+    }
+
     // Validate selection for export
     function validateSelection() {
         const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
