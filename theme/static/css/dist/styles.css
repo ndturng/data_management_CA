@@ -3717,12 +3717,6 @@ details.collapse summary::-webkit-details-marker {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
-.filter-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
 .filter-input {
   padding-right: 30px; 
 }
@@ -3785,6 +3779,7 @@ select {
   background-color: #f8f8f8; /* Light background color */
   padding: 8px 12px;
   border-radius: 8px;
+  width: 250px;
 }
 
 .select-wrapper {

@@ -203,7 +203,7 @@
                      data-filter-name="birth_year">
                     <input type="text"
                            name="birth_year"
-                           placeholder="Tìm theo năm sinh" />
+                           placeholder="Năm sinh" />
                     <span class="trash-icon"
                           onclick="removeFilter(this)">
                         <img src="{% static 'svg/trash-icon.svg' %}"
@@ -212,30 +212,589 @@
                              height="20" />
                     </span>
                 </div>
+                
+                <!-- Search by year_join_party -->
+                <div class="filter-container"
+                     data-filter-name="year_join_party">
+                    <input type="text"
+                           name="year_join_party"
+                           placeholder="Năm vào Đảng" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                 alt="Trash Icon"
+                                 width="20"
+                                 height="20" />
+                    </span>
+                </div>       
+                
             </div>
 
-            <div class="filter-container"
-                 data-filter-name="position">
-                <label for="position">Chức vụ:</label>
-                <div class="select-wrapper">
-                    <select name="position">
-                        <option value="">Tất cả</option>
-
-                        {% for p in position %}
-                            <option value="{{ p }}" 
-                                {% if request.GET.position == p %}selected{% endif %}
-                                >{{ p }}</option>
-                        {% endfor %}
-
-                    </select>
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by year_join_CA -->
+                <div class="filter-container"
+                     data-filter-name="year_join_CA">
+                    <input type="text"
+                           name="year_join_CA"
+                           placeholder="Năm vào CA" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                 alt="Trash Icon"
+                                 width="20"
+                                 height="20" />
+                    </span>
                 </div>
-                <span class="trash-icon"
-                      onclick="removeFilter(this)">
-                    <img src="{% static 'svg/trash-icon.svg' %}"
-                         alt="Trash Icon"
-                         width="20"
-                         height="20" />
-                </span>
+
+                <!-- Search by current_residence -->
+                <div class="filter-container"
+                     data-filter-name="current_residence">
+                     <input type="text"
+                     name="current_residence"
+                     placeholder="Chỗ ở hiện nay" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+
+                <!-- Search by salary_decision_year -->
+                <div class="filter-container"
+                     data-filter-name="salary_decision_year">
+                    <input type="text"
+                           name="salary_decision_year"
+                           placeholder="Năm quyết định lương" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by work_unit -->
+                <div class="filter-container"
+                     data-filter-name="work_unit">
+                    <input type="text"
+                           name="work_unit"
+                           placeholder="Đơn vị công tác" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by specialized_work -->
+                <div class="filter-container"
+                     data-filter-name="specialized_work">
+                    <input type="text"
+                           name="specialized_work"
+                           placeholder="Công tác chuyên trách" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by other_work -->
+                <div class="filter-container"
+                     data-filter-name="other_work">
+                    <input type="text"
+                           name="other_work"
+                           placeholder="Công tác khác" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by most_work -->
+                <div class="filter-container"
+                     data-filter-name="most_work">
+                    <input type="text"
+                           name="most_work"
+                           placeholder="Công tác làm nhiều nhất" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by phone_number -->
+                <div class="filter-container"
+                     data-filter-name="phone_number">
+                    <input type="text"
+                           name="phone_number"
+                           placeholder="Số điện thoại" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by bank_account_BIDV -->
+                <div class="filter-container"
+                     data-filter-name="bank_account_BIDV">
+                    <input type="text"
+                           name="bank_account_BIDV"
+                           placeholder="Số tài khoản BIDV" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by id_citizen -->
+                <div class="filter-container"
+                     data-filter-name="id_citizen">
+                    <input type="text"
+                           name="id_citizen"
+                           placeholder="Số CMND" />
+                    <span class="trash-icon"
+                            onclick="removeFilter(this)">
+                            <img src="{% static 'svg/trash-icon.svg' %}"
+                                alt="Trash Icon"
+                                width="20"
+                                height="20" />
+                    </span>
+                </div>
+
+
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by position -->
+                <div class="filter-container"
+                    data-filter-name="position">
+                    <label for="position">Chức vụ:</label>
+                    <div class="select-wrapper">
+                        <select name="position">
+                            <option value="">Tất cả</option>
+
+                            {% for p in position %}
+                                <option value="{{ p }}" 
+                                    {% if request.GET.position == p %}selected{% endif %}
+                                    >{{ p }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by military_rank -->
+                <div class="filter-container"
+                    data-filter-name="military_rank">
+                    <label for="military_rank">Cấp bậc hàm:</label>
+                    <div class="select-wrapper">
+                        <select name="military_rank">
+                            <option value="">Tất cả</option>
+
+                            {% for r in military_rank %}
+                                <option value="{{ r }}" 
+                                    {% if request.GET.military_rank == r %}selected{% endif %}
+                                    >{{ r }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by salary_coefficient -->
+                <div class="filter-container"
+                    data-filter-name="salary_coefficient">
+                    <label for="salary_coefficient">Hệ số lương:</label>
+                    <div class="select-wrapper">
+                        <select name="salary_coefficient">
+                            <option value="">Tất cả</option>
+
+                            {% for s in salary_coefficient %}
+                                <option value="{{ s }}" 
+                                    {% if request.GET.salary_coefficient == s %}selected{% endif %}
+                                    >{{ s }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by party_position -->
+                <div class="filter-container"
+                    data-filter-name="party_position">
+                    <label for="party_position">Chức vụ Đảng:</label>
+                    <div class="select-wrapper">
+                        <select name="party_position">
+                            <option value="">Tất cả</option>
+
+                            {% for p in party_position %}
+                                <option value="{{ p }}" 
+                                    {% if request.GET.party_position == p %}selected{% endif %}
+                                    >{{ p }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+
+                <!-- Search by gender -->
+                <div class="filter-container"
+                    data-filter-name="gender">
+                    <label for="gender">Giới tính:</label>
+                    <div class="select-wrapper">
+                        <select name="gender">
+                            <option value="">Tất cả</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            
+                <!-- Search by military_type -->
+                <div class="filter-container"
+                    data-filter-name="military_type">
+                    <label for="military_type">Lực lượng:</label>
+                    <div class="select-wrapper">
+                        <select name="military_type">
+                            <option value="">Tất cả</option>
+                            
+                            {% for t in military_type %}
+                                <option value="{{ t }}" 
+                                    {% if request.GET.military_type == t %}selected{% endif %}
+                                    >{{ t }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                    <span class="trash-icon
+                        " onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+
+            </div>
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by political_theory -->
+                <div class="filter-container"
+                    data-filter-name="political_theory">
+                    <label for="political_theory">Trình độ chính trị:</label>
+                    <div class="select-wrapper">
+                        <select name="political_theory">
+                            <option value="">Tất cả</option>
+                            
+                            {% for p in political_theory %}
+                                <option value="{{ p }}" 
+                                    {% if request.GET.political_theory == p %}selected{% endif %}
+                                    >{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by birth_place -->
+                <div class="filter-container"
+                    data-filter-name="birth_place">
+                    <label for="birth_place">Nơi sinh:</label>
+                    <div class="select-wrapper">
+                        <select name="birth_place">
+                            <option value="">Tất cả</option>
+                            
+                            {% for p in birth_place %}
+                                <option value="{{ p }}" 
+                                    {% if request.GET.birth_place == p %}selected{% endif %}
+                                    >{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            </div>
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by equipment_type -->
+                <div class="filter-container"
+                    data-filter-name="equipment_type">
+                    <label for="equipment_type">Quân trang:</label>
+                    <div class="select-wrapper">
+                        <select name="equipment_type">
+                            <option value="">Tất cả</option>
+                            
+                            {% for e in equipment_type %}
+                                <option value="{{ e }}" 
+                                    {% if request.GET.equipment_type == e %}selected{% endif %}
+                                    >{{ e }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by size_of_shoes -->
+                <div class="filter-container"
+                    data-filter-name="size_of_shoes">
+                    <label for="size_of_shoes">Giày:</label>
+                    <div class="select-wrapper">
+                        <select name="size_of_shoes">
+                            <option value="">Tất cả</option>
+                            
+                            {% for s in size_of_shoes %}
+                                <option value="{{ s }}" 
+                                    {% if request.GET.size_of_shoes == s %}selected{% endif %}
+                                    >{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by size_of_hat -->
+                <div class="filter-container"
+                    data-filter-name="size_of_hat">
+                    <label for="size_of_hat">Mũ:</label>
+                    <div class="select-wrapper">
+                        <select name="size_of_hat">
+                            <option value="">Tất cả</option>
+                            
+                            {% for s in size_of_hat %}
+                                <option value="{{ s }}" 
+                                    {% if request.GET.size_of_hat == s %}selected{% endif %}
+                                    >{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by size_of_clothes -->
+                <div class="filter-container"
+                    data-filter-name="size_of_clothes">
+                    <label for="size_of_clothes">Quần áo:</label>
+                    <div class="select-wrapper">
+                        <select name="size_of_clothes">
+                            <option value="">Tất cả</option>
+                            
+                            {% for s in size_of_clothes %}
+                                <option value="{{ s }}" 
+                                    {% if request.GET.size_of_clothes == s %}selected{% endif %}
+                                    >{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by certi_of_IT -->
+                <div class="filter-container"
+                    data-filter-name="certi_of_IT">
+                    <label for="certi_of_IT">Tin học:</label>
+                    <div class="select-wrapper">
+                        <select name="certi_of_IT">
+                            <option value="">Tất cả</option>
+                            
+                            {% for c in certi_of_IT %}
+                                <option value="{{ c }}" 
+                                    {% if request.GET.certi_of_IT == c %}selected{% endif %}
+                                    >{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+                <!-- Search by certi_of_foreign_language -->
+                <div class="filter-container"
+                    data-filter-name="certi_of_foreign_language">
+                    <label for="certi_of_foreign_language">Ngoại ngữ:</label>
+                    <div class="select-wrapper">
+                        <select name="certi_of_foreign_language">
+                            <option value="">Tất cả</option>
+                            
+                            {% for c in certi_of_foreign_language %}
+                                <option value="{{ c }}" 
+                                    {% if request.GET.certi_of_foreign_language == c %}selected{% endif %}
+                                    >{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex mx-16 space-x-2 mt-1">
+                <!-- Search by blood_type -->
+                <div class="filter-container"
+                    data-filter-name="blood_type">
+                    <label for="blood_type">Nhóm máu:</label>
+                    <div class="select-wrapper">
+                        <select name="blood_type">
+                            <option value="">Tất cả</option>
+                            
+                            {% for b in blood_type %}
+                                <option value="{{ b }}" 
+                                    {% if request.GET.blood_type == b %}selected{% endif %}
+                                    >{{ b }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
+
+                <!-- Search by profile_address -->
+                <div class="filter-container"
+                    data-filter-name="profile_address">
+                    <label for="profile_address">Địa chỉ hồ sơ:</label>
+                    <div class="select-wrapper">
+                        <select name="profile_address">
+                            <option value="">Tất cả</option>
+                            
+                            {% for p in profile_address %}
+                                <option value="{{ p }}" 
+                                    {% if request.GET.profile_address == p %}selected{% endif %}
+                                    >{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span class="trash-icon"
+                        onclick="removeFilter(this)">
+                        <img src="{% static 'svg/trash-icon.svg' %}"
+                            alt="Trash Icon"
+                            width="20"
+                            height="20" />
+                    </span>
+                </div>
             </div>
 
         </form>
@@ -258,13 +817,169 @@
                         <input type="checkbox"
                                class="filter-checkbox"
                                value="birth_year" />
-                        Tìm theo năm sinh
+                        Năm sinh
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="year_join_CA" />
+                        Năm vào CA
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="year_join_party" />
+                        Năm vào Đảng
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="current_residence" />
+                        Chỗ ở hiện nay
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="salary_decision_year" />
+                        Năm quyết định lương
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="work_unit" />
+                        Đơn vị công tác
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="specialized_work" />
+                        Công tác chuyên trách
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="other_work" />
+                        Công tác khác
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="most_work" />
+                        Công tác làm nhiều nhất
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="phone_number" />
+                        Số điện thoại
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="bank_account_BIDV" />
+                        Số tài khoản BIDV
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="id_citizen" />
+                        Số CCCD
                     </label>
                     <label>
                         <input type="checkbox"
                                class="filter-checkbox"
                                value="position" />
                         Chức vụ
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="military_rank" />
+                        Cấp bậc hàm
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="gender" />
+                        Giới tính
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="military_type" />
+                        Lực lượng
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="salary_coefficient" />
+                        Hệ số lương
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="party_position" />
+                        Chức vụ Đảng
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="political_theory" />
+                        Trình độ chính trị
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="birth_place" />
+                        Nơi sinh
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="equipment_type" />
+                        Quân trang
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="size_of_shoes" />
+                        Giày
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="size_of_hat" />
+                        Mũ
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="size_of_clothes" />
+                        Quần áo
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="certi_of_IT" />
+                        Tin học
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="certi_of_foreign_language" />
+                        Ngoại ngữ
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="blood_type" />
+                        Nhóm máu
+                    </label>
+                    <label>
+                        <input type="checkbox"
+                               class="filter-checkbox"
+                               value="profile_address" />
+                        Địa chỉ hồ sơ
                     </label>
                 </div>
 
@@ -389,7 +1104,7 @@
             if (filterElement) {
                 filterElement.style.display = "flex"; // Show the filter
                 sessionStorage.setItem(`filter_${filterName}_visible`, "true"); // Save visibility state
-            }
+            } 
         });
 
         // Check if at least one selected filter has a value saved in sessionStorage, then reload the page
@@ -560,11 +1275,11 @@
 
         // Check if the value of the filter not empty
         if (filterContainer.querySelector("input, select").value) {
-        // Clear the saved value for the filter
-        sessionStorage.removeItem(`filter_${filterName}_value`);
+            // Clear the saved value for the filter
+            sessionStorage.removeItem(`filter_${filterName}_value`);
 
-        // Reset the filter value 
-        filterContainer.querySelector("input, select").value = "";
+            // Reset the filter value
+            filterContainer.querySelector("input, select").value = "";
 
             // Reload the page to apply the filters
             document.getElementById("filterForm").submit();
@@ -579,7 +1294,7 @@
         }
 
         updateModalFilterState(filterName, false); // Unmark as active in the modal
-
+        
     }
     
     // Restore the selected state of filters in the modal
