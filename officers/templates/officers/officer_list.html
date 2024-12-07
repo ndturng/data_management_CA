@@ -1,1093 +1,356 @@
 {% load static tailwind_tags %}
+{% tailwind_css %}
 
-<div class="navbar bg-base-200 mb-10 shadow-inner drop-shadow-md">
-    {% tailwind_css %}
-    <div class="flex-1">
-        <h2 class="font-semibold text-2xl ml-20">THÔNG TIN CÁN BỘ</h2>
-    </div>
-    <div class="flex-none">
-        <div class="flex-none tooltip tooltip-bottom"
-             data-tip="Tìm kiếm">
-            <button class="btn btn-md btn-circle btn-ghost">
-                <img src="{% static 'src/search.png' %}"
-                     alt="Search Icon"
-                     class="w-5 h-5" />
-            </button>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+    <title>Officer Information System</title>
+
+    <!-- Link to local Font Awesome CSS -->
+    <link rel="stylesheet"
+          href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
+
+    <!-- Link to compiled Tailwind CSS -->
+    <link rel="stylesheet"
+          href="{% static 'css/dist/styles.css' %}" />
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex flex-col items-center md:items-start">
+                <h1 class="text-2xl font-bold">CÔNG AN THỊ XÃ ĐÔNG HOÀ</h1>
+                <h2 class="text-xl font-semibold">THÔNG TIN CÁN BỘ</h2>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center md:justify-end">
+                <a href="{% url 'officer_create' %}"
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                    <i class="fas fa-plus mr-2"></i>Add Officer
+                </a>
+                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition"
+                        id="toggleExportForm"
+                        onclick="toggleView()">
+                    <i class="fas fa-file-export mr-2"></i>Export Data
+                </button>
+                <a href="{% url 'excel_upload' %}"
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                    <i class="fas fa-file-upload mr-2"></i>Upload Excel
+                </a>
+                <a href="{% url 'delete_all_officers' %}"
+                   class="bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition">
+                    <i class="fas fa-trash-alt mr-2"></i>Delete All
+                </a>
+                <button class="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Log Out
+                </button>
+            </div>
         </div>
-        <a href="{% url 'officer_create' %}"
-           class="btn btn-ghost rounded-md">
-            <span class="text-lg">Thêm mới cán bộ</span>
-            <img src="{% static 'src/add-user.png' %}"
-                 alt="Add user"
-                 class="w-5 h-5" />
-        </a>
+    </nav>
 
-        <a href="{% url 'excel_upload' %}"
-           class="btn btn-ghost rounded-md">
-            <span class="text-lg">Tải lên từ Excel</span>
-            <img src="{% static 'src/upload.png' %}"
-                 alt="Upload icon"
-                 class="w-5 h-5" />
-        </a>
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        <!-- Left section (Officer List) -->
+        <div class="lg:w-3/4 h-[calc(100vh-130px)]">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto overflow-y-auto h-full">
+                    <table class="min-w-full divide-y divide-gray-200">
 
-        {% if officers %}
-            <a href="{% url 'delete_all_officers' %}"
-               class="btn btn-ghost rounded-md text-red-600 text-lg">Xoá tất cả</a>
-        {% endif %}
+                        {% for officer in officers %}
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-2 whitespace-nowrap max-w-25 text-center">
+                                        {{ forloop.counter }}
+                                    </td>
+                                    <td class="px-2 py-2 whitespace-nowrap max-w-150">{{ officer.birth_name }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.birth_year }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.military_rank }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.position }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.work_unit }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">
+                                        <a href="{% url 'officer_detail' officer.pk %}"
+                                           class="text-blue-600 hover:text-blue-800 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'officer_delete' officer.pk %}"
+                                           class="text-red-600 hover:text-red-800">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
 
-        <button>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
 
-            {% if user.is_authenticated %}
-                <!-- <p>Chào mừng, {{ user.username }}! </p> -->
-                <form method="POST"
-                      action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="btn btn-ghost rounded-md text-lg">
-                        Đăng xuất
+        <!-- Right Section (Filter Options) -->
+        <div class="lg:w-1/4">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-3 items-center text-center">
+                    Filter Options
+                </h2>
+                <div class="flex justify-between items-center mb-4 gap-2">
+                    <button class="text-blue-600 hover:text-blue-800 text-sm font-normal flex items-center">
+                        <i class="fas fa-plus mr-1"></i>Add Filters
                     </button>
+                    <button class="text-red-600 hover:text-red-800 text-sm font-normal flex items-center">
+                        <i class="fas fa-times mr-1"></i>Remove Filters
+                    </button>
+                </div>
+                <div class="flex gap-2 mb-4">
+                    <button type="submit"
+                            class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Apply Filters
+                    </button>
+                    <button type="button"
+                            class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                        Reset All
+                    </button>
+                </div>
+                <form>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Department</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option>All Departments</option>
+                                <option>IT Department</option>
+                                <option>HR Department</option>
+                                <option>Finance Department</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Rank</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option>All Ranks</option>
+                                <option>Senior Officer</option>
+                                <option>Junior Officer</option>
+                                <option>Chief Officer</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Search</label>
+                            <input type="text"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   placeholder="Search officers..." />
+                        </div>
+                    </div>
                 </form>
-            {% else %}
-                <a href="{% url 'login' %}">Đăng nhập</a>
-            {% endif %}
+            </div>
+        </div>
+    </div>
 
+    <!-- Modal for Add Officer -->
+    <div id="addModal"
+         class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
+        <!-- Modal content -->
+        <div class="bg-white p-8 rounded-lg w-96">
+            <h3 class="text-xl font-semibold mb-4">Add New Officer</h3>
+            <form>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                               placeholder="Officer's name" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Rank</label>
+                        <input type="text"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                               placeholder="Officer's rank" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Department</label>
+                        <input type="text"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                               placeholder="Officer's department" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Contact</label>
+                        <input type="text"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                               placeholder="Officer's contact" />
+                    </div>
+                    <div class="flex justify-end gap-4 mt-4">
+                        <button type="button"
+                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-md">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+<!-- Warning Message Modal -->
+<div id="warningModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+     
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+        <p class="text-red-600 text-center mb-4 font-semibold text-lg">
+            CHÚ Ý
+        </p>
+        <p class="text-center" id="warningText"></p>
+        
+
+        <button onclick="closeWarningModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
+                       OK
         </button>
     </div>
 </div>
 
-<!-- Warning Message Modal (initially hidden) -->
-<div id="warningModal"
-     style="display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border: 1px solid #f5c6cb;
-            border-radius: 5px;
-            z-index: 1000">
-    <div style="text-align: center;
-                margin-top: 10px">
-
-        <button onclick="closeWarningModal()"
-                style="background-color: #721c24;
-                       color: white;
-                       border: none;
-                       padding: 5px 10px;
-                       cursor: pointer;
-                       border-radius: 3px">OK</button>
-    </div>
-</div>
-
-<!-- Display messages -->
-
-{% if messages %}
-
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} mb-10">{{ message }}</div>
-    {% endfor %}
-
-{% endif %}
-
-
-<!-- Checkbox to toggle between officer list and export form -->
-<label class="font-semibold ml-10 text-lg">
-    <input type="checkbox"
-           id="toggleExportForm"
-           onclick="toggleView()" />
-    Xuất dữ liệu
-</label>
-
-<div class="flex divide-x">
-    <!-- Officer List and Filter Form -->
-    <div id="officerList"
-         class="mx-20 w-3/5">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                </tr>
-            </thead>
-
-            {% for officer in officers %}
-                <tbody class="mx-10 text-lg">
-                    <tr>
-                        <th>1</th>
-                        <td>{{ officer.birth_name }}</td>
-                        <td>{{ officer.birth_year }}</td>
-                        <td>{{ officer.work_unit }}</td>
-                        <td>
-                            <a href="{% url 'officer_detail' officer.pk %}"
-                               class="text-green-500 hover:text-green-600 underline mx-2">
-                                Xem
-                            </a>
-                            <span class="px-2"></span>
-                            <a href="{% url 'officer_delete' officer.pk %}"
-                               class="text-red-600 hover:text-red-700 underline mx-2">
-                                Xoá
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            {% endfor %}
-
-        </table>
-    </div>
-
-    <div id="searchOfficer"
-         class="w-2/5">
-        <form id="filterForm"
-              method="GET"
-              action="{% url 'officer_list' %}">
-            <div class="flex mx-16 space-x-2">
-                <!-- Search by name -->
-                <div class="mt-9">
-                    <input type="text"
-                           name="birth_name"
-                           placeholder="Tìm theo tên"
-                           value="{{ birth_name|default_if_none:'' }}"
-                           class="rounded-lg input-sm" />
-                </div>
-
-                <!-- Search by id_ca -->
-                <div class="mt-9">
-                    <input type="text"
-                           name="id_ca"
-                           placeholder="Tìm theo số hiệu"
-                           value="{{ id_ca|default_if_none:'' }}"
-                           class="rounded-lg input-sm" />
-                </div>
-
-                <div class="tooltip tooltip-top mt-7"
-                     data-tip="Lọc">
-                    <button type="submit"
-                            class="btn btn-md btn-square btn-ghost"
-                            onclick="applyFilter()">
-                        <img src="{% static 'src/filter.png' %}"
-                             alt="Filter Icon"
-                             class="w-9 h-9" />
-                    </button>
-                </div>
-
-                <!-- Reset all filter value -->
-                <div class="tooltip tooltip-top mt-7"
-                     data-tip="Reset bộ lọc"
-                     onclick="resetFilter()">
-                    <a href="{% url 'officer_list' %}">
-                        <img src="{% static 'src/reset_icon.png' %}"
-                             alt="Delete icon"
-                             class="w-6 h-6" />
-                    </a>
-                </div>
-
-
-                <div class="flex-none tooltip tooltip-top mt-10"
-                     data-tip="Xoá bộ lọc"
-                     onclick="deleteFilters()">
-                    <a href="{% url 'officer_list' %}">
-                        <img src="{% static 'src/delete-icon.png' %}"
-                             alt="Delete icon"
-                             class="w-6 h-6" />
-                    </a>
-
-                </div>
-
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-
-                <!-- Search by birth_year -->
-                <div class="filter-container"
-                     data-filter-name="birth_year">
-                    <input type="text"
-                           name="birth_year"
-                           placeholder="Năm sinh" />
-                    <span class="trash-icon"
-                          onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                             alt="Trash Icon"
-                             width="20"
-                             height="20" />
-                    </span>
-                </div>
-                
-                <!-- Search by year_join_party -->
-                <div class="filter-container"
-                     data-filter-name="year_join_party">
-                    <input type="text"
-                           name="year_join_party"
-                           placeholder="Năm vào Đảng" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                 alt="Trash Icon"
-                                 width="20"
-                                 height="20" />
-                    </span>
-                </div>       
-                
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by year_join_CA -->
-                <div class="filter-container"
-                     data-filter-name="year_join_CA">
-                    <input type="text"
-                           name="year_join_CA"
-                           placeholder="Năm vào CA" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                 alt="Trash Icon"
-                                 width="20"
-                                 height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by current_residence -->
-                <div class="filter-container"
-                     data-filter-name="current_residence">
-                     <input type="text"
-                     name="current_residence"
-                     placeholder="Chỗ ở hiện nay" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-
-                <!-- Search by salary_decision_year -->
-                <div class="filter-container"
-                     data-filter-name="salary_decision_year">
-                    <input type="text"
-                           name="salary_decision_year"
-                           placeholder="Năm quyết định lương" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by work_unit -->
-                <div class="filter-container"
-                     data-filter-name="work_unit">
-                    <input type="text"
-                           name="work_unit"
-                           placeholder="Đơn vị công tác" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by specialized_work -->
-                <div class="filter-container"
-                     data-filter-name="specialized_work">
-                    <input type="text"
-                           name="specialized_work"
-                           placeholder="Công tác chuyên trách" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by other_work -->
-                <div class="filter-container"
-                     data-filter-name="other_work">
-                    <input type="text"
-                           name="other_work"
-                           placeholder="Công tác khác" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by most_work -->
-                <div class="filter-container"
-                     data-filter-name="most_work">
-                    <input type="text"
-                           name="most_work"
-                           placeholder="Công tác làm nhiều nhất" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by phone_number -->
-                <div class="filter-container"
-                     data-filter-name="phone_number">
-                    <input type="text"
-                           name="phone_number"
-                           placeholder="Số điện thoại" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by bank_account_BIDV -->
-                <div class="filter-container"
-                     data-filter-name="bank_account_BIDV">
-                    <input type="text"
-                           name="bank_account_BIDV"
-                           placeholder="Số tài khoản BIDV" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by id_citizen -->
-                <div class="filter-container"
-                     data-filter-name="id_citizen">
-                    <input type="text"
-                           name="id_citizen"
-                           placeholder="Số CMND" />
-                    <span class="trash-icon"
-                            onclick="removeFilter(this)">
-                            <img src="{% static 'svg/trash-icon.svg' %}"
-                                alt="Trash Icon"
-                                width="20"
-                                height="20" />
-                    </span>
-                </div>
-
-
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by position -->
-                <div class="filter-container"
-                    data-filter-name="position">
-                    <label for="position">Chức vụ:</label>
-                    <div class="select-wrapper">
-                        <select name="position">
-                            <option value="">Tất cả</option>
-
-                            {% for p in position %}
-                                <option value="{{ p }}" 
-                                    {% if request.GET.position == p %}selected{% endif %}
-                                    >{{ p }}</option>
-                            {% endfor %}
-
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by military_rank -->
-                <div class="filter-container"
-                    data-filter-name="military_rank">
-                    <label for="military_rank">Cấp bậc hàm:</label>
-                    <div class="select-wrapper">
-                        <select name="military_rank">
-                            <option value="">Tất cả</option>
-
-                            {% for r in military_rank %}
-                                <option value="{{ r }}" 
-                                    {% if request.GET.military_rank == r %}selected{% endif %}
-                                    >{{ r }}</option>
-                            {% endfor %}
-
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by salary_coefficient -->
-                <div class="filter-container"
-                    data-filter-name="salary_coefficient">
-                    <label for="salary_coefficient">Hệ số lương:</label>
-                    <div class="select-wrapper">
-                        <select name="salary_coefficient">
-                            <option value="">Tất cả</option>
-
-                            {% for s in salary_coefficient %}
-                                <option value="{{ s }}" 
-                                    {% if request.GET.salary_coefficient == s %}selected{% endif %}
-                                    >{{ s }}</option>
-                            {% endfor %}
-
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by party_position -->
-                <div class="filter-container"
-                    data-filter-name="party_position">
-                    <label for="party_position">Chức vụ Đảng:</label>
-                    <div class="select-wrapper">
-                        <select name="party_position">
-                            <option value="">Tất cả</option>
-
-                            {% for p in party_position %}
-                                <option value="{{ p }}" 
-                                    {% if request.GET.party_position == p %}selected{% endif %}
-                                    >{{ p }}</option>
-                            {% endfor %}
-
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-
-                <!-- Search by gender -->
-                <div class="filter-container"
-                    data-filter-name="gender">
-                    <label for="gender">Giới tính:</label>
-                    <div class="select-wrapper">
-                        <select name="gender">
-                            <option value="">Tất cả</option>
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            
-                <!-- Search by military_type -->
-                <div class="filter-container"
-                    data-filter-name="military_type">
-                    <label for="military_type">Lực lượng:</label>
-                    <div class="select-wrapper">
-                        <select name="military_type">
-                            <option value="">Tất cả</option>
-                            
-                            {% for t in military_type %}
-                                <option value="{{ t }}" 
-                                    {% if request.GET.military_type == t %}selected{% endif %}
-                                    >{{ t }}</option>
-                            {% endfor %}
-
-                        </select>
-                    </div>
-                    <span class="trash-icon
-                        " onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-
-            </div>
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by political_theory -->
-                <div class="filter-container"
-                    data-filter-name="political_theory">
-                    <label for="political_theory">Trình độ chính trị:</label>
-                    <div class="select-wrapper">
-                        <select name="political_theory">
-                            <option value="">Tất cả</option>
-                            
-                            {% for p in political_theory %}
-                                <option value="{{ p }}" 
-                                    {% if request.GET.political_theory == p %}selected{% endif %}
-                                    >{{ p }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by birth_place -->
-                <div class="filter-container"
-                    data-filter-name="birth_place">
-                    <label for="birth_place">Nơi sinh:</label>
-                    <div class="select-wrapper">
-                        <select name="birth_place">
-                            <option value="">Tất cả</option>
-                            
-                            {% for p in birth_place %}
-                                <option value="{{ p }}" 
-                                    {% if request.GET.birth_place == p %}selected{% endif %}
-                                    >{{ p }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by equipment_type -->
-                <div class="filter-container"
-                    data-filter-name="equipment_type">
-                    <label for="equipment_type">Quân trang:</label>
-                    <div class="select-wrapper">
-                        <select name="equipment_type">
-                            <option value="">Tất cả</option>
-                            
-                            {% for e in equipment_type %}
-                                <option value="{{ e }}" 
-                                    {% if request.GET.equipment_type == e %}selected{% endif %}
-                                    >{{ e }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by size_of_shoes -->
-                <div class="filter-container"
-                    data-filter-name="size_of_shoes">
-                    <label for="size_of_shoes">Giày:</label>
-                    <div class="select-wrapper">
-                        <select name="size_of_shoes">
-                            <option value="">Tất cả</option>
-                            
-                            {% for s in size_of_shoes %}
-                                <option value="{{ s }}" 
-                                    {% if request.GET.size_of_shoes == s %}selected{% endif %}
-                                    >{{ s }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by size_of_hat -->
-                <div class="filter-container"
-                    data-filter-name="size_of_hat">
-                    <label for="size_of_hat">Mũ:</label>
-                    <div class="select-wrapper">
-                        <select name="size_of_hat">
-                            <option value="">Tất cả</option>
-                            
-                            {% for s in size_of_hat %}
-                                <option value="{{ s }}" 
-                                    {% if request.GET.size_of_hat == s %}selected{% endif %}
-                                    >{{ s }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by size_of_clothes -->
-                <div class="filter-container"
-                    data-filter-name="size_of_clothes">
-                    <label for="size_of_clothes">Quần áo:</label>
-                    <div class="select-wrapper">
-                        <select name="size_of_clothes">
-                            <option value="">Tất cả</option>
-                            
-                            {% for s in size_of_clothes %}
-                                <option value="{{ s }}" 
-                                    {% if request.GET.size_of_clothes == s %}selected{% endif %}
-                                    >{{ s }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by certi_of_IT -->
-                <div class="filter-container"
-                    data-filter-name="certi_of_IT">
-                    <label for="certi_of_IT">Tin học:</label>
-                    <div class="select-wrapper">
-                        <select name="certi_of_IT">
-                            <option value="">Tất cả</option>
-                            
-                            {% for c in certi_of_IT %}
-                                <option value="{{ c }}" 
-                                    {% if request.GET.certi_of_IT == c %}selected{% endif %}
-                                    >{{ c }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-                <!-- Search by certi_of_foreign_language -->
-                <div class="filter-container"
-                    data-filter-name="certi_of_foreign_language">
-                    <label for="certi_of_foreign_language">Ngoại ngữ:</label>
-                    <div class="select-wrapper">
-                        <select name="certi_of_foreign_language">
-                            <option value="">Tất cả</option>
-                            
-                            {% for c in certi_of_foreign_language %}
-                                <option value="{{ c }}" 
-                                    {% if request.GET.certi_of_foreign_language == c %}selected{% endif %}
-                                    >{{ c }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-1">
-                <!-- Search by blood_type -->
-                <div class="filter-container"
-                    data-filter-name="blood_type">
-                    <label for="blood_type">Nhóm máu:</label>
-                    <div class="select-wrapper">
-                        <select name="blood_type">
-                            <option value="">Tất cả</option>
-                            
-                            {% for b in blood_type %}
-                                <option value="{{ b }}" 
-                                    {% if request.GET.blood_type == b %}selected{% endif %}
-                                    >{{ b }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-
-                <!-- Search by profile_address -->
-                <div class="filter-container"
-                    data-filter-name="profile_address">
-                    <label for="profile_address">Địa chỉ hồ sơ:</label>
-                    <div class="select-wrapper">
-                        <select name="profile_address">
-                            <option value="">Tất cả</option>
-                            
-                            {% for p in profile_address %}
-                                <option value="{{ p }}" 
-                                    {% if request.GET.profile_address == p %}selected{% endif %}
-                                    >{{ p }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <span class="trash-icon"
-                        onclick="removeFilter(this)">
-                        <img src="{% static 'svg/trash-icon.svg' %}"
-                            alt="Trash Icon"
-                            width="20"
-                            height="20" />
-                    </span>
-                </div>
-            </div>
-
-        </form>
-        <!-- "Thêm bộ lọc" Button -->
-        <button class="add-filter-button"
-                onclick="openFilterModal()">+ Thêm bộ lọc</button>
-
-        <!-- Filter Selection Modal -->
-        <div id="filterModal"
-             class="modal-overlay"
-             style="display: none">
-            <div class="modal-content">
-                <span class="close-modal"
-                      onclick="closeFilterModal()">&times;</span>
-                <h3 class="modal-title">Chọn các bộ lọc</h3>
-
-                <!-- Filter Options -->
-                <div class="filter-options">
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="birth_year" />
-                        Năm sinh
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="year_join_CA" />
-                        Năm vào CA
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="year_join_party" />
-                        Năm vào Đảng
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="current_residence" />
-                        Chỗ ở hiện nay
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="salary_decision_year" />
-                        Năm quyết định lương
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="work_unit" />
-                        Đơn vị công tác
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="specialized_work" />
-                        Công tác chuyên trách
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="other_work" />
-                        Công tác khác
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="most_work" />
-                        Công tác làm nhiều nhất
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="phone_number" />
-                        Số điện thoại
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="bank_account_BIDV" />
-                        Số tài khoản BIDV
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="id_citizen" />
-                        Số CCCD
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="position" />
-                        Chức vụ
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="military_rank" />
-                        Cấp bậc hàm
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="gender" />
-                        Giới tính
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="military_type" />
-                        Lực lượng
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="salary_coefficient" />
-                        Hệ số lương
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="party_position" />
-                        Chức vụ Đảng
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="political_theory" />
-                        Trình độ chính trị
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="birth_place" />
-                        Nơi sinh
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="equipment_type" />
-                        Quân trang
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="size_of_shoes" />
-                        Giày
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="size_of_hat" />
-                        Mũ
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="size_of_clothes" />
-                        Quần áo
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="certi_of_IT" />
-                        Tin học
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="certi_of_foreign_language" />
-                        Ngoại ngữ
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="blood_type" />
-                        Nhóm máu
-                    </label>
-                    <label>
-                        <input type="checkbox"
-                               class="filter-checkbox"
-                               value="profile_address" />
-                        Địa chỉ hồ sơ
-                    </label>
-                </div>
-
-                <!-- Apply Filters Button -->
-                <button class="btn btn-primary mt-5"
-                        onclick="applySelectedFilters()">Áp dụng</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Export Form -->
-<div id="exportForm"
-     style="display: none">
-    <form method="post"
-          action="{% url 'export_officers_data' %}"
-          onsubmit="return validateSelection()">
-        {% csrf_token %}
-        <h3 class="mb-10 mt-5 text-3xl font-semibold text-center">
-            Chọn cán bộ và thông tin cần trích xuất
-        </h3>
-
-        <div class="container mx-auto">
-            <table class="min-w-full border border-gray-300">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
-                            Chọn cán bộ
-                        </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
-                            Chọn thông tin
-                        </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200">
-                            Chọn bảng liên quan
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td class="border border-gray-300 p-4 pl-8 h-20 overflow-y-auto align-top">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                           id="select-all-officers" />
-                                    Chọn tất cả
-                                </label>
-                                <ol class="pl-10">
-
-                                    {% for officer in officers %}
-                                        <input type="checkbox"
-                                               name="officers"
-                                               value="{{ officer.pk }}"
-                                               id="officer_{{ officer.pk }}" />
-                                        <label for="officer_{{ officer.pk }}">
-                                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
-                                        </label>
-                                        <br />
-                                    {% endfor %}
-
-                                </ol>
-                            </div>
-                        </td>
-                        <td class="border border-gray-300 p-4 h-20 overflow-y-auto">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                           id="select-all-fields" />
-                                    Chọn tất cả
-                                </label>
-                                <ul class="pl-10">
-                                    {{ form.fields }}
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="border border-gray-300 p-4 h-20 overflow-y-autoauto align-top">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                           id="select-all-related-tables" />
-                                    Chọn tất cả
-                                </label>
-                                <ul class="pl-10">
-                                    {{ form.related_tables }}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="flex justify-center">
-            <button type="submit"
-                    name="export"
-                    class="btn text-lg mb-10 mt-5 rounded-lg w-2/5 space-x-2">
-                <span>Xuất dữ liệu</span>
-                <img src="{% static 'src/export-file.png' %}"
-                     alt="Export File"
-                     class="w-5 h-5" />
-
+<!-- Export Data Modal -->
+<div id="exportModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"> 
+    <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-7xl mx-4 overflow-hidden">
+        
+        <div class="flex justify-between items-center mb-6 p-2">
+            <h2 class="text-2xl font-semibold">Export Data</h2>
+            <button type="button"
+                    class="text-red-600 hover:text-red-800"
+                    onclick="closeExportForm()">
+                <svg class="w-6 h-6"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                    </svg>
             </button>
         </div>
-    </form>
+        
+        <div class="bg-gray-50 p-6 rounded-lg">
+            <form class="space-y-6"
+                  method="post"
+                  action="{% url 'export_officers_data' %}"
+                  onsubmit="return validateSelection()">
+                {% csrf_token %}
+                <div class="flex gap-6">
+
+                    <!-- Select Officers -->
+                    <div class="space-y-2 w-1/2">
+                        <label class="block text-sm font-medium text-gray-700">Select Officers</label>
+                        
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                    id="select-all-officers"
+                                    class="select-all border-black" />
+                                <span>Select All Officers</span>
+                            </label>
+
+                            {% for officer in officers %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                        name="officers"
+                                        value="{{ officer.pk }}"
+                                        class="officer-checkbox border-black" />
+                                    <span>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <!-- Select Fields -->
+                    <div class="space-y-2 w-1/4">
+                        <label class="block text-sm font-medium text-gray-700">Select Fields</label>
+
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                    id="select-all-fields"
+                                    class="border-black select-all" />
+                                <span>Select All Fields</span>
+                            </label>
+
+                            {% for value, label in form.fields.model_fields.choices %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                        name="model_fields"
+                                        value="{{ value }}"
+                                        class="field-checkbox border-black" />
+                                    <span>{{ label }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <!-- Related Tables -->
+                    <div class="space-y-2 w-1/4">
+                        <label class="block text-sm font-medium text-gray-700">Related Tables</label>
+
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                    id="select-all-related-tables"
+                                    class="select-all" />
+                                <span>Select All Related Tables</span>
+                            </label>
+
+                            {% for value, label in form.fields.related_tables.choices %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                        name="related_tables"
+                                        value="{{ value }}"
+                                        class="related-table-checkbox border-black" />
+                                    <span>{{ label }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button onclick="closeExportForm()"
+                            class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            name="export"
+                            class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        Export
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
 
 <script>
+    // JavaScript to control the "Select All" functionality
+    document.addEventListener("DOMContentLoaded", function() {
+        // General function to handle "Select All" checkbox functionality
+        function setupSelectAll(selectAllId, checkboxesClass) {
+            const selectAll = document.getElementById(selectAllId);
+            const checkboxes = document.querySelectorAll(checkboxesClass);
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+        }
+
+        // Setup Select All for each section
+        setupSelectAll('select-all-officers', '.officer-checkbox');
+        setupSelectAll('select-all-fields', '.field-checkbox');
+        setupSelectAll('select-all-related-tables', '.related-table-checkbox');
+    });
+    
     // Function to apply selected filters from the modal
     function applySelectedFilters() {
         // Get all selected checkboxes in the modal
@@ -1324,6 +587,7 @@
     
     // Open and close modal functions
     function openFilterModal() {
+        event.preventDefault();
         const modal = document.getElementById("filterModal");
         modal.style.display = "flex";
     }
@@ -1335,20 +599,13 @@
 
     // Show export form
     function toggleView() {
-        var isChecked = document.getElementById('toggleExportForm').checked;
-        var officerList = document.getElementById('officerList');
-        var exportForm = document.getElementById('exportForm');
-        var searchOfficer = document.getElementById('searchOfficer');
-    
-        if (isChecked) {
-            officerList.style.display = 'none';
-            searchOfficer.style.display = 'none';
-            exportForm.style.display = 'block';
-        } else {
-            officerList.style.display = 'block';
-            searchOfficer.style.display = 'block';
-            exportForm.style.display = 'none';
-        }
+        event.preventDefault();
+        document.getElementById("exportModal").classList.toggle("hidden");     
+    }
+
+    function closeExportForm() {
+        event.preventDefault();
+        document.getElementById("exportModal").classList.add("hidden");
     }
 
     // Validate selection for export
@@ -1356,17 +613,17 @@
         const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
         const isAnyOfficerSelected = Array.from(officerCheckboxes).some(checkbox => checkbox.checked);
     
-        const fieldCheckboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        const fieldCheckboxes = document.querySelectorAll('input[name="model_fields"]');
         const isAnyFieldSelected = Array.from(fieldCheckboxes).some(checkbox => checkbox.checked);
     
         if (!isAnyOfficerSelected && !isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ và một trường thông tin để xuất dữ liệu!");
+            showWarningModal("Vui lòng chọn ít nhất một CÁN BỘ và một THÔNG TIN để xuất dữ liệu!");
             return false;
         } else if (!isAnyOfficerSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ để xuất dữ liệu!");
+            showWarningModal("Vui lòng chọn ít nhất một CÁN BỘ để xuất dữ liệu!");
             return false;
         } else if (!isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một trường thông tin để xuất dữ liệu!");
+            showWarningModal("Vui lòng chọn ít nhất một THÔNG TIN để xuất dữ liệu!");
             return false;
         }
     
@@ -1376,11 +633,11 @@
     // Show and close warning modal
     function showWarningModal(message) {
         const warningModal = document.getElementById("warningModal");
-        const warningText = warningModal.querySelector("p");
+        const warningText = document.getElementById("warningText");
         if (warningText) {
             warningText.innerText = message; // Set custom message
         }
-        warningModal.style.display = "block"; // Show modal
+        warningModal.classList.remove("hidden"); // Show modal
     }
     
     function closeWarningModal() {

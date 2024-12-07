@@ -78,9 +78,10 @@ def officer_list(request):
 def export_officers_data(request):
     if request.method == "POST" and "export" in request.POST:
         form = f.OfficerExportForm(request.POST)
+        
         if form.is_valid():
             selected_officers = form.cleaned_data["officers"]
-            selected_fields = form.cleaned_data["fields"]
+            selected_fields = form.cleaned_data["model_fields"]
             selected_related_tables = form.cleaned_data["related_tables"]
 
             # Create an in-memory ZIP file to store the officer Excel files

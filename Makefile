@@ -38,3 +38,7 @@ start: start-mysql runserver
 # active virtual environment
 # active_env:
 # 	source venv/bin/activate
+
+# start the tailwind watch
+tailwind:
+	cd theme/static_src && npm run dev
