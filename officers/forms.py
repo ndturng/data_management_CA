@@ -97,6 +97,11 @@ class OfficerExportForm(forms.Form):
         required=False,
     )
 
+    filter_options = forms.MultipleChoiceField(
+        choices=[],  # Empty initially, choices will be set dynamically
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -105,6 +110,9 @@ class OfficerExportForm(forms.Form):
 
         # Dynamically load choices for the 'related_tables' field
         self.fields["related_tables"].choices = self.get_related_table_choices()
+
+        # Dynamically load choices for the 'filter_options' field
+        self.fields["filter_options"].choices = self.get_filter_options()
 
     def get_field_choices(self):
         """
@@ -135,6 +143,17 @@ class OfficerExportForm(forms.Form):
             for table_name, _ in SHEET_TO_MODEL_FIELDS.items()
         ]
         return related_table_choices
+
+    def get_filter_options(self):
+        """
+        Dynamically generate filter options
+        """
+        filter_options = []
+        # Loop through GENERAL_INFO_FIELDS
+        for field_name, field_label in c.GENERAL_INFO_FIELDS.items():
+            if field_name in (c.FILTER_FIELDS + c.SEARCH_FIELDS):
+                filter_options.append((field_name, field_label))
+        return filter_options
 
 
 class TitleForm(RelatedBaseForm):
