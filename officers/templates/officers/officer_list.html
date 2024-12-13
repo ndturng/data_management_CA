@@ -84,41 +84,39 @@
                     </table>
                 </div>
             </div>
-            
+
         </div>
 
         <!-- Right Section (Filter Options) -->
         <div class="lg:w-1/4 h-[calc(100vh-130px)]">
             <div class="bg-white py-3 rounded-lg shadow-md h-full flex flex-col">
                 <div class="px-4">
-                <h2 class="text-xl font-semibold mb-3 items-center text-center">
-                    Filter Options
-                </h2>
-                <div class="flex justify-between items-center mb-4 gap-2">
+                    <h2 class="text-xl font-semibold mb-3 items-center text-center">
+                        Filter Options
+                    </h2>
+                    <div class="flex justify-between items-center mb-4 gap-2">
                         <button class="text-blue-600 hover:text-blue-800 text-sm font-normal flex items-center"
                                 onclick="openFilterModal()">
-                        <i class="fas fa-plus mr-1"></i>Add Filters
-                    </button>
+                            <i class="fas fa-plus mr-1"></i>Add Filters
+                        </button>
                         <button class="text-red-600 hover:text-red-800 text-sm font-normal flex items-center"
                                 onclick="deleteFilters()">
-                            <a href="{% url 'officer_list' %}">
-                        <i class="fas fa-times mr-1"></i>Remove Filters
-                            </a>
-                    </button>
-                </div>
-                <div class="flex gap-2 mb-4">
+                            <i class="fas fa-times mr-1"></i>Remove Filters
+                        </button>
+                    </div>
+                    <div class="flex gap-2 mb-4">
                         <button type="button"
                                 onclick="applyFilter()"
                                 form="filterForm"
-                            class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                        Apply Filters
-                    </button>
-                    <button type="button"
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Apply Filters
+                        </button>
+                        <button type="button"
                                 onclick="resetFilter()"
-                            class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
-                            <a href="{% url 'officer_list' %}">Reset All</a>
-                    </button>
-                </div>
+                                class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                            Reset All
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto space-y-3 px-4">
@@ -127,7 +125,7 @@
                           method="GET"
                           action="{% url 'officer_list' %}">
                         <!-- Search by birth_name -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="birth_name">
                             <label class="block text-sm font-medium text-gray-700">Họ và tên:</label>
                             <input type="text"
@@ -137,7 +135,7 @@
                         </div>
 
                         <!-- Search by id_ca -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="id_ca">
                             <label class="block text-sm font-medium text-gray-700">Số hiệu:</label>
                             <input type="text"
@@ -147,7 +145,7 @@
                         </div>
 
                         <!-- Search by birth_year -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="birth_year">
                             <label class="block text-sm font-medium text-gray-700">Năm sinh:</label>
                             <input type="text"
@@ -157,7 +155,7 @@
                         </div>
 
                         <!-- Search by year_join_party -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="year_join_party">
                             <label class="block text-sm font-medium text-gray-700">Năm vào Đảng:</label>
                             <input type="text"
@@ -167,7 +165,7 @@
                         </div>
 
                         <!-- Search by year_join_CA -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="year_join_CA">
                             <label class="block text-sm font-medium text-gray-700">Năm vào Công an:</label>
                             <input type="text"
@@ -177,7 +175,7 @@
                         </div>
 
                         <!-- Search by current_residence -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="current_residence">
                             <label class="block text-sm font-medium text-gray-700">Chỗ ở hiện nay:</label>
                             <input type="text"
@@ -187,7 +185,7 @@
                         </div>
 
                         <!-- Search by salary_decision_year -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="salary_decision_year">
                             <label class="block text-sm font-medium text-gray-700">
                                 Năm quyết định lương:
@@ -199,7 +197,7 @@
                         </div>
 
                         <!-- Search by work_unit -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="work_unit">
                             <label class="block text-sm font-medium text-gray-700">Đơn vị công tác:</label>
                             <input type="text"
@@ -209,7 +207,7 @@
                         </div>
 
                         <!-- Search by specialized_work -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="specialized_work">
                             <label class="block text-sm font-medium text-gray-700">
                                 Công tác chuyên trách:
@@ -221,7 +219,7 @@
                         </div>
 
                         <!-- Search by other_work -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="other_work">
                             <label class="block text-sm font-medium text-gray-700">Công tác khác:</label>
                             <input type="text"
@@ -231,7 +229,7 @@
                         </div>
 
                         <!-- Search by most_work -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="most_work">
                             <label class="block text-sm font-medium text-gray-700">Công tác chính:</label>
                             <input type="text"
@@ -240,7 +238,7 @@
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
                         </div>
                         <!-- Search by phone_number -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="phone_number">
                             <label class="block text-sm font-medium text-gray-700">Số điện thoại:</label>
                             <input type="text"
@@ -250,7 +248,7 @@
                         </div>
 
                         <!-- Search by bank_account_BIDV -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="bank_account_BIDV">
                             <label class="block text-sm font-medium text-gray-700">
                                 Số tài khoản BIDV:
@@ -262,7 +260,7 @@
                         </div>
 
                         <!-- Search by id_citizen -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="id_citizen">
                             <label class="block text-sm font-medium text-gray-700">Số CCCD:</label>
                             <input type="text"
@@ -272,7 +270,7 @@
                         </div>
 
                         <!-- Search by blood_type -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="blood_type">
                             <label class="block text-sm font-medium text-gray-700">Nhóm máu:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -289,7 +287,7 @@
                         </div>
 
                         <!-- Search by position -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="position">
                             <label class="block text-sm font-medium text-gray-700">Chức vụ:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -306,7 +304,7 @@
                         </div>
 
                         <!-- Search by military_rank -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="military_rank">
                             <label class="block text-sm font-medium text-gray-700">Cấp bậc hàm:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -323,7 +321,7 @@
                         </div>
 
                         <!-- Search by salary_coefficient -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="salary_coefficient">
                             <label class="block text-sm font-medium text-gray-700">Hệ số lương:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -337,10 +335,10 @@
                                 {% endfor %}
 
                             </select>
-                    </div>
+                        </div>
 
                         <!-- Search by party_position -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="party_position">
                             <label class="block text-sm font-medium text-gray-700">Chức vụ Đảng:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -358,7 +356,7 @@
                         </div>
 
                         <!-- Search by gender -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="gender">
                             <label class="block text-sm font-medium text-gray-700">Giới tính:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -370,7 +368,7 @@
                         </div>
 
                         <!-- Search by military_type -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="military_type">
                             <label class="block text-sm font-medium text-gray-700">Lực lượng:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -387,7 +385,7 @@
                         </div>
 
                         <!-- Search by political_theory -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="political_theory">
                             <label class="block text-sm font-medium text-gray-700">
                                 Trình độ chính trị:
@@ -406,7 +404,7 @@
                         </div>
 
                         <!-- Search by birth_place -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="birth_place">
                             <label class="block text-sm font-medium text-gray-700">Nơi sinh:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -423,7 +421,7 @@
                         </div>
 
                         <!-- Search by equipment_type -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="equipment_type">
                             <label class="block text-sm font-medium text-gray-700">Quân trang:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -440,7 +438,7 @@
                         </div>
 
                         <!-- Search by size_of_shoes -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="size_of_shoes">
                             <label class="block text-sm font-medium text-gray-700">Giày:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -457,7 +455,7 @@
                         </div>
 
                         <!-- Search by size_of_hat -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="size_of_hat">
                             <label class="block text-sm font-medium text-gray-700">Mũ:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -474,7 +472,7 @@
                         </div>
 
                         <!-- Search by size_of_clothes -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="size_of_clothes">
                             <label class="block text-sm font-medium text-gray-700">Quần áo:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -491,7 +489,7 @@
                         </div>
 
                         <!-- Search by certi_of_IT -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="certi_of_IT">
                             <label class="block text-sm font-medium text-gray-700">Tin học:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -509,7 +507,7 @@
                         </div>
 
                         <!-- Search by certi_of_foreign_language -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="certi_of_foreign_language">
                             <label class="block text-sm font-medium text-gray-700">Ngoại ngữ:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -526,7 +524,7 @@
                         </div>
 
                         <!-- Search by profile_address -->
-                        <div class="filter-container flex flex-col mb-3"
+                        <div class="filter-container flex flex-col mb-3 hidden"
                              data-filter-name="profile_address">
                             <label class="block text-sm font-medium text-gray-700">Địa chỉ hồ sơ:</label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -542,7 +540,7 @@
                             </select>
                         </div>
 
-                </form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -667,26 +665,26 @@
 
 <!-- Warning Message Modal -->
 <div id="warningModal"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-     
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+
     <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
         <p class="text-red-600 text-center mb-4 font-semibold text-lg">CHÚ Ý</p>
         <p class="text-center"
            id="warningText"></p>
-        
+
 
         <button onclick="closeWarningModal()"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
-                       OK
+            OK
         </button>
     </div>
 </div>
 
 <!-- Export Data Modal -->
 <div id="exportModal"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"> 
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-7xl mx-4 overflow-hidden">
-        
+
         <div class="flex justify-between items-center mb-6 p-2">
             <h2 class="text-2xl font-semibold">Export Data</h2>
             <button type="button"
@@ -698,10 +696,10 @@
                      viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
-                    </svg>
+                </svg>
             </button>
         </div>
-        
+
         <div class="bg-gray-50 p-6 rounded-lg">
             <form class="space-y-6"
                   method="post"
@@ -713,22 +711,22 @@
                     <!-- Select Officers -->
                     <div class="space-y-2 w-1/2">
                         <label class="block text-sm font-medium text-gray-700">Select Officers</label>
-                        
+
                         <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
 
                             <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                 <input type="checkbox"
-                                    id="select-all-officers"
-                                    class="select-all border-black" />
+                                       id="select-all-officers"
+                                       class="select-all border-black" />
                                 <span>Select All Officers</span>
                             </label>
 
                             {% for officer in officers %}
                                 <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                     <input type="checkbox"
-                                        name="officers"
-                                        value="{{ officer.pk }}"
-                                        class="officer-checkbox border-black" />
+                                           name="officers"
+                                           value="{{ officer.pk }}"
+                                           class="officer-checkbox border-black" />
                                     <span>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}</span>
                                 </label>
                             {% endfor %}
@@ -743,17 +741,17 @@
                         <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
                             <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                 <input type="checkbox"
-                                    id="select-all-fields"
-                                    class="border-black select-all" />
+                                       id="select-all-fields"
+                                       class="border-black select-all" />
                                 <span>Select All Fields</span>
                             </label>
 
                             {% for value, label in form.fields.model_fields.choices %}
                                 <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                     <input type="checkbox"
-                                        name="model_fields"
-                                        value="{{ value }}"
-                                        class="field-checkbox border-black" />
+                                           name="model_fields"
+                                           value="{{ value }}"
+                                           class="field-checkbox border-black" />
                                     <span>{{ label }}</span>
                                 </label>
                             {% endfor %}
@@ -768,17 +766,17 @@
                         <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
                             <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                 <input type="checkbox"
-                                    id="select-all-related-tables"
-                                    class="select-all" />
+                                       id="select-all-related-tables"
+                                       class="select-all" />
                                 <span>Select All Related Tables</span>
                             </label>
 
                             {% for value, label in form.fields.related_tables.choices %}
                                 <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
                                     <input type="checkbox"
-                                        name="related_tables"
-                                        value="{{ value }}"
-                                        class="related-table-checkbox border-black" />
+                                           name="related_tables"
+                                           value="{{ value }}"
+                                           class="related-table-checkbox border-black" />
                                     <span>{{ label }}</span>
                                 </label>
                             {% endfor %}
@@ -786,7 +784,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-4 mt-8">
                     <button onclick="closeExportForm()"
                             class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
@@ -829,7 +827,7 @@
         const selectedFilters = Array.from(
             document.querySelectorAll(".filter-checkbox:checked")
         ).map((checkbox) => checkbox.value);
-
+        
         // Show the selected filters on the main page
         showFilters(selectedFilters);
 
@@ -870,7 +868,7 @@
             }
         });
     }
-
+    
     function hideFilters(unselectedFilters) {
         unselectedFilters.forEach((filterName) => {
             const filterElement = document.querySelector(`.filter-container[data-filter-name="${filterName}"]`);
@@ -882,7 +880,7 @@
             }
         });
     }
-
+    
     
     function shouldSubmitForm(selectedFilters, unselectedFilters) {
         return selectedFilters.some((filterName) => {
@@ -892,11 +890,11 @@
             const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
             return savedValue && savedValue.trim();
         });
-        }
+    }
 
 
     // Restore the checkbox state in the modal
-    function restoreModalCheckboxState() {
+   function restoreModalCheckboxState() {
         document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
             checkbox.checked = isFilterVisible(checkbox.value);
         });
@@ -927,11 +925,15 @@
             const filterName = filterInput.closest(".filter-container").getAttribute("data-filter-name");
             sessionStorage.removeItem(`filter_${filterName}_value`);
         });
+
+        // Navigate to the original page
+        window.location.href = "{% url 'officer_list' %}";
     }
 
     // When click on Delete All Filter Button
     function deleteFilters() {
         sessionStorage.clear();
+        window.location.href = "{% url 'officer_list' %}";
     }
         
     // When click on "Lọc" Button
@@ -946,10 +948,10 @@
         document.querySelectorAll(".filter-container").forEach((container) => {
             const filterName = container.getAttribute("data-filter-name");
             const filterInput = container.querySelector("input, select");
-
+    
             if (filterInput && container.style.display !== "none") {
                 sessionStorage.setItem(`filter_${filterName}_value`, filterInput.value);
-            }
+            }            
         });
     }
         
@@ -959,8 +961,7 @@
         restoreFilterVisibility();
         restoreModalFilterState();
         restoreFilterValues();
-        restoreModalCheckboxState();
-
+        restoreModalCheckboxState();        
     });
     
     // Restore filter visibility from sessionStorage
@@ -1098,6 +1099,5 @@
     function closeWarningModal() {
         const warningModal = document.getElementById("warningModal");
         warningModal.style.display = "none"; // Hide modal
-    }
-    
+    }    
 </script>
