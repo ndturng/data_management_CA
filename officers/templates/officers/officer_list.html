@@ -1,3 +1,4 @@
+{% load static %}
 {% load static tailwind_tags %}
 {% tailwind_css %}
 
@@ -16,33 +17,34 @@
           href="{% static 'css/dist/styles.css' %}" />
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-sky-100">
     <!-- Navigation Bar -->
-    <nav class="bg-blue-600 text-white p-4 shadow-lg">
+    <nav class="bg-sky-600 text-white p-4 shadow-lg">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex flex-col items-center md:items-start">
                 <h1 class="text-2xl font-bold">CÔNG AN THỊ XÃ ĐÔNG HOÀ</h1>
-                <h2 class="text-xl font-semibold">THÔNG TIN CÁN BỘ</h2>
+                <h2 class="text-xl font-bold">THÔNG TIN CÁN BỘ</h2>
             </div>
             <div class="flex flex-wrap gap-3 justify-center md:justify-end">
                 <a href="{% url 'officer_create' %}"
-                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold">
                     <i class="fas fa-plus mr-2"></i>Add Officer
                 </a>
-                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition"
+                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold"
                         id="toggleExportForm"
                         onclick="toggleView()">
                     <i class="fas fa-file-export mr-2"></i>Export Data
                 </button>
                 <a href="{% url 'excel_upload' %}"
-                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition">
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold">
                     <i class="fas fa-file-upload mr-2"></i>Upload Excel
                 </a>
                 <a href="{% url 'delete_all_officers' %}"
-                   class="bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition">
+                   class="bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-semibold">
                     <i class="fas fa-trash-alt mr-2"></i>Delete All
                 </a>
-                <button class="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">
+                <button class="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition font-semibold"
+                        onclick="logout()">
                     <i class="fas fa-sign-out-alt mr-2"></i>Log Out
                 </button>
             </div>
@@ -95,25 +97,29 @@
                         Filter Options
                     </h2>
                     <div class="flex justify-between items-center mb-4 gap-2">
-                        <button class="text-blue-600 hover:text-blue-800 text-sm font-normal flex items-center"
+                        <button class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
                                 onclick="openFilterModal()">
-                            <i class="fas fa-plus mr-1"></i>Add Filters
+                            <i class="fa-solid fa-filter"></i>
+                            Add Filters
                         </button>
-                        <button class="text-red-600 hover:text-red-800 text-sm font-normal flex items-center"
+                        <button class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
                                 onclick="deleteFilters()">
-                            <i class="fas fa-times mr-1"></i>Remove Filters
+                            <i class="fa-solid fa-filter-circle-xmark"></i>
+                            Remove Filters
                         </button>
                     </div>
                     <div class="flex gap-2 mb-4">
                         <button type="button"
                                 onclick="applyFilter()"
                                 form="filterForm"
-                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fa-solid fa-gears"></i>
                             Apply Filters
                         </button>
                         <button type="button"
                                 onclick="resetFilter()"
-                                class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fa-solid fa-arrow-rotate-left"></i>
                             Reset All
                         </button>
                     </div>
@@ -347,9 +353,8 @@
 
                                 {% for p in party_position %}
                                     <option value="{{ p }}" 
-                                        {% if request.GET.party_position == p %}selected{% endif %}>
-                                        {{ p }}
-                                    </option>
+                                        {% if request.GET.party_position == p %}selected{% endif %}
+                                        >{{ p }}</option>
                                 {% endfor %}
 
                             </select>
@@ -498,9 +503,8 @@
 
                                 {% for c in certi_of_IT %}
                                     <option value="{{ c }}" 
-                                        {% if request.GET.certi_of_IT == c %}selected{% endif %}>
-                                        {{ c }}
-                                    </option>
+                                        {% if request.GET.certi_of_IT == c %}selected{% endif %}
+                                        >{{ c }}</option>
                                 {% endfor %}
 
                             </select>
@@ -657,7 +661,7 @@
             <button class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
                     onclick="closeFilterModal()">Cancel</button>
 
-            <button class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                     onclick="showSelectedFilters()">Apply</button>
         </div>
     </div>
@@ -1099,5 +1103,18 @@
     function closeWarningModal() {
         const warningModal = document.getElementById("warningModal");
         warningModal.style.display = "none"; // Hide modal
-    }    
+    }
+
+    // Check if the reload count exists in sessionStorage
+    if (sessionStorage.getItem("reloadCount")) {
+        // Increment the reload count
+        sessionStorage.setItem("reloadCount", Number(sessionStorage.getItem("reloadCount")) + 1);
+    } else {
+        // Initialize the reload count
+        sessionStorage.setItem("reloadCount", 1);
+    }
+
+    // Display the reload count
+    console.log("Page has been reloaded", sessionStorage.getItem("reloadCount"), "times.");
+    
 </script>
