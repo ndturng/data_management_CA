@@ -111,7 +111,7 @@
                 </h1>
 
                 <!-- Actions Section -->
-                <div class="flex justify-between items-center mb-10">
+                <div class="flex justify-between items-center mb-5">
                     <!-- Category Dropdown -->
                     <div class="flex items-center">
                         <label for="categoryDropdown"
@@ -119,7 +119,7 @@
                             Lựa chọn danh mục:
                         </label>
                         <select id="categoryDropdown"
-                                class="rounded-lg ml-5 px-3 py-2 border border-gray-300 shadow-sm"
+                                class="rounded-lg ml-5 px-3 py-2 border border-gray-300 shadow-sm w-64"
                                 onchange="filterCategory()">
                             <option value="">Tất cả</option>
 
@@ -160,7 +160,7 @@
                            onclick="toggleSelectAll(this)" />
                     <label for="selectAllCheckbox"
                            class="form-check-label text-lg font-semibold">
-                        Chọn tất cả ảnh
+                        Chọn tất cả ảnh trong danh mục
                     </label>
                 </div>
 
@@ -169,22 +169,24 @@
                      class="grid grid-cols-4 gap-6">
 
                     {% for image in images %}
-                        <div class="card bg-base-300 p-4 shadow-md rounded-lg overflow-hidden relative group">
+                        <div class="card p-4 shadow-md rounded-lg overflow-hidden relative group bg-white">
                             <!-- Checkbox for selection -->
                             <div class="flex items-center mb-3">
                                 <input type="checkbox"
                                        name="selected_images"
                                        value="{{ image.pk }}"
-                                       class="image-checkbox mr-2" />
+                                       class="image-checkbox absolute top-3 right-3" />
                                 <p class="text-sm font-medium">{{ image.description }}</p>
                             </div>
 
-                            <div class="card w-52 bg-base-300 px-3 pb-3 shadow-md rounded-lg overflow-hidden relative group">
+                            <div class="card w-full rounded-lg overflow-hidden relative group">
                                 <!-- Image Display -->
                                 <img src="{{ image.image.url }}"
                                      alt="{{ image.description }}"
                                      class="img-thumbnail h-48 w-full object-cover rounded-md"
-                                     onclick="FullView(this.src)" />
+                                     onclick="FullView(this.src, this.dataset.name, this.dataset.description)"
+                                     data-name="{{ image.image.url|default:'Unnamed' }}"
+                                     data-description="{{ image.description|default:'No description available' }}" />
 
                                 <!-- Small Overlay in the Top-Right -->
                                 <div class="absolute top-2 right-2 flex gap-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -229,7 +231,9 @@
                              class="absolute top-0 left-0 w-full bg-black bg-opacity-50 text-white p-4 flex justify-between items-center z-40 duration-500">
                             <div class="flex flex-col">
                                 <span id="ImageName"
-                                      class="text-lg font-semibold">Image Name</span>
+                                      class="text-lg font-semibold">
+                                    Image Name
+                                </span>
                                 <span id="ImageDescription"
                                       class="text-sm text-gray-300">Image Description</span>
                             </div>
@@ -308,18 +312,20 @@
         const fullImage = document.getElementById("FullImage");
         const imageNameElement = document.getElementById("ImageName");
         const imageDescriptionElement = document.getElementById("ImageDescription");
-
+    
         // Set image source and details
         fullImage.src = imageSrc;
-        imageNameElement.textContent = imageName;
+        // Get the image name from the full path
+        imageNameElement.textContent = imageName.split("/").pop();
         imageDescriptionElement.textContent = imageDescription;
-
+    
         // Reset zoom level
         resetZoom();
-
+    
         // Show the modal
         fullImageView.classList.remove("hidden");
     }
+    
 
     function CloseFullView() {
         // debugger;
