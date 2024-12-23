@@ -805,7 +805,7 @@
     if (messages.length > 0) {
         showExcelErrorModal(messages);
     }
-    
+
     // Show the Excel Error Modal
     function showExcelErrorModal(messages) {
         // Check if messages exist and are non-empty
@@ -1153,17 +1153,5 @@
         const warningModal = document.getElementById("warningModal");
         warningModal.classList.add("hidden"); // Hide modal
     }
-
-    // Check if the reload count exists in sessionStorage
-    if (sessionStorage.getItem("reloadCount")) {
-        // Increment the reload count
-        sessionStorage.setItem("reloadCount", Number(sessionStorage.getItem("reloadCount")) + 1);
-    } else {
-        // Initialize the reload count
-        sessionStorage.setItem("reloadCount", 1);
-    }
-
-    // Display the reload count
-    console.log("Page has been reloaded", sessionStorage.getItem("reloadCount"), "times.");
     
 </script>
