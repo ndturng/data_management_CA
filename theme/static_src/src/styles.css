@@ -36,3 +36,62 @@
         transition: 0.3s;
     }
 }
+
+@layer components {
+    /* Blurry and partially visible state */
+    .hidden-controls {
+        opacity: 0.3
+    }
+
+    /* Zoom button style */
+    .zoom-btn {
+        background-color: #333;
+        color: white;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .zoom-btn:hover {
+        background-color: #555;
+        transform: scale(1.1); /* Slight zoom effect */
+    }
+
+    /* Hover effect */
+    .zoom-btn .hover-effect {
+        background: rgba(255, 255, 255, 0.2); /* Light blurry effect */
+        filter: blur(8px); /* Blurry effect */
+        transition: opacity 0.3s ease;
+        opacity: 0;
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        z-index: -1; /* Behind the icon */
+    }
+
+    /* Show hover effect when the button is hovered */
+    .zoom-btn:hover .hover-effect {
+        opacity: 1;
+    }
+
+    /* Add a slightly larger icon hover size for a polished feel */
+    .zoom-btn:hover i {
+        transform: scale(1.1); /* Slightly increase icon size */
+        transition: transform 0.2s ease;
+    }
+
+    #TopBar button {
+        pointer-events: auto; /* Explicitly allow interaction with buttons */
+    }
+
+
+    .hidden-bar {
+        opacity: 0; /* Hide the bar */
+    }   
+
+}
+    

@@ -1,11 +1,16 @@
-{% block content %}
-  <div class="container">
-    <h2>Bạn đang muốn xoá ảnh này?</h2>
+{% load static tailwind_tags %}
 
-    <form method="post">
+{% block content %}
+  <div class="text-center mt-36">
+  {% tailwind_css %}
+   <h2 class="text-4xl font-medium text-red-500">Bạn đang muốn xoá ảnh này?</h2>
+
+    <form method="post" class="mt-10">
       {% csrf_token %}
-      <a href="{% url 'url_image' pk=object.officer.pk %}" class="btn btn-secondary">HUỶ</a> |
-      <button type="submit" class="btn btn-danger">XOÁ</button>
+      <div class="space-x-6">
+        <a href="{% url 'url_image' pk=object.officer.pk %}" class="btn rounded-lg shadow-lg">HUỶ</a>
+        <button type="submit" class="btn btn-error rounded-lg text-white shadow-lg">XOÁ</button>
+      </div>
     </form>
   </div>
 {% endblock %}

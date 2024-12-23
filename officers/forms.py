@@ -87,57 +87,73 @@ class OfficerExportForm(forms.Form):
         required=False,
     )
 
-    fields = forms.MultipleChoiceField(
-        choices=[],  # Initialize with an empty list; choices will be set dynamically
-        widget=forms.CheckboxSelectMultiple,
+    model_fields = forms.MultipleChoiceField(
+        choices=[],  # Empty initially, choices will be set dynamically
         required=True,
     )
 
     related_tables = forms.MultipleChoiceField(
-        choices=[],  # This will hold the related table choices
-        widget=forms.CheckboxSelectMultiple,
+        choices=[],  # Empty initially, choices will be set dynamically
+        required=False,
+    )
+
+    filter_options = forms.MultipleChoiceField(
+        choices=[],  # Empty initially, choices will be set dynamically
         required=False,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Get the field choices dynamically with labels from OfficerInfoForm
-        self.fields["fields"].choices = self.get_field_choices()
+        # Dynamically load choices for the 'fields' field
+        self.fields["model_fields"].choices = self.get_field_choices()
 
-        # Get the related table choices
+        # Dynamically load choices for the 'related_tables' field
         self.fields["related_tables"].choices = self.get_related_table_choices()
 
+        # Dynamically load choices for the 'filter_options' field
+        self.fields["filter_options"].choices = self.get_filter_options()
+
     def get_field_choices(self):
-        # Map the fields from Officer model to their corresponding labels in OfficerInfoForm
-        form = (
-            OfficerInfoForm()
-        )  # Initialize OfficerInfoForm to access its fields
+        """
+        Dynamically generate choices for fields based on Officer model.
+        """
+        form = OfficerInfoForm()  # Initialize OfficerInfoForm to get field labels
         field_choices = []
 
         for field_name in m.Officer._meta.fields:
             if field_name.name == "id":
-                continue
-            # Get the field's label from OfficerInfoForm if available
+                continue  # Skip the 'id' field
             label = (
                 form.fields[field_name.name].label
                 if field_name.name in form.fields
                 else field_name.verbose_name
             )
-            field_choices.append((field_name.name, label))
+            value = field_name.name
+            field_choices.append((value, label))
 
         return field_choices
 
     def get_related_table_choices(self):
         """
-        Get the related table choices from the SHEET_TO_MODEL_FIELDS config.
+        Dynamically get related tables using the SHEET_TO_MODEL_FIELDS config.
         """
-        related_table_choices = []
-        for key, _ in SHEET_TO_MODEL_FIELDS.items():
-            # Use the key (which is the display name) for the related tables
-            related_table_choices.append((key, key))
-
+        related_table_choices = [
+            (table_name, table_name)  
+            for table_name, _ in SHEET_TO_MODEL_FIELDS.items()
+        ]
         return related_table_choices
+
+    def get_filter_options(self):
+        """
+        Dynamically generate filter options
+        """
+        filter_options = []
+        # Loop through GENERAL_INFO_FIELDS
+        for field_name, field_label in c.GENERAL_INFO_FIELDS.items():
+            if field_name in (c.FILTER_FIELDS + c.SEARCH_FIELDS):
+                filter_options.append((field_name, field_label))
+        return filter_options
 
 
 class TitleForm(RelatedBaseForm):

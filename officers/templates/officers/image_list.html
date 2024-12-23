@@ -1,107 +1,290 @@
-<div class="container">
-    <h2>Bộ ảnh của {{ officer.birth_name }}</h2>
+{% load static %}
+{% load static tailwind_tags %}
+{% tailwind_css %}
 
-    <!-- Warning Modal for no selection -->
-    <div id="warningModal"
-         style="display: none;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: #f8d7da;
-                color: #721c24;
-                padding: 20px;
-                border: 1px solid #f5c6cb;
-                border-radius: 5px;
-                z-index: 1000">
-        <p>Please select at least one officer to export data.</p>
-        <div style="text-align: center;
-                    margin-top: 10px">
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+        <title>{{ officer.birth_name }} - Quy hoạch</title>
 
-            <button onclick="closeWarningModal()"
-                    style="background-color: #721c24;
-                           color: white;
-                           border: none;
-                           padding: 5px 10px;
-                           cursor: pointer;
-                           border-radius: 3px">OK</button>
-        </div>
-    </div>
+        <!-- Link to local Font Awesome CSS -->
+        <link rel="stylesheet"
+              href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
 
-    <!-- Form for selecting and downloading images -->
-    <form id="downloadForm"
-          method="post"
-          action="{% url 'url_download_selected_images' officer.pk %}"
-          onsubmit="return validateImageSelection()">
-        {% csrf_token %}
+        <!-- Link to compiled Tailwind CSS -->
+        <link rel="stylesheet"
+              href="{% static 'css/dist/styles.css' %}" />
 
-        <!-- Upload and Back Buttons -->
-        <div class="mb-3">
-            <a href="{% url 'officer_detail' officer.pk %}"
-               class="btn btn-secondary">Quay lại</a>
-            <a href="{% url 'url_image_create' officer.pk %}"
-               class="btn btn-primary">Tải ảnh lên</a>
-        </div>
+        <script>
+            function confirmDelete() {
+                return confirm('Are you sure you want to delete this?');
+            }
+        </script>
+    </head>
+    <body class="bg-blue-100 h-screen">
+        <div class="flex">
+            <nav class="w-64 h-screen bg-sky-600 px-4 py-6 flex flex-col space-y-2 fixed left-0 top-0 overflow-y-auto">
+                <a href="{% url 'officer_list' %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="{% url 'officer_detail' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Thông tin chung</span>
+                </a>
+                <a href="{% url 'url_title_view' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Chức danh</span>
+                </a>
+                <a href="{% url 'url_position_plan' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-arrow-up-short-wide"></i>
+                    <span>Quy hoạch</span>
+                </a>
+                <a href="{% url 'url_learning_path' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Đào tạo</span>
+                </a>
+                <a href="{% url 'url_work_process' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-business-time"></i>
+                    <span>Quá trình công tác</span>
+                </a>
+                <a href="{% url 'url_salary_process' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Quá trình lương</span>
+                </a>
+                <a href="{% url 'url_laudatory' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-medal"></i>
+                    <span>Khen thưởng</span>
+                </a>
+                <a href="{% url 'url_discipline' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Kỷ luật</span>
+                </a>
+                <a href="{% url 'url_relative' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-users"></i>
+                    <span>Thân nhân</span>
+                </a>
+                <a href="{% url 'url_abroad' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-plane-departure"></i>
+                    <span>Ra nước ngoài</span>
+                </a>
+                <a href="{% url 'url_army_join_history' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-person-military-rifle"></i>
+                    <span>Tham gia quân đội</span>
+                </a>
+                <a href="{% url 'url_health' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Sức khoẻ</span>
+                </a>
+                <a href="{% url 'url_image' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-white text-black font-semibold">
+                    <i class="fas fa-image"></i>
+                    <span>Ảnh</span>
+                </a>
+            </nav>
 
-        <!-- Category Filter Dropdown -->
-        <select id="categoryDropdown"
-                class="form-control mb-3"
-                onchange="filterCategory()">
-            <option value="">Tất cả</option>
+            <form id="downloadForm"
+                  method="POST"
+                  action="{% url 'url_download_selected_images' officer.pk %}"
+                  class="flex-1 ml-64 p-8 h-screen overflow-y-auto">
+                {% csrf_token %}
 
-            {% for key, label in category_labels.items %}
-                <option value="{{ key }}" 
-                    {% if request.GET.category == key %}selected{% endif %}
-                    >{{ label }}</option>
-            {% endfor %}
+                <!-- Header Section -->
+                <h1 class="text-4xl text-center mb-10">
+                    Bộ ảnh: <strong class="ml-3">{{ officer.birth_name }}</strong>
+                </h1>
 
-        </select>
+                <!-- Actions Section -->
+                <div class="flex justify-between items-center mb-5">
+                    <!-- Category Dropdown -->
+                    <div class="flex items-center">
+                        <label for="categoryDropdown"
+                               class="text-lg font-semibold">
+                            Lựa chọn danh mục:
+                        </label>
+                        <select id="categoryDropdown"
+                                class="rounded-lg ml-5 px-3 py-2 border border-gray-300 shadow-sm w-64"
+                                onchange="filterCategory()">
+                            <option value="">Tất cả</option>
 
-        <!-- Select All Checkbox -->
-        <div class="form-check mb-3">
-            <input type="checkbox"
-                   id="selectAllCheckbox"
-                   class="form-check-input"
-                   onclick="toggleSelectAll(this)" />
-            <label for="selectAllCheckbox"
-                   class="form-check-label">Chọn tất cả ảnh</label>
-        </div>
+                            {% for key, label in category_labels.items %}
+                                <option value="{{ key }}" 
+                                    {% if request.GET.category == key %}selected{% endif %}
+                                    >{{ label }}</option>
+                            {% endfor %}
 
-        <!-- Download Selected button -->
-        <button type="submit"
-                class="btn btn-success mb-3">Tải ảnh đã chọn</button>
+                        </select>
+                    </div>
 
-        <!-- Display images with checkboxes for selection -->
-        <div id="images"
-             class="image-grid mt-3">
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <!-- Download Selected button -->
+                        <button type="submit"
+                                class="btn px-4 py-2 rounded-lg shadow-md inline-flex items-center text-lg bg-blue-600 hover:bg-blue-700 text-white">
+                            <span class="pr-2">Tải xuống ảnh đã chọn</span>
+                            <i class="fa-solid fa-download"></i>
+                        </button>
 
-            {% for image in images %}
-                <div class="image-item">
-                    <!-- Checkbox to select image for download -->
-                    <input type="checkbox"
-                           name="selected_images"
-                           value="{{ image.pk }}"
-                           class="image-checkbox mr-2" />
-                    <img src="{{ image.image.url }}"
-                         alt="{{ image.description }}"
-                         class="img-thumbnail"
-                         style="max-width: 150px" />
-                    <p>{{ image.description }}</p>
-                    <a href="{{ image.image.url }}"
-                       download
-                       class="btn btn-sm btn-success">Download</a>
-                    <a href="{% url 'url_image_update' officer.pk image.pk %}"
-                       class="btn btn-sm btn-warning">Cập nhật</a>
-                    <a href="{% url 'url_image_delete' officer.pk image.pk %}"
-                       class="btn btn-sm btn-danger">Xoá</a>
+                        <!-- Upload Images Button -->
+                        <a href="{% url 'url_image_create' officer.pk %}">
+                            <button type="button"
+                                    class="btn px-4 py-2 rounded-lg shadow-md inline-flex items-center text-lg bg-green-600 hover:bg-green-700 text-white">
+                                <i class="fa-solid fa-upload pr-2"></i>
+                                <span>Tải ảnh lên</span>
+                            </button>
+                        </a>
+                    </div>
                 </div>
-            {% empty %}
-                <p>Không có ảnh nào trong danh mục này.</p>
-            {% endfor %}
+
+                <!-- Select All Checkbox -->
+                <div class="form-check form-switch mb-8">
+                    <input type="checkbox"
+                           id="selectAllCheckbox"
+                           class="form-check-input"
+                           onclick="toggleSelectAll(this)" />
+                    <label for="selectAllCheckbox"
+                           class="form-check-label text-lg font-semibold">
+                        Chọn tất cả ảnh trong danh mục
+                    </label>
+                </div>
+
+                <!-- Image Gallery -->
+                <div id="images"
+                     class="grid grid-cols-4 gap-6">
+
+                    {% for image in images %}
+                        <div class="card p-4 shadow-md rounded-lg overflow-hidden relative group bg-white">
+                            <!-- Checkbox for selection -->
+                            <div class="flex items-center mb-3">
+                                <input type="checkbox"
+                                       name="selected_images"
+                                       value="{{ image.pk }}"
+                                       class="image-checkbox absolute top-3 right-3" />
+                                <p class="text-sm font-medium">{{ image.description }}</p>
+                            </div>
+
+                            <div class="card w-full rounded-lg overflow-hidden relative group">
+                                <!-- Image Display -->
+                                <img src="{{ image.image.url }}"
+                                     alt="{{ image.description }}"
+                                     class="img-thumbnail h-48 w-full object-cover rounded-md"
+                                     onclick="FullView(this.src, this.dataset.name, this.dataset.description)"
+                                     data-name="{{ image.image.url|default:'Unnamed' }}"
+                                     data-description="{{ image.description|default:'No description available' }}" />
+
+                                <!-- Small Overlay in the Top-Right -->
+                                <div class="absolute top-2 right-2 flex gap-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Tải xuống"
+                                       href="{{ image.image.url }}"
+                                       download>
+                                        <i class="fas fa-download text-green-700"></i>
+                                    </a>
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Chỉnh sửa"
+                                       href="{% url 'url_image_update' officer.pk image.pk %}">
+                                        <i class="fas fa-edit text-blue-700"></i>
+                                    </a>
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Xoá"
+                                       href="{% url 'url_image_delete' officer.pk image.pk %}">
+                                        <i class="fas fa-trash text-red-500"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% empty %}
+                        <div class="col-span-4 text-center text-lg italic">
+                            Không có ảnh nào trong danh mục này.
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </form>
+
+            <!-- Full Image View -->
+            <div id="FullImageView"
+                 class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4">
+                <div class="relative w-full h-full flex flex-col">
+                    <!-- Top Overlay Bar -->
+                    <div id="TopBarWrapper"
+                         class="relative">
+                        <!-- Top Bar -->
+                        <div id="TopBar"
+                             class="absolute top-0 left-0 w-full bg-black bg-opacity-50 text-white p-4 flex justify-between items-center z-40 duration-500">
+                            <div class="flex flex-col">
+                                <span id="ImageName"
+                                      class="text-lg font-semibold">
+                                    Image Name
+                                </span>
+                                <span id="ImageDescription"
+                                      class="text-sm text-gray-300">Image Description</span>
+                            </div>
+                            <button id="CloseButton"
+                                    onclick="CloseFullView()"
+                                    class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full w-8 h-8 flex items-center justify-center">
+                                <i class="fa-solid fa-times text-black text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Image Container -->
+                    <div class="flex justify-center items-center flex-grow">
+                        <img id="FullImage"
+                             alt="Full Image"
+                             class="max-w-3xl max-h-screen rounded-md transform" />
+                    </div>
+
+                    <!-- Zoom Controls -->
+                    <div id="ZoomControlsWrapper"
+                         class="relative">
+                        <div id="ZoomControls"
+                             class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full flex space-x-3 transition-all duration-300 z-10">
+                            <!-- Zoom Out Button -->
+                            <button onclick="zoomOut()"
+                                    class="zoom-btn relative w-10 h-10 flex items-center justify-center rounded-full bg-transparent">
+                                <i class="fa-solid fa-magnifying-glass-minus"></i>
+                            </button>
+
+                            <!-- Reset Zoom Button -->
+                            <button onclick="resetZoom()"
+                                    class="zoom-btn relative w-10 h-10 flex items-center justify-center rounded-full bg-transparent">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+
+                            <!-- Zoom In Button -->
+                            <button onclick="zoomIn()"
+                                    class="zoom-btn relative w-10 h-10 flex items-center justify-center rounded-full bg-transparent">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
 
         </div>
-    </form>
-</div>
+    </body>
+</html>
 
 <script>
     function filterCategory() {
@@ -118,27 +301,119 @@
         });
     }
 
-    function validateImageSelection() {
-        const imageCheckboxes = document.querySelectorAll(".image-checkbox");
-        const isAnyImageSelected = Array.from(imageCheckboxes).some(checkbox => checkbox.checked);
+  
+    let zoomLevel = 1;
+    const zoomStep = 0.1;
+    const maxZoom = 3; // Max zoom level
+    const minZoom = 0.5; // Min zoom level
 
-        if (!isAnyImageSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một ảnh để tải xuống.");
-            return false; // Prevent form submission
+    function FullView(imageSrc, imageName = "Unnamed", imageDescription = "No description available") {
+        const fullImageView = document.getElementById("FullImageView");
+        const fullImage = document.getElementById("FullImage");
+        const imageNameElement = document.getElementById("ImageName");
+        const imageDescriptionElement = document.getElementById("ImageDescription");
+    
+        // Set image source and details
+        fullImage.src = imageSrc;
+        // Get the image name from the full path
+        imageNameElement.textContent = imageName.split("/").pop();
+        imageDescriptionElement.textContent = imageDescription;
+    
+        // Reset zoom level
+        resetZoom();
+    
+        // Show the modal
+        fullImageView.classList.remove("hidden");
+    }
+    
+
+    function CloseFullView() {
+        // debugger;
+        console.log("Close Full View");
+        const fullImageView = document.getElementById("FullImageView");
+        fullImageView.classList.add("hidden");
+    }
+
+    function zoomIn() {
+        const fullImage = document.getElementById("FullImage");
+        if (zoomLevel < maxZoom) {
+            zoomLevel += zoomStep;
+            fullImage.style.transform = `scale(${zoomLevel})`;
+        }
+    }
+
+    function zoomOut() {
+        const fullImage = document.getElementById("FullImage");
+        if (zoomLevel > minZoom) {
+            zoomLevel -= zoomStep;
+            fullImage.style.transform = `scale(${zoomLevel})`;
+        }
+    }
+
+    function resetZoom() {
+        const fullImage = document.getElementById("FullImage");
+        zoomLevel = 1;
+        fullImage.style.transform = `scale(${zoomLevel})`;
+    }
+
+    // Hide the top bar when not hovered
+    document.addEventListener("DOMContentLoaded", () => {
+        // Top bar fade -------------------------------------
+        const topBar = document.getElementById("TopBar");
+        let fadeTimeout;
+
+        // Function to hide the top bar
+        function hideTopBar() {
+            topBar.classList.add("hidden-bar");
         }
 
-        return true; 
-    }
+        // Function to show the top bar
+        function showTopBar() {
+            topBar.classList.remove("hidden-bar");
+            resetFadeTimeout(); // Reset the timer when the bar is shown
+        }
 
-    // Function to show the warning modal with a custom message
-    function showWarningModal(message) {
-        const warningModal = document.getElementById("warningModal");
-        warningModal.querySelector("p").innerText = message; // Set custom message
-        warningModal.style.display = "block";
-    }
+        // Function to reset the fade timeout
+        function resetFadeTimeout() {
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(hideTopBar, 5000); // Set to 5 seconds
+        }
 
-    // Function to close the warning modal
-    function closeWarningModal() {
-        document.getElementById("warningModal").style.display = "none";
-    }
+        // Add event listeners for hover
+        topBar.addEventListener("mouseenter", showTopBar); // Show bar when mouse enters the hover zone
+        topBar.addEventListener("mouseleave", resetFadeTimeout); // Restart timer when mouse leaves the bar
+
+        // Start the initial fade timeout
+        resetFadeTimeout();
+
+        // Zoom controls fade --------------------------------
+        const zoomControls = document.getElementById("ZoomControls");
+        let zoomFadeTimeout;
+    
+        // Function to blur the zoom controls
+        function blurZoomControls() {
+            console.log("Blur Zoom Controls");
+            zoomControls.classList.add("hidden-controls");
+        }
+    
+        // Function to show the zoom controls
+        function showZoomControls() {
+            console.log("Show Zoom Controls");
+            zoomControls.classList.remove("hidden-controls");
+            resetZoomFadeTimeout(); // Reset timer when shown
+        }
+    
+        // Function to reset the fade timeout
+        function resetZoomFadeTimeout() {
+            clearTimeout(zoomFadeTimeout);
+            zoomFadeTimeout = setTimeout(blurZoomControls, 5000); // Set to 5 seconds
+        }
+    
+        // Add hover events for the zoom controls
+        zoomControls.addEventListener("mouseenter", showZoomControls); // Show controls when hovered
+        zoomControls.addEventListener("mouseleave", resetZoomFadeTimeout); // Start fade timeout when leaving
+    
+        // Initialize the fade timeout
+        resetZoomFadeTimeout();        
+    });       
 </script>

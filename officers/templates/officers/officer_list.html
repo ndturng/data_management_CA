@@ -1,608 +1,1169 @@
+{% load static %}
 {% load static tailwind_tags %}
+{% tailwind_css %}
 
-<div class="navbar bg-base-200 mb-10 shadow-inner drop-shadow-md">
-    {% tailwind_css %}
-    <div class="flex-1">
-        <h2 class="font-semibold text-2xl ml-20">THÔNG TIN CÁN BỘ</h2>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+    <title>Officer Information System</title>
+
+    <!-- Link to local Font Awesome CSS -->
+    <link rel="stylesheet"
+          href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
+
+    <!-- Link to compiled Tailwind CSS -->
+    <link rel="stylesheet"
+          href="{% static 'css/dist/styles.css' %}" />
+</head>
+
+<body class="bg-sky-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-sky-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex flex-col items-center md:items-start">
+                <h1 class="text-2xl font-bold">CÔNG AN THỊ XÃ ĐÔNG HOÀ</h1>
+                <h2 class="text-xl font-bold">THÔNG TIN CÁN BỘ</h2>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center md:justify-end">
+                <a href="{% url 'officer_create' %}"
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold">
+                    <i class="fas fa-plus mr-2"></i>Add Officer
+                </a>
+                <button class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold"
+                        id="toggleExportForm"
+                        onclick="toggleView()">
+                    <i class="fas fa-file-export mr-2"></i>Export Data
+                </button>
+                <a href="{% url 'excel_upload' %}"
+                   class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-semibold">
+                    <i class="fas fa-file-upload mr-2"></i>Upload Excel
+                </a>
+                <a href="{% url 'delete_all_officers' %}"
+                   class="bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition font-semibold">
+                    <i class="fas fa-trash-alt mr-2"></i>Delete All
+                </a>
+                <button class="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition font-semibold"
+                        onclick="logout()">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Log Out
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        <!-- Left section (Officer List) -->
+        <div class="lg:w-3/4 h-[calc(100vh-130px)]">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto overflow-y-auto h-full">
+                    <table class="min-w-full divide-y divide-gray-200">
+
+                        {% for officer in officers %}
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-2 whitespace-nowrap max-w-25 text-center">
+                                        {{ forloop.counter }}
+                                    </td>
+                                    <td class="px-2 py-2 whitespace-nowrap max-w-150">{{ officer.birth_name }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.birth_year }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.military_rank }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.position }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">{{ officer.work_unit }}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">
+                                        <a href="{% url 'officer_detail' officer.pk %}"
+                                           class="text-blue-600 hover:text-blue-800 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'officer_delete' officer.pk %}"
+                                           class="text-red-600 hover:text-red-800">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Section (Filter Options) -->
+        <div class="lg:w-1/4 h-[calc(100vh-130px)]">
+            <div class="bg-white py-3 rounded-lg shadow-md h-full flex flex-col">
+                <div class="px-4">
+                    <h2 class="text-xl font-semibold mb-3 items-center text-center">
+                        Filter Options
+                    </h2>
+                    <div class="flex justify-between items-center mb-4 gap-2">
+                        <button class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+                                onclick="openFilterModal()">
+                            <i class="fa-solid fa-filter"></i>
+                            Add Filters
+                        </button>
+                        <button class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+                                onclick="deleteFilters()">
+                            <i class="fa-solid fa-filter-circle-xmark"></i>
+                            Remove Filters
+                        </button>
+                    </div>
+                    <div class="flex gap-2 mb-4">
+                        <button type="button"
+                                onclick="applyFilter()"
+                                form="filterForm"
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fa-solid fa-gears"></i>
+                            Apply Filters
+                        </button>
+                        <button type="button"
+                                onclick="resetFilter()"
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fa-solid fa-arrow-rotate-left"></i>
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto space-y-3 px-4">
+                    <!-- Filters -->
+                    <form id="filterForm"
+                          method="GET"
+                          action="{% url 'officer_list' %}">
+                        <!-- Search by birth_name -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="birth_name">
+                            <label class="block text-sm font-medium text-gray-700">Họ và tên:</label>
+                            <input type="text"
+                                   name="birth_name"
+                                   value="{{ request.GET.birth_name }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by id_ca -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="id_ca">
+                            <label class="block text-sm font-medium text-gray-700">Số hiệu:</label>
+                            <input type="text"
+                                   name="id_ca"
+                                   value="{{ request.GET.id_ca }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by birth_year -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="birth_year">
+                            <label class="block text-sm font-medium text-gray-700">Năm sinh:</label>
+                            <input type="text"
+                                   name="birth_year"
+                                   value="{{ request.GET.birth_year }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by year_join_party -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="year_join_party">
+                            <label class="block text-sm font-medium text-gray-700">Năm vào Đảng:</label>
+                            <input type="text"
+                                   name="year_join_party"
+                                   value="{{ request.GET.year_join_party }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by year_join_CA -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="year_join_CA">
+                            <label class="block text-sm font-medium text-gray-700">Năm vào Công an:</label>
+                            <input type="text"
+                                   name="year_join_CA"
+                                   value="{{ request.GET.year_join_CA }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by current_residence -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="current_residence">
+                            <label class="block text-sm font-medium text-gray-700">Chỗ ở hiện nay:</label>
+                            <input type="text"
+                                   name="current_residence"
+                                   value="{{ request.GET.current_residence }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by salary_decision_year -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="salary_decision_year">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Năm quyết định lương:
+                            </label>
+                            <input type="text"
+                                   name="salary_decision_year"
+                                   value="{{ request.GET.salary_decision_year }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by work_unit -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="work_unit">
+                            <label class="block text-sm font-medium text-gray-700">Đơn vị công tác:</label>
+                            <input type="text"
+                                   name="work_unit"
+                                   value="{{ request.GET.work_unit }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by specialized_work -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="specialized_work">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Công tác chuyên trách:
+                            </label>
+                            <input type="text"
+                                   name="specialized_work"
+                                   value="{{ request.GET.specialized_work }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by other_work -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="other_work">
+                            <label class="block text-sm font-medium text-gray-700">Công tác khác:</label>
+                            <input type="text"
+                                   name="other_work"
+                                   value="{{ request.GET.other_work }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by most_work -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="most_work">
+                            <label class="block text-sm font-medium text-gray-700">Công tác chính:</label>
+                            <input type="text"
+                                   name="most_work"
+                                   value="{{ request.GET.most_work }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+                        <!-- Search by phone_number -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="phone_number">
+                            <label class="block text-sm font-medium text-gray-700">Số điện thoại:</label>
+                            <input type="text"
+                                   name="phone_number"
+                                   value="{{ request.GET.phone_number }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by bank_account_BIDV -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="bank_account_BIDV">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Số tài khoản BIDV:
+                            </label>
+                            <input type="text"
+                                   name="bank_account_BIDV"
+                                   value="{{ request.GET.bank_account_BIDV }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by id_citizen -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="id_citizen">
+                            <label class="block text-sm font-medium text-gray-700">Số CCCD:</label>
+                            <input type="text"
+                                   name="id_citizen"
+                                   value="{{ request.GET.id_citizen }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+
+                        <!-- Search by blood_type -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="blood_type">
+                            <label class="block text-sm font-medium text-gray-700">Nhóm máu:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="blood_type">
+                                <option value="">Tất cả</option>
+
+                                {% for b in blood_type %}
+                                    <option value="{{ b }}" 
+                                        {% if request.GET.blood_type == b %}selected{% endif %}
+                                        >{{ b }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by position -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="position">
+                            <label class="block text-sm font-medium text-gray-700">Chức vụ:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="position">
+                                <option value="">Tất cả</option>
+
+                                {% for p in position %}
+                                    <option value="{{ p }}" 
+                                        {% if request.GET.position == p %}selected{% endif %}
+                                        >{{ p }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by military_rank -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="military_rank">
+                            <label class="block text-sm font-medium text-gray-700">Cấp bậc hàm:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="military_rank">
+                                <option value="">Tất cả</option>
+
+                                {% for r in military_rank %}
+                                    <option value="{{ r }}" 
+                                        {% if request.GET.military_rank == r %}selected{% endif %}
+                                        >{{ r }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by salary_coefficient -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="salary_coefficient">
+                            <label class="block text-sm font-medium text-gray-700">Hệ số lương:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="salary_coefficient">
+                                <option value="">Tất cả</option>
+
+                                {% for s in salary_coefficient %}
+                                    <option value="{{ s }}" 
+                                        {% if request.GET.salary_coefficient == s %}selected{% endif %}
+                                        >{{ s }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by party_position -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="party_position">
+                            <label class="block text-sm font-medium text-gray-700">Chức vụ Đảng:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="party_position">
+                                <option value="">Tất cả</option>
+
+                                {% for p in party_position %}
+                                    <option value="{{ p }}" 
+                                        {% if request.GET.party_position == p %}selected{% endif %}
+                                        >{{ p }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by gender -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="gender">
+                            <label class="block text-sm font-medium text-gray-700">Giới tính:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="gender">
+                                <option value="">Tất cả</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+
+                        <!-- Search by military_type -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="military_type">
+                            <label class="block text-sm font-medium text-gray-700">Lực lượng:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="military_type">
+                                <option value="">Tất cả</option>
+
+                                {% for m in military_type %}
+                                    <option value="{{ m }}" 
+                                        {% if request.GET.military_type == m %}selected{% endif %}
+                                        >{{ m }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by political_theory -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="political_theory">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Trình độ chính trị:
+                            </label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="political_theory">
+                                <option value="">Tất cả</option>
+
+                                {% for p in political_theory %}
+                                    <option value="{{ p }}" 
+                                        {% if request.GET.political_theory == p %}selected{% endif %}
+                                        >{{ p }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by birth_place -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="birth_place">
+                            <label class="block text-sm font-medium text-gray-700">Nơi sinh:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="birth_place">
+                                <option value="">Tất cả</option>
+
+                                {% for b in birth_place %}
+                                    <option value="{{ b }}" 
+                                        {% if request.GET.birth_place == b %}selected{% endif %}
+                                        >{{ b }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by equipment_type -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="equipment_type">
+                            <label class="block text-sm font-medium text-gray-700">Quân trang:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="equipment_type">
+                                <option value="">Tất cả</option>
+
+                                {% for e in equipment_type %}
+                                    <option value="{{ e }}" 
+                                        {% if request.GET.equipment_type == e %}selected{% endif %}
+                                        >{{ e }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by size_of_shoes -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="size_of_shoes">
+                            <label class="block text-sm font-medium text-gray-700">Giày:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="size_of_shoes">
+                                <option value="">Tất cả</option>
+
+                                {% for s in size_of_shoes %}
+                                    <option value="{{ s }}" 
+                                        {% if request.GET.size_of_shoes == s %}selected{% endif %}
+                                        >{{ s }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by size_of_hat -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="size_of_hat">
+                            <label class="block text-sm font-medium text-gray-700">Mũ:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="size_of_hat">
+                                <option value="">Tất cả</option>
+
+                                {% for s in size_of_hat %}
+                                    <option value="{{ s }}" 
+                                        {% if request.GET.size_of_hat == s %}selected{% endif %}
+                                        >{{ s }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by size_of_clothes -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="size_of_clothes">
+                            <label class="block text-sm font-medium text-gray-700">Quần áo:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="size_of_clothes">
+                                <option value="">Tất cả</option>
+
+                                {% for s in size_of_clothes %}
+                                    <option value="{{ s }}" 
+                                        {% if request.GET.size_of_clothes == s %}selected{% endif %}
+                                        >{{ s }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by certi_of_IT -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="certi_of_IT">
+                            <label class="block text-sm font-medium text-gray-700">Tin học:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="certi_of_IT">
+                                <option value="">Tất cả</option>
+
+                                {% for c in certi_of_IT %}
+                                    <option value="{{ c }}" 
+                                        {% if request.GET.certi_of_IT == c %}selected{% endif %}
+                                        >{{ c }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by certi_of_foreign_language -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="certi_of_foreign_language">
+                            <label class="block text-sm font-medium text-gray-700">Ngoại ngữ:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="certi_of_foreign_language">
+                                <option value="">Tất cả</option>
+
+                                {% for c in certi_of_foreign_language %}
+                                    <option value="{{ c }}" 
+                                        {% if request.GET.certi_of_foreign_language == c %}selected{% endif %}
+                                        >{{ c }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Search by profile_address -->
+                        <div class="filter-container flex flex-col mb-3 hidden"
+                             data-filter-name="profile_address">
+                            <label class="block text-sm font-medium text-gray-700">Địa chỉ hồ sơ:</label>
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    name="profile_address">
+                                <option value="">Tất cả</option>
+
+                                {% for p in profile_address %}
+                                    <option value="{{ p }}" 
+                                        {% if request.GET.profile_address == p %}selected{% endif %}
+                                        >{{ p }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="flex-none">
-        <div class="flex-none tooltip tooltip-bottom"
-             data-tip="Tìm kiếm">
-            <button class="btn btn-md btn-circle btn-ghost">
-                <img src="{% static 'src/search.png' %}"
-                     alt="Search Icon"
-                     class="w-5 h-5" />
+</body>
+
+<div id="filterModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto">
+    <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-7xl mx-4 overflow-hidden overflow-y-auto">
+
+        <div class="flex justify-between items-center p-2">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                Select Filters
+            </h3>
+            <button type="button"
+                    class="text-red-600 hover:text-red-800"
+                    onclick="closeFilterModal()">
+                <svg class="w-6 h-6"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
             </button>
         </div>
-        <a href="{% url 'officer_create' %}"
-           class="btn btn-ghost rounded-md">
-            <span class="text-lg">Thêm mới cán bộ</span>
-            <img src="{% static 'src/add-user.png' %}"
-                 alt="Add user"
-                 class="w-5 h-5" />
-        </a>
 
-        <a href="{% url 'excel_upload' %}"
-           class="btn btn-ghost rounded-md">
-            <span class="text-lg">Tải lên từ Excel</span>
-            <img src="{% static 'src/upload.png' %}"
-                 alt="Upload icon"
-                 class="w-5 h-5" />
-        </a>
+        <!-- Filter Options -->
+        <div class="grid grid-cols-4 gap-2 overflow-y-auto">
 
-        {% if officers %}
-            <a href="{% url 'delete_all_officers' %}"
-               class="btn btn-ghost rounded-md text-red-600 text-lg">Xoá tất cả</a>
-        {% endif %}
+            {% for value, label in form.fields.filter_options.choices %}
+                <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox"
+                           value="{{ value }}"
+                           class="filter-checkbox h-5 w-5 text-blue-500 rounded" />
+                    <span>{{ label }}</span>
+                </label>
+            {% endfor %}
 
-        <button>
 
-            {% if user.is_authenticated %}
-                <!-- <p>Chào mừng, {{ user.username }}! </p> -->
-                <form method="POST"
-                      action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="btn btn-ghost rounded-md text-lg">
-                        Đăng xuất
-                    </button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}">Đăng nhập</a>
-            {% endif %}
+            <!-- birth_year -->
+            <label class="flex items -center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                <input type="checkbox"
+                       value="birth_year"
+                       class="filter-checkbox h-5 w-5 text-blue-500 rounded" />
+                <span>Năm sinh</span>
+            </label>
 
+            <!-- year_join_party -->
+            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                <input type="checkbox"
+                       value="year_join_party"
+                       class="filter-checkbox h-5 w-5 text-blue-500 rounded" />
+                <span>Năm vào Đảng</span>
+            </label>
+
+            <!-- year_join_CA -->
+            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                <input type="checkbox"
+                       value="year_join_CA"
+                       class="filter-checkbox h-5 w-5 text-blue-500 rounded" />
+                <span>Năm vào Công an</span>
+            </label>
+        </div>
+
+        <div class="flex justify-center space-x-3 mt-6">
+            <button class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                    onclick="closeFilterModal()">Cancel</button>
+
+            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    onclick="showSelectedFilters()">Apply</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Excel Processing Errors Messages -->
+<div id="ExcelErrorModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+     role="dialog"
+     aria-labelledby="modalTitle"
+     aria-describedby="modalDescription">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl mx-4">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 id="modalTitle" class="text-xl font-semibold text-red-600">Processing Errors</h2>
+            <button type="button"
+                    onclick="closeExcelErrorModal()"
+                    class="text-red-600 hover:text-red-800">
+                <i class="fa-solid fa-times w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div id="modalMessagesContainer" class="space-y-4 overflow-y-auto max-h-96">
+            <!-- Messages will be dynamically inserted here -->
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end mt-6">
+            <button onclick="closeExcelErrorModal()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Warning Message Modal -->
+<div id="warningModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+        <p class="text-red-600 text-center mb-4 font-semibold text-lg">CHÚ Ý</p>
+        <p class="text-center"
+           id="warningText"></p>
+
+        <button onclick="closeWarningModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
+            OK
         </button>
     </div>
 </div>
 
-<!-- Warning Message Modal (initially hidden) -->
-<div id="warningModal"
-     style="display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border: 1px solid #f5c6cb;
-            border-radius: 5px;
-            z-index: 1000">
-    <p>Please select at least one officer to export data.</p>
-    <div style="text-align: center;
-                margin-top: 10px">
-
-        <button onclick="closeWarningModal()"
-                style="background-color: #721c24;
-                       color: white;
-                       border: none;
-                       padding: 5px 10px;
-                       cursor: pointer;
-                       border-radius: 3px">OK</button>
-    </div>
-</div>
-
-<!-- Display messages -->
-
-{% if messages %}
-
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} mb-10">{{ message }}</div>
-    {% endfor %}
-
-{% endif %}
-
-
-<!-- Checkbox to toggle between officer list and export form -->
-<label class="font-semibold ml-10 text-lg">
-    <input type="checkbox"
-           id="toggleExportForm"
-           onclick="toggleView()" />
-    Xuất dữ liệu
-</label>
-
-<div class="flex divide-x">
-    <!-- Officer List and Filter Form -->
-    <div id="officerList"
-         class="mx-20 w-3/5">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                </tr>
-            </thead>
-
-            {% for officer in officers %}
-                <tbody class="mx-10 text-lg">
-                    <tr>
-                        <th>1</th>
-                        <td>{{ officer.birth_name }}</td>
-                        <td>{{ officer.birth_year }}</td>
-                        <td>{{ officer.work_unit }}</td>
-                        <td>
-                            <a href="{% url 'officer_detail' officer.pk %}"
-                               class="text-green-500 hover:text-green-600 underline mx-2">
-                                Xem
-                            </a>
-                            <span class="px-2"></span>
-                            <a href="{% url 'officer_delete' officer.pk %}"
-                               class="text-red-600 hover:text-red-700 underline mx-2">
-                                Xoá
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            {% endfor %}
-        </table>
-    </div>
-
-    <div id="searchOfficer"
-         class="w-2/5">
-        <form method="GET"
-              action="{% url 'officer_list' %}">
-            <div class="flex mx-16 space-x-2">
-                <!-- Search by name -->
-                <div class="mt-9">
-                    <input type="text"
-                           name="birth_name"
-                           placeholder="Tìm theo tên"
-                           value="{{ birth_name|default_if_none:'' }}"
-                           class="rounded-lg input-sm" />
-                </div>
-
-                <!-- Search by id_ca -->
-                <div class="mt-9">
-                    <input type="text"
-                           name="id_ca"
-                           placeholder="Tìm theo số hiệu"
-                           value="{{ id_ca|default_if_none:'' }}"
-                           class="rounded-lg input-sm" />
-                </div>
-
-                <div class="tooltip tooltip-top mt-7"
-                     data-tip="Lọc">
-                    <button type="submit"
-                            class="btn btn-md btn-square btn-ghost">
-                        <img src="{% static 'src/filter.png' %}"
-                             alt="Filter Icon"
-                             class="w-9 h-9" />
-                    </button>
-                </div>
-
-                <div class="flex-none tooltip tooltip-top mt-10"
-                     data-tip="Xoá bộ lọc">
-
-                    {% if request.GET %}
-
-                        <a href="{% url 'officer_list' %}">
-                            <img src="{% static 'src/delete-icon.png' %}"
-                                 alt="Delete icon"
-                                 class="w-6 h-6" />
-                        </a>
-
-                    {% endif %}
-
-                </div>
-            </div>
-
-            <div class="flex mx-16 space-x-2 mt-3">
-                <!--Search by birth_year-->
-                <div>
-                    <!-- <p>Tìm theo năm sinh</p>
-<input type="text" name="birth_year" placeholder="Tìm theo năm sinh" value="{{ birth_year|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
-                </div>
-
-                <!-- Search by year_join_party -->
-                <div>
-                    <!-- <p>Tìm theo năm vào Đảng</p>
-<input type="text" name="year_join_party" placeholder="Tìm theo năm vào Đảng" value="{{ year_join_party|default_if_none:'' }}" class="rounded-lg input-sm max-w-xs" /> -->
-                </div>
-            </div>
-
-            <!-- Search by year_join_party_official -->
-            <!-- <input type="text"
-        name="year_join_party_official"
-        placeholder="Tìm theo năm vào Đảng chính thức"
-        value="{{ year_join_party_official|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by year_join_CA -->
-            <!-- <input type="text"
-        name="year_join_CA"
-        placeholder="Tìm theo năm vào CA"
-        value="{{ year_join_CA|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by current_residence -->
-            <!-- <input type="text"
-        name="current_residence"
-        placeholder="Tìm theo chỗ ở hiện nay"
-        value="{{ current_residence|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by salary_decision_year -->
-            <!-- <input type="text"
-        name="salary_decision_year"
-        placeholder="Tìm theo năm quyết định lương"
-        value="{{ salary_decision_year|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by work_unit -->
-            <!-- <input type="text"
-        name="work_unit"
-        placeholder="Tìm theo đơn vị công tác"
-        value="{{ work_unit|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by specialized_work -->
-            <!-- <input type="text"
-        name="specialized_work"
-        placeholder="Tìm theo công tác chuyên trách"
-        value="{{ specialized_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by other_work -->
-            <!-- <input type="text"
-        name="other_work"
-        placeholder="Tìm theo công tác khác"
-        value="{{ other_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by most_work -->
-            <!-- <input type="text"
-        name="most_work"
-        placeholder="Tìm theo công tác làm nhiều nhất"
-        value="{{ most_work|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by phone_number -->
-            <!-- <input type="text"
-        name="phone_number"
-        placeholder="Tìm theo số điện thoại"
-        value="{{ phone_number|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by bank_account_BIDV -->
-            <!-- <input type="text"
-        name="bank_account_BIDV"
-        placeholder="Tìm theo số tài khoản BIDV"
-        value="{{ bank_account_BIDV|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-            <!-- Search by id_citizen -->
-            <!-- <input type="text"
-        name="id_citizen"
-        placeholder="Tìm theo số CMND"
-        value="{{ id_citizen|default_if_none:'' }}"
-        style="flex: 1;
-               min-width: 150px" /> -->
-
-
-
-            <!-- <label for="gender">Giới tính:</label>
-            <select name="gender" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-                
-                {% for g in gender %}
-                    <option value="{{ g }}" {% if request.GET.gender == g %}selected{% endif %}>{{ g }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="military_type">Lực lượng:</label>
-            <select name="military_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for mt in military_type %}
-                    <option value="{{ mt }}" {% if request.GET.military_type == mt %}selected{% endif %}>{{ mt }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="military_rank">Cấp bậc hàm:</label>
-            <select name="military_rank" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for mr in military_rank %}
-                    <option value="{{ mr }}" {% if request.GET.military_rank == mr %}selected{% endif %}>{{ mr }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="salary_coefficient">Hệ số lương:</label>
-            <select name="salary_coefficient" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for sc in salary_coefficient %}
-                    <option value="{{ sc }}" {% if request.GET.salary_coefficient == sc %}selected{% endif %}>{{ sc }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="position">Chức vụ:</label>
-            <select name="position" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for p in position %}
-                    <option value="{{ p }}" {% if request.GET.position == p %}selected{% endif %}>{{ p }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="party_position">Chức vụ Đảng:</label>
-            <select name="party_position" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pp in party_position %}
-                    <option value="{{ pp }}" {% if request.GET.party_position == pp %}selected{% endif %}>{{ pp }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="political_theory">Trình độ chính trị:</label>
-            <select name="political_theory" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pt in political_theory %}
-                    <option value="{{ pt }}" {% if request.GET.political_theory == pt %}selected{% endif %}>{{ pt }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="birth_place">Nơi sinh:</label>
-            <select name="birth_place" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for bp in birth_place %}
-                    <option value="{{ bp }}" {% if request.GET.birth_place == bp %}selected{% endif %}>{{ bp }}</option>
-                {% endfor %}
-
-            </select>
-
-            <label for="equipment_type">Quân trang:</label>
-            <select name="equipment_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for et in equipment_type %}
-                    <option value="{{ et }}" {% if request.GET.equipment_type == et %}selected{% endif %}>{{ et }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_shoes">Giày:</label>
-            <select name="size_of_shoes" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for sos in size_of_shoes %}
-                    <option value="{{ sos }}" {% if request.GET.size_of_shoes == sos %}selected{% endif %}>{{ sos }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_hat">Mũ:</label>
-            <select name="size_of_hat" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for soh in size_of_hat %}
-                    <option value="{{ soh }}" {% if request.GET.size_of_hat == soh %}selected{% endif %}>{{ soh }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="size_of_clothes">Quần áo:</label>
-            <select name="size_of_clothes" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for soc in size_of_clothes %}
-                    <option value="{{ soc }}" {% if request.GET.size_of_clothes == soc %}selected{% endif %}>{{ soc }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="certi_of_IT">Tin học:</label>
-            <select name="certi_of_IT" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for cit in certi_of_IT %}
-                    <option value="{{ cit }}" {% if request.GET.certi_of_IT == cit %}selected{% endif %}>{{ cit }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="certi_of_foreign_language">Ngoại ngữ:</label>
-            <select name="certi_of_foreign_language" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for cofl in certi_of_foreign_language %}
-                    <option value="{{ cofl }}" {% if request.GET.certi_of_foreign_language == cofl %}selected{% endif %}>{{ cofl }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="blood_type">Nhóm máu:</label>
-            <select name="blood_type" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for bt in blood_type %}
-                    <option value="{{ bt }}" {% if request.GET.blood_type == bt %}selected{% endif %}>{{ bt }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="profile_address">Địa chỉ hồ sơ:</label>
-            <select name="profile_address" style="flex: 1; min-width: 150px">
-                <option value="">Tất cả</option>
-
-                {% for pa in profile_address %}
-                    <option value="{{ pa }}" {% if request.GET.profile_address == pa %}selected{% endif %}>{{ pa }}</option>
-                {% endfor %}
-            </select> -->
-        </form>
-    </div>
-</div>
-
-<!-- Export Form -->
-<div id="exportForm"
-     style="display: none">
-    <form method="post"
-          action="{% url 'export_officers_data' %}"
-          onsubmit="return validateSelection()">
-        {% csrf_token %}
-        <h3 class="mb-10 mt-5 text-3xl font-semibold text-center">
-            Chọn cán bộ và thông tin cần trích xuất
-        </h3>
-
-        <div class="container mx-auto">
-            <table class="min-w-full border border-gray-300">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn cán bộ </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn thông tin </th>
-                        <th class="px-4 py-4 border border-gray-300 text-center bg-base-200"> Chọn bảng liên quan </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td class="border border-gray-300 p-4 pl-8 h-20 overflow-y-auto align-top">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                        id="select-all-officers" />
-                                    Chọn tất cả
-                                </label>
-                                <ol class="pl-10">
-            
-                                    {% for officer in officers %}
-                                        <input type="checkbox"
-                                            name="officers"
-                                            value="{{ officer.pk }}"
-                                            id="officer_{{ officer.pk }}" />
-                                        <label for="officer_{{ officer.pk }}">
-                                            {{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}
-                                        </label>
-                                        <br />
-                                    {% endfor %}
-                                </ol>
-                            </div>
-                        </td>
-                        <td class="border border-gray-300 p-4 h-20 overflow-y-auto">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                        id="select-all-fields" />
-                                    Chọn tất cả
-                                </label>
-                                <ul class="pl-10">
-                                    {{ form.fields }}
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="border border-gray-300 p-4 h-20 overflow-y-autoauto align-top">
-                            <div class="space-y-3">
-                                <label class="font-semibold">
-                                    <input type="checkbox"
-                                        id="select-all-related-tables" />
-                                    Chọn tất cả
-                                </label>
-                                <ul class="pl-10">
-                                    {{ form.related_tables }}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="flex justify-center">
-            <button type="submit"
-                    name="export"
-                    class="btn text-lg mb-10 mt-5 rounded-lg w-2/5 space-x-2">
-                    <span>Xuất dữ liệu</span>
-                    <img src="{% static 'src/export-file.png' %}"
-                        alt="Export File"
-                        class="w-5 h-5" />
-                
+<!-- Export Data Modal -->
+<div id="exportModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-7xl mx-4 overflow-hidden">
+
+        <div class="flex justify-between items-center mb-6 p-2">
+            <h2 class="text-2xl font-semibold">Export Data</h2>
+            <button type="button"
+                    class="text-red-600 hover:text-red-800"
+                    onclick="closeExportForm()">
+                <svg class="w-6 h-6"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
             </button>
         </div>
-    </form>
+
+        <div class="bg-gray-50 p-6 rounded-lg">
+            <form class="space-y-6"
+                  method="post"
+                  action="{% url 'export_officers_data' %}"
+                  onsubmit="return validateSelection()">
+                {% csrf_token %}
+                <div class="flex gap-6">
+
+                    <!-- Select Officers -->
+                    <div class="space-y-2 w-1/2">
+                        <label class="block text-sm font-medium text-gray-700">Select Officers</label>
+
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                       id="select-all-officers"
+                                       class="select-all border-black" />
+                                <span>Select All Officers</span>
+                            </label>
+
+                            {% for officer in officers %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                           name="officers"
+                                           value="{{ officer.pk }}"
+                                           class="officer-checkbox border-black" />
+                                    <span>{{ officer.birth_name }} - {{ officer.birth_year }} - {{ officer.work_unit }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <!-- Select Fields -->
+                    <div class="space-y-2 w-1/4">
+                        <label class="block text-sm font-medium text-gray-700">Select Fields</label>
+
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                       id="select-all-fields"
+                                       class="border-black select-all" />
+                                <span>Select All Fields</span>
+                            </label>
+
+                            {% for value, label in form.fields.model_fields.choices %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                           name="model_fields"
+                                           value="{{ value }}"
+                                           class="field-checkbox border-black" />
+                                    <span>{{ label }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <!-- Related Tables -->
+                    <div class="space-y-2 w-1/4">
+                        <label class="block text-sm font-medium text-gray-700">Related Tables</label>
+
+                        <div class="space-y-2 h-96 overflow-y-auto border rounded-lg p-3 bg-white shadow-sm">
+                            <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                <input type="checkbox"
+                                       id="select-all-related-tables"
+                                       class="select-all" />
+                                <span>Select All Related Tables</span>
+                            </label>
+
+                            {% for value, label in form.fields.related_tables.choices %}
+                                <label class="flex items-center space-x-2 hover:bg-gray-200 p-1 rounded">
+                                    <input type="checkbox"
+                                           name="related_tables"
+                                           value="{{ value }}"
+                                           class="related-table-checkbox border-black" />
+                                    <span>{{ label }}</span>
+                                </label>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button onclick="closeExportForm()"
+                            class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            name="export"
+                            class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        Export
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
 
 <script>
-    function toggleView() {
-        var isChecked = document.getElementById('toggleExportForm').checked;
-        var officerList = document.getElementById('officerList');
-        var exportForm = document.getElementById('exportForm');
-        var searchOfficer = document.getElementById('searchOfficer');
+    const messages = [
+        {% for message in messages %}
+        {
+            type: "{{ message.tags }}", // e.g., "warning" or "error"
+            content: "{{ message|escapejs }}" // Escaped for safe JS rendering
+        },
+        {% endfor %}
+    ];
 
-        if (isChecked) {
-            officerList.style.display = 'none';
-            searchOfficer.style.display = 'none';
-            exportForm.style.display = 'block';
-        } else {
-            officerList.style.display = 'block';
-            searchOfficer.style.display = 'block';
-            exportForm.style.display = 'none';
+    // Show the modal only if messages exist
+    if (messages.length > 0) {
+        showExcelErrorModal(messages);
+    }
+    
+    // Show the Excel Error Modal
+    function showExcelErrorModal(messages) {
+        // Check if messages exist and are non-empty
+        if (!messages || messages.length === 0) {
+            console.log("No messages to display, modal will not be shown.");
+            return; // Do nothing if no messages
+        }
+    
+        const modal = document.getElementById("ExcelErrorModal");
+        const messagesContainer = document.getElementById("modalMessagesContainer");
+    
+        if (!modal || !messagesContainer) {
+            console.error("Modal or messages container not found!");
+            return;
+        }
+    
+        // Clear previous messages
+        messagesContainer.innerHTML = "";
+    
+        // Add messages to the container
+        messages.forEach(message => {
+            console.log(message);
+            // Create a div for each message
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("p-4", "rounded-lg", "shadow-sm");
+    
+            // Style based on message type
+            if (message.type === "warning") {
+                messageDiv.classList.add("bg-yellow-50", "text-yellow-700", "border", "border-yellow-300");
+            } else if (message.type === "error") {
+                messageDiv.classList.add("bg-red-50", "text-red-700", "border", "border-red-300");
+            }
+    
+            // Set message content
+            messageDiv.textContent = message.content;
+            messagesContainer.appendChild(messageDiv);
+        });
+    
+        // Show the modal
+        modal.classList.remove("hidden");
+    }
+
+    // Close the Excel Error Modal
+    function closeExcelErrorModal() {
+        const modal = document.getElementById("ExcelErrorModal");
+        if (modal) {
+            modal.classList.add("hidden");
         }
     }
-    document.getElementById('select-all-officers').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="officers"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
-    document.getElementById('select-all-fields').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
 
-    document.getElementById('select-all-related-tables').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="{{ form.related_tables.name }}"]');
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = this.checked;
-        });
-    });
+    // JavaScript to control the "Select All" functionality
+    document.addEventListener("DOMContentLoaded", function() {
+        // General function to handle "Select All" checkbox functionality
+        function setupSelectAll(selectAllId, checkboxesClass) {
+            const selectAll = document.getElementById(selectAllId);
+            const checkboxes = document.querySelectorAll(checkboxesClass);
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+        }
 
+        // Setup Select All for each section
+        setupSelectAll('select-all-officers', '.officer-checkbox');
+        setupSelectAll('select-all-fields', '.field-checkbox');
+        setupSelectAll('select-all-related-tables', '.related-table-checkbox');
+    });
+    
+    function showSelectedFilters() {
+        // Get all selected checkboxes in the modal
+        const selectedFilters = Array.from(
+            document.querySelectorAll(".filter-checkbox:checked")
+        ).map((checkbox) => checkbox.value);
+        
+        // Show the selected filters on the main page
+        showFilters(selectedFilters);
+
+        // Get all the unselected checkboxes in the modal
+        const unselectedFilters = Array.from(
+            document.querySelectorAll(".filter-checkbox:not(:checked)")
+        ).map((checkbox) => checkbox.value);
+
+        // Hide the unselected filters on the main page
+        hideFilters(unselectedFilters);
+
+        // Check if form submission is needed
+        if (shouldSubmitForm(selectedFilters, unselectedFilters)) {
+            restoreFilterValues();
+            document.getElementById("filterForm").submit();
+        }
+
+        // If a filter is hidden, reset its value to empty
+        unselectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(
+                `.filter-container[data-filter-name="${filterName}"]`
+            );
+            if (filterElement) {
+                filterElement.querySelector("input, select").value = ""; 
+            }
+        });
+
+        // Close the modal after applying
+        closeFilterModal();
+    }
+
+    function showFilters(selectedFilters) {
+        selectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(`.filter-container[data-filter-name="${filterName}"]`);
+            if (filterElement) {
+                filterElement.style.display = "flex";
+                sessionStorage.setItem(`filter_${filterName}_visible`, "true");
+            }
+        });
+    }
+    
+    function hideFilters(unselectedFilters) {
+        unselectedFilters.forEach((filterName) => {
+            const filterElement = document.querySelector(`.filter-container[data-filter-name="${filterName}"]`);
+            if (filterElement) {
+                filterElement.style.display = "none";
+                sessionStorage.setItem(`filter_${filterName}_visible`, "false");
+                const input = filterElement.querySelector("input, select");
+                if (input) input.value = ""; // Reset value
+            }
+        });
+    }
+    
+    
+    function shouldSubmitForm(selectedFilters, unselectedFilters) {
+        return selectedFilters.some((filterName) => {
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            return savedValue && savedValue.trim();
+        }) || unselectedFilters.some((filterName) => {
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            return savedValue && savedValue.trim();
+        });
+    }
+
+
+    // Restore the checkbox state in the modal
+   function restoreModalCheckboxState() {
+        document.querySelectorAll(".filter-checkbox").forEach((checkbox) => {
+            checkbox.checked = isFilterVisible(checkbox.value);
+        });
+    }
+
+    function isFilterVisible(filterName) {
+        return sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+    }
+
+
+    // Restore value of visible filters from sessionStorage
+    function restoreFilterValues() {
+        const filters = document.querySelectorAll(".filter-container input, .filter-container select");
+        filters.forEach((input) => {
+            const filterName = input.getAttribute("name");
+            const savedValue = sessionStorage.getItem(`filter_${filterName}_value`);
+            if (savedValue && isFilterVisible(filterName)) {
+                input.value = savedValue;
+            }
+        });
+    }
+
+    // When click on Reset Filter Button
+    function resetFilter() {
+        // Clear all filter values and their values in sessionStorage
+        document.querySelectorAll(".filter-container input, select").forEach(filterInput => {
+            filterInput.value = "";
+            const filterName = filterInput.closest(".filter-container").getAttribute("data-filter-name");
+            sessionStorage.removeItem(`filter_${filterName}_value`);
+        });
+
+        // Navigate to the original page
+        window.location.href = "{% url 'officer_list' %}";
+    }
+
+    // When click on Delete All Filter Button
+    function deleteFilters() {
+        sessionStorage.clear();
+        window.location.href = "{% url 'officer_list' %}";
+    }
+        
+    // When click on "Lọc" Button
+    function applyFilter() {
+        saveVisibleFiltersToSession();
+
+        // Explicitly submit the form
+        document.getElementById("filterForm").submit();
+    }
+
+    function saveVisibleFiltersToSession() {
+        document.querySelectorAll(".filter-container").forEach((container) => {
+            const filterName = container.getAttribute("data-filter-name");
+            const filterInput = container.querySelector("input, select");
+    
+            if (filterInput && container.style.display !== "none") {
+                sessionStorage.setItem(`filter_${filterName}_value`, filterInput.value);
+            }            
+        });
+    }
+        
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Restore filter visibility and modal state on page load
+        restoreFilterVisibility();
+        restoreModalFilterState();
+        restoreFilterValues();
+        restoreModalCheckboxState();        
+    });
+    
+    // Restore filter visibility from sessionStorage
+    function restoreFilterVisibility() {
+        document.querySelectorAll(".filter-container").forEach(container => {
+            const filterName = container.getAttribute("data-filter-name");
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            container.style.display = isVisible ? "flex" : "none"; // Restore visibility
+        });
+    }
+    
+    // Show a filter when selected in the modal
+    function showFilter(filterName) {
+        const filterElement = document.querySelector(`.filter-container[data-filter-name="${filterName}"]`);
+        if (filterElement) {
+            filterElement.style.display = "flex"; // Show the filter
+            sessionStorage.setItem(`filter_${filterName}_visible`, "true"); // Save visibility state
+            updateModalFilterState(filterName, true); // Mark as selected in the modal
+        }
+        closeFilterModal(); // Close the modal after selection
+    }
+    
+    // Hide a filter and update sessionStorage // refactor later
+    function removeFilter(closeButton) {
+        const filterContainer = closeButton.parentElement;
+        const filterName = filterContainer.getAttribute("data-filter-name");
+
+        filterContainer.style.display = "none"; // Hide the filter
+        sessionStorage.setItem(`filter_${filterName}_visible`, "false"); // Save hidden state
+
+        // Check if the value of the filter not empty
+        if (filterContainer.querySelector("input, select").value) {
+            // Clear the saved value for the filter
+            sessionStorage.removeItem(`filter_${filterName}_value`);
+
+            // Reset the filter value
+            filterContainer.querySelector("input, select").value = "";
+
+            // Reload the page to apply the filters
+            document.getElementById("filterForm").submit();
+
+        }
+        // Uncheck the corresponding checkbox in the modal
+        const modalCheckbox = document.querySelector(
+            `.filter-checkbox[value="${filterName}"]`
+        );
+        if (modalCheckbox) {
+            modalCheckbox.checked = false; // Uncheck the checkbox
+        }
+
+        updateModalFilterState(filterName, false); // Unmark as active in the modal
+        
+    }
+    
+    // Restore the selected state of filters in the modal
+    function restoreModalFilterState() {
+        document.querySelectorAll(".filter-option").forEach(option => {
+            const filterName = option.getAttribute("onclick").match(/'([^']+)'/)[1];
+            const isVisible = sessionStorage.getItem(`filter_${filterName}_visible`) === "true";
+            if (isVisible) {
+                option.classList.add("active"); // Mark as active
+            } else {
+                option.classList.remove("active"); // Remove active state
+            }
+        });
+    }
+    
+    // Update the selected state of a filter in the modal
+    function updateModalFilterState(filterName, isVisible) {
+        const filterOption = document.querySelector(`.filter-option[onclick*="'${filterName}'"]`);
+        if (filterOption) {
+            if (isVisible) {
+                filterOption.classList.add("active"); // Mark as active
+            } else {
+                filterOption.classList.remove("active"); // Unmark as active
+            }
+        }
+    }
+    
+    // Open and close modal functions
+    function openFilterModal() {
+        event.preventDefault();
+        const modal = document.getElementById("filterModal");
+        modal.classList.remove("hidden");
+    }
+    
+    function closeFilterModal() {
+        const modal = document.getElementById("filterModal");
+        modal.classList.add("hidden");
+    }
+
+    // Show export form
+    function toggleView() {
+        event.preventDefault();
+        document.getElementById("exportModal").classList.toggle("hidden");     
+    }
+
+    function closeExportForm() {
+        event.preventDefault();
+        document.getElementById("exportModal").classList.add("hidden");
+    }
+
+    // Validate selection for export
     function validateSelection() {
-        // Get all officer checkboxes
         const officerCheckboxes = document.querySelectorAll('input[name="officers"]');
         const isAnyOfficerSelected = Array.from(officerCheckboxes).some(checkbox => checkbox.checked);
     
-        // Get all field checkboxes in the "Chọn thông tin" section
-        const fieldCheckboxes = document.querySelectorAll('input[name="{{ form.fields.name }}"]');
+        const fieldCheckboxes = document.querySelectorAll('input[name="model_fields"]');
         const isAnyFieldSelected = Array.from(fieldCheckboxes).some(checkbox => checkbox.checked);
     
-        // Determine which warning to show based on selection
         if (!isAnyOfficerSelected && !isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ và một trường thông tin để xuất dữ liệu!");
-            return false; 
+            showWarningModal("Vui lòng chọn ít nhất một CÁN BỘ và một THÔNG TIN để xuất dữ liệu!");
+            return false;
         } else if (!isAnyOfficerSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một cán bộ để xuất dữ liệu!");
-            return false; 
+            showWarningModal("Vui lòng chọn ít nhất một CÁN BỘ để xuất dữ liệu!");
+            return false;
         } else if (!isAnyFieldSelected) {
-            showWarningModal("Vui lòng chọn ít nhất một trường thông tin để xuất dữ liệu!");
-            return false; 
+            showWarningModal("Vui lòng chọn ít nhất một THÔNG TIN để xuất dữ liệu!");
+            return false;
         }
     
-        return true; // Allow form submission if all validations pass
+        return true; // All validations pass
     }
     
-    // Show the warning modal with a custom message
+    // Show and close warning modal
     function showWarningModal(message) {
-        const warningModal = document.getElementById('warningModal');
-        warningModal.querySelector('p').innerText = message; // Set custom message
-        warningModal.style.display = 'block';
+        const warningModal = document.getElementById("warningModal");
+        const warningText = document.getElementById("warningText");
+        if (warningText) {
+            warningText.innerText = message; // Set custom message
+        }
+        warningModal.classList.remove("hidden"); // Show modal
     }
     
-    // Close the warning modal
     function closeWarningModal() {
-        document.getElementById('warningModal').style.display = 'none';
+        const warningModal = document.getElementById("warningModal");
+        warningModal.classList.add("hidden"); // Hide modal
     }
-    
+
+    // Check if the reload count exists in sessionStorage
+    if (sessionStorage.getItem("reloadCount")) {
+        // Increment the reload count
+        sessionStorage.setItem("reloadCount", Number(sessionStorage.getItem("reloadCount")) + 1);
+    } else {
+        // Initialize the reload count
+        sessionStorage.setItem("reloadCount", 1);
+    }
+
+    // Display the reload count
+    console.log("Page has been reloaded", sessionStorage.getItem("reloadCount"), "times.");
     
 </script>
-

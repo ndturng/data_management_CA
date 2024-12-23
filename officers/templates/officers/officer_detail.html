@@ -1,5 +1,6 @@
 {% load static %}
 {% load static tailwind_tags %}
+{% tailwind_css %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,93 +9,100 @@
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0" />
         <title>{{ officer.birth_name }} - Details</title>
-        {% tailwind_css %}
 
+        <!-- Link to local Font Awesome CSS -->
         <link rel="stylesheet"
-              href="{% static 'src/styles.css' %}" />
+              href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
+
+        <!-- Link to compiled Tailwind CSS -->
+        <link rel="stylesheet"
+              href="{% static 'css/dist/styles.css' %}" />
     </head>
-    <body>
-        <div class="flex h-screen">
-            <div class="w-80 bg-base-200 min-h-screen py-5">
-                <div class="hoverable-item">
-                    <a href="{% url 'officer_list' %}"
-                       class="hoverable-link">
-                        <img src="{% static 'src/home-icon.png' %}"
-                             alt="Home Icon"
-                             class="w-6 h-6" />
-                        <span>Trang chủ</span>
-                    </a>
-                </div>
-                <div class="highlight-item">
-                    <a href="{% url 'officer_detail' officer.pk %}"
-                       class="hoverable-link-secondary">Thông tin chung</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_title_view' officer.pk %}"
-                       class="hoverable-link-secondary">Chức danh</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_position_plan' officer.pk %}"
-                       class="hoverable-link-secondary">Quy hoạch</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_learning_path' officer.pk %}"
-                       class="hoverable-link-secondary">Đào tạo</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_work_process' officer.pk %}"
-                       class="hoverable-link-secondary">Quá trình công tác</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_salary_process' officer.pk %}"
-                       class="hoverable-link-secondary">Quá trình lương</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_laudatory' officer.pk %}"
-                       class="hoverable-link-secondary">Khen thưởng</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_discipline' officer.pk %}"
-                       class="hoverable-link-secondary">Kỷ luật</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_relative' officer.pk %}"
-                       class="hoverable-link-secondary">Thân nhân</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_abroad' officer.pk %}"
-                       class="hoverable-link-secondary">Ra nước ngoài</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_army_join_history' officer.pk %}"
-                       class="hoverable-link-secondary">Tham gia quân đội</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_health' officer.pk %}"
-                       class="hoverable-link-secondary">Sức khoẻ</a>
-                </div>
-                <div class="hoverable-item">
-                    <a href="{% url 'url_image' officer.pk %}"
-                       class="hoverable-link-secondary">Ảnh</a>
-                </div>
-            </div>
-
-            <div class="w-full h-screen overflow-y-auto px-7 pb-5 pt-10">
-                <h1 class="text-4xl font-semibold text-center">Tóm tắt lý lịch</h1>
-
+    <body class="bg-blue-100">
+        <div class="flex">
+            <nav class="w-64 h-screen bg-sky-600 px-4 py-6 flex flex-col space-y-2 fixed left-0 top-0 overflow-y-auto">
+                <a href="{% url 'officer_list' %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="{% url 'officer_detail' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-white text-black font-semibold">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Thông tin chung</span>
+                </a>
+                <a href="{% url 'url_title_view' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Chức danh</span>
+                </a>
+                <a href="{% url 'url_position_plan' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-arrow-up-short-wide"></i>
+                    <span>Quy hoạch</span>
+                </a>
+                <a href="{% url 'url_learning_path' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Đào tạo</span>
+                </a>
+                <a href="{% url 'url_work_process' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                    <i class="fas fa-business-time"></i>
+                    <span>Quá trình công tác</span>
+                </a>
+                <a href="{% url 'url_salary_process' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Quá trình lương</span>
+                </a>
+                <a href="{% url 'url_laudatory' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-medal"></i>
+                    <span>Khen thưởng</span>
+                </a>
+                <a href="{% url 'url_discipline' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Kỷ luật</span>
+                </a>
+                <a href="{% url 'url_relative' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-users"></i>
+                    <span>Thân nhân</span>
+                </a>
+                <a href="{% url 'url_abroad' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-plane-departure"></i>
+                    <span>Ra nước ngoài</span>
+                </a>
+                <a href="{% url 'url_army_join_history' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-person-military-rifle"></i>
+                    <span>Tham gia quân đội</span>
+                </a>
+                <a href="{% url 'url_health' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Sức khoẻ</span>
+                </a>
+                <a href="{% url 'url_image' officer.pk %}"
+                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                    <i class="fas fa-image"></i>
+                    <span>Ảnh</span>
+                </a>
+            </nav>
+            <main class="flex-1 ml-64 p-8 h-screen overflow-y-auto">
                 <a href="{% url 'officer_update' officer.pk %}"
                    class="flex justify-end pb-10">
-                    <button class="btn bg-base-100 rounded-lg">
-                        <img src="{% static 'src/compose.png' %}"
-                             alt="Compose icon"
-                             class="w-5 h-5" />
+                    <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10 bg-blue-600 hover:bg-blue-700 text-white">
+                        <i class="fas fa-edit"></i>
                         <span>Cập nhật</span>
                     </button>
                 </a>
-
                 <div class="flex space-x-1">
                     <div class="avatar w-40">
-                        <div class="w-40 h-48 rounded bg-base-200">
+                        <div class="w-40 h-48 rounded bg-white">
                             <img src="{% static 'src/army-avatar.png' %}"
                                  alt="Army avatar" />
                         </div>
@@ -106,41 +114,41 @@
                                     <div class="w-1/2">
                                         <div class="grid grid-cols-2 gap-3 items-center">
                                             <p class="text-right">Họ và tên khai sinh:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_name }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.birth_name }}</p>
 
                                             <p class="text-right">Tên đang dùng:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.current_name }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.current_name }}</p>
 
                                             <p class="text-right">Ngày sinh:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">
+                                            <p class="bg-white px-2 py-1 rounded-md">
                                                 {{ officer.date_of_birth|date:"d/m/Y" }}
                                             </p>
 
                                             <p class="text-right">Nơi sinh:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.birth_place }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.birth_place }}</p>
                                         </div>
                                     </div>
 
                                     <div class="w-1/2">
                                         <div class="grid grid-cols-2 gap-3 items-center">
                                             <p class="text-right">Dân tộc:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.folk }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.folk }}</p>
 
                                             <p class="text-right">Tôn giáo:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.religion }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.religion }}</p>
 
                                             <p class="text-right">Số CCCD:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_citizen }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.id_citizen }}</p>
 
                                             <p class="text-right">Số ĐT:</p>
-                                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.phone_number }}</p>
+                                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.phone_number }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="w-full">
                                     <div class="grid grid-cols-4 gap-2 items-center">
                                         <p class="text-right">Chỗ ở hiện nay:</p>
-                                        <p class="bg-base-200 pl-2 ml-1 col-span-3 py-1 rounded-md">
+                                        <p class="bg-white pl-2 ml-1 col-span-3 py-1 rounded-md">
                                             {{ officer.current_residence }}
                                         </p>
                                     </div>
@@ -152,92 +160,88 @@
                             <div class="flex-grow w-1/2">
                                 <div class="grid grid-cols-2 gap-3 items-center">
                                     <p class="text-right">Tháng năm vào Đoàn:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_group }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.month_join_group }}</p>
 
                                     <p class="text-right">Đoàn thể:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.group }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.group }}</p>
 
                                     <p class="text-right">Tháng năm vào Đảng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_party }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.month_join_party }}</p>
 
                                     <p class="text-right">Tháng năm chính thức:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">
+                                    <p class="bg-white px-2 py-1 rounded-md">
                                         {{ officer.month_join_party_official }}
                                     </p>
 
                                     <p class="text-right">Số thẻ Đảng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_card_number }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.party_card_number }}</p>
 
                                     <p class="text-right">Chức vụ Đảng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.party_position }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.party_position }}</p>
 
                                     <p class="text-right">Tháng năm tuyển dụng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_recruit }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.month_recruit }}</p>
 
                                     <p class="text-right">Tháng năm vào CA:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.month_join_CA }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.month_join_CA }}</p>
 
                                     <p class="text-right">Lực lượng:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_type }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.military_type }}</p>
 
                                     <p class="text-right">Loại hàm:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.rank_type }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.rank_type }}</p>
 
                                     <p class="text-right">Tháng năm đến ĐVCQ:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
+                                    <p class="bg-white px-2 py-1 rounded-md"></p>
 
                                     <p class="text-right">Tháng năm đến ĐVTT:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
+                                    <p class="bg-white px-2 py-1 rounded-md"></p>
 
                                     <p class="text-right">Tháng năm đến ĐVCS:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md"></p>
+                                    <p class="bg-white px-2 py-1 rounded-md"></p>
                                 </div>
                             </div>
 
                             <div class="flex-grow w-1/2">
                                 <div class="grid grid-cols-2 gap-3 items-center">
                                     <p class="text-right">Đơn vị công tác:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.work_unit }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.work_unit }}</p>
 
                                     <p class="text-right">Chức vụ:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.position }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.position }}</p>
 
                                     <p class="text-right">Cấp bậc hàm:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.military_rank }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.military_rank }}</p>
 
                                     <p class="text-right">Hệ số lương:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">
-                                        {{ officer.salary_coefficient }}
-                                    </p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.salary_coefficient }}</p>
 
                                     <p class="text-right">Quyết định lương:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.salary_decision }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.salary_decision }}</p>
 
                                     <p class="text-right">Năm quyết định lương:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">
-                                        {{ officer.salary_decision_year }}
-                                    </p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.salary_decision_year }}</p>
 
                                     <p class="text-right">Công tác làm nhiều nhất:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.most_work }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.most_work }}</p>
 
                                     <p class="text-right">Công tác chuyên trách:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.specialized_work }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.specialized_work }}</p>
 
                                     <p class="text-right">Công tác khác:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.other_work }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.other_work }}</p>
 
                                     <p class="text-right">Quyết định điều động:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.maneuver_decision }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.maneuver_decision }}</p>
 
                                     <p class="text-right">Đơn vị tuyển:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_unit }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.recruit_unit }}</p>
 
                                     <p class="text-right">Nguồn tuyển:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.recruit_source }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.recruit_source }}</p>
 
                                     <p class="text-right">Gia đình chính sách:</p>
-                                    <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.policy_family }}</p>
+                                    <p class="bg-white px-2 py-1 rounded-md">{{ officer.policy_family }}</p>
                                 </div>
                             </div>
                         </div>
@@ -246,67 +250,67 @@
                     <div class="flex-grow w-1/3">
                         <div class="grid grid-cols-2 gap-3 items-center">
                             <p class="text-right">Số hồ sơ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.id_ca }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.id_ca }}</p>
 
                             <p class="text-right">Nhóm máu:</p>
                             <div class="flex justify-between">
-                                <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
+                                <p class="bg-white px-3 py-1 rounded-md">{{ officer.blood_type }}</p>
                                 <div class="grid grid-cols-2 gap-3 items-center">
                                     <p class="text-right">Giới tính:</p>
-                                    <p class="bg-base-200 px-3 py-1 rounded-md">{{ officer.gender }}</p>
+                                    <p class="bg-white px-3 py-1 rounded-md">{{ officer.gender }}</p>
                                 </div>
                             </div>
 
                             <p class="text-right">Số TK BIDV:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.bank_account_BIDV }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.bank_account_BIDV }}</p>
 
                             <p class="text-right">Số sổ bảo hiểm:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.insurance_number }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.insurance_number }}</p>
 
                             <p class="text-right">Ký hiệu đơn vị:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.unit_notation }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.unit_notation }}</p>
 
                             <p class="text-right">Danh hiệu:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.compete_title }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.compete_title }}</p>
 
                             <p class="text-right">Quân trang:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.equipment_type }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.equipment_type }}</p>
 
                             <p class="text-right">Giày:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.size_of_shoes }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.size_of_shoes }}</p>
 
                             <p class="text-right">Mũ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.size_of_hat }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.size_of_hat }}</p>
 
                             <p class="text-right">Quần áo:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.size_of_clothes }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.size_of_clothes }}</p>
 
                             <p class="text-right">Tin học:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.certi_of_IT }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.certi_of_IT }}</p>
 
                             <p class="text-right">Ngoại ngữ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">
+                            <p class="bg-white px-2 py-1 rounded-md">
                                 {{ officer.certi_of_foreign_language }}
                             </p>
 
                             <p class="text-right">Trình độ chính trị:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.political_theory }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.political_theory }}</p>
 
                             <p class="text-right">Năng lực sở trường:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.strength }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.strength }}</p>
 
                             <p class="text-right">Trình độ học vấn:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.education }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.education }}</p>
 
                             <p class="text-right">Địa chỉ hồ sơ:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.profile_address }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.profile_address }}</p>
 
                             <p class="text-right">Ngày cập nhật:</p>
-                            <p class="bg-base-200 px-2 py-1 rounded-md">{{ officer.date_update }}</p>
+                            <p class="bg-white px-2 py-1 rounded-md">{{ officer.date_update }}</p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </body>
 </html>
