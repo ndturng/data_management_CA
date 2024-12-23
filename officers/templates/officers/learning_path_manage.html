@@ -129,32 +129,25 @@
                                 <tr class="border-t border-gray-300 bg-gray-100 text-lg">
                                     <td class="py-2 px-4">{{ learning_path.period }}</td>
                                     <td class="py-2 px-4">{{ learning_path.learning_content }}</td>
-                                    <td class="py-2">
-                                        <div class="flex items-center space-x-7">
-                                            <!-- Update Button -->
-                                            <div class="flex-none tooltip tooltip-top"
-                                                 data-tip="Cập nhật">
-                                                <a href="{% url 'url_learning_path_update' officer.pk learning_path.id %}">
-                                                    <button class="transform motion-safe:hover:scale-110 text-blue-600">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                </a>
-                                            </div>
+                                    <td class="py-2 px-4">
+                                        <!-- Update Button -->
+                                        <a href="{% url 'url_learning_path_update' officer.pk learning_path.id %}">
+                                            <button class="text-blue-600 transform motion-safe:hover:scale-110 mr-2">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </a>
 
-                                            <!-- Delete Button with confirmation -->
-                                            <div class="flex-none tooltip tooltip-top"
-                                                 data-tip="Xoá">
-                                                <form method="POST"
-                                                      action="{% url 'url_learning_path_delete' officer.pk learning_path.id %}"
-                                                      onsubmit="return confirmDelete();">
-                                                    {% csrf_token %}
-                                                    <button type="submit"
-                                                            class="transform motion-safe:hover:scale-110 text-red-600">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
+                                        <!-- Delete Button -->
+                                        <form method="POST"
+                                              action="{% url 'url_learning_path_delete' officer.pk learning_path.id %}"
+                                              onsubmit="return confirmDelete();"
+                                              class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit"
+                                                    class="text-red-600 transform motion-safe:hover:scale-110">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}
