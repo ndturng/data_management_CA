@@ -549,53 +549,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal for Add Officer -->
-    <div id="addModal"
-         class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
-        <!-- Modal content -->
-        <div class="bg-white p-8 rounded-lg w-96">
-            <h3 class="text-xl font-semibold mb-4">Add New Officer</h3>
-            <form>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                               placeholder="Officer's name" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Rank</label>
-                        <input type="text"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                               placeholder="Officer's rank" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Department</label>
-                        <input type="text"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                               placeholder="Officer's department" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Contact</label>
-                        <input type="text"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                               placeholder="Officer's contact" />
-                    </div>
-                    <div class="flex justify-end gap-4 mt-4">
-                        <button type="button"
-                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md">
-                            Cancel
-                        </button>
-                        <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-md">
-                            Save
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 </body>
 
 <div id="filterModal"
@@ -667,6 +620,39 @@
     </div>
 </div>
 
+<!-- Modal for Excel Processing Errors Messages -->
+<div id="ExcelErrorModal"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+     role="dialog"
+     aria-labelledby="modalTitle"
+     aria-describedby="modalDescription">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl mx-4">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 id="modalTitle" class="text-xl font-semibold text-red-600">Processing Errors</h2>
+            <button type="button"
+                    onclick="closeExcelErrorModal()"
+                    class="text-red-600 hover:text-red-800">
+                <i class="fa-solid fa-times w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div id="modalMessagesContainer" class="space-y-4 overflow-y-auto max-h-96">
+            <!-- Messages will be dynamically inserted here -->
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end mt-6">
+            <button onclick="closeExcelErrorModal()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <!-- Warning Message Modal -->
 <div id="warningModal"
      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
@@ -675,7 +661,6 @@
         <p class="text-red-600 text-center mb-4 font-semibold text-lg">CHÚ Ý</p>
         <p class="text-center"
            id="warningText"></p>
-
 
         <button onclick="closeWarningModal()"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mt-4">
@@ -807,6 +792,70 @@
 </div>
 
 <script>
+    const messages = [
+        {% for message in messages %}
+        {
+            type: "{{ message.tags }}", // e.g., "warning" or "error"
+            content: "{{ message|escapejs }}" // Escaped for safe JS rendering
+        },
+        {% endfor %}
+    ];
+
+    // Show the modal only if messages exist
+    if (messages.length > 0) {
+        showExcelErrorModal(messages);
+    }
+    
+    // Show the Excel Error Modal
+    function showExcelErrorModal(messages) {
+        // Check if messages exist and are non-empty
+        if (!messages || messages.length === 0) {
+            console.log("No messages to display, modal will not be shown.");
+            return; // Do nothing if no messages
+        }
+    
+        const modal = document.getElementById("ExcelErrorModal");
+        const messagesContainer = document.getElementById("modalMessagesContainer");
+    
+        if (!modal || !messagesContainer) {
+            console.error("Modal or messages container not found!");
+            return;
+        }
+    
+        // Clear previous messages
+        messagesContainer.innerHTML = "";
+    
+        // Add messages to the container
+        messages.forEach(message => {
+            console.log(message);
+            // Create a div for each message
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("p-4", "rounded-lg", "shadow-sm");
+    
+            // Style based on message type
+            if (message.type === "warning") {
+                messageDiv.classList.add("bg-yellow-50", "text-yellow-700", "border", "border-yellow-300");
+            } else if (message.type === "error") {
+                messageDiv.classList.add("bg-red-50", "text-red-700", "border", "border-red-300");
+            }
+    
+            // Set message content
+            messageDiv.textContent = message.content;
+            messagesContainer.appendChild(messageDiv);
+        });
+    
+        // Show the modal
+        modal.classList.remove("hidden");
+    }
+
+    // Close the Excel Error Modal
+    function closeExcelErrorModal() {
+        const modal = document.getElementById("ExcelErrorModal");
+        if (modal) {
+            modal.classList.add("hidden");
+        }
+    }
+
     // JavaScript to control the "Select All" functionality
     document.addEventListener("DOMContentLoaded", function() {
         // General function to handle "Select All" checkbox functionality
