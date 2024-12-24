@@ -47,6 +47,13 @@
                         onclick="logout()">
                     <i class="fas fa-sign-out-alt mr-2"></i>Log Out
                 </button>
+                <form id="logoutForm"
+                      class="hidden"
+                      method="POST"
+                      action="{% url 'logout' %}">
+                    {% csrf_token %}
+                </form>
+                    
             </div>
         </div>
     </nav>
@@ -792,6 +799,11 @@
 </div>
 
 <script>
+    // Log out 
+    function logout() {
+        document.getElementById("logoutForm").submit();
+    }
+    
     const messages = [
         {% for message in messages %}
         {
