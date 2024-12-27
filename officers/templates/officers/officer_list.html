@@ -65,8 +65,8 @@
                 <div class="overflow-x-auto overflow-y-auto h-full">
                     <table class="min-w-full divide-y divide-gray-200">
 
-                        {% for officer in officers %}
-                            <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for officer in officers %}
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-2 whitespace-nowrap max-w-25 text-center">
                                         {{ forloop.counter }}
@@ -87,8 +87,8 @@
                                         </a>
                                     </td>
                                 </tr>
-                            </tbody>
-                        {% endfor %}
+                            {% endfor %}
+                        </tbody>
 
                     </table>
                 </div>
