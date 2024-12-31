@@ -43,6 +43,7 @@
         opacity: 0.3
     }
 
+    /* Image zoom effect */
     /* Zoom button style */
     .zoom-btn {
         background-color: #333;
@@ -88,10 +89,78 @@
         pointer-events: auto; /* Explicitly allow interaction with buttons */
     }
 
-
     .hidden-bar {
         opacity: 0; /* Hide the bar */
     }   
 
+    /*------------------- Table Styles -------------------*/
+    .table-card {
+        @apply rounded-lg shadow-md overflow-hidden;
+    }
+    .table-container {
+        position: relative;
+        max-height: calc(90vh - 110px); /* 90% of the viewport height minus the top bar height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        background-color: white;
+    }
+
+    /* .table-container {
+        @apply relative max-h-[calc(90vh-110px)] overflow-y-auto bg-white;
+    }  */
+
+    .table-content {
+        @apply border-collapse w-full text-center;
+    }
+
+    .table-head {
+        @apply bg-sky-600 text-white text-xl sticky;
+    }
+
+    .table-head-row {
+        @apply bg-sky-600 text-white text-xl;
+    }
+
+    .table-head-row th {
+        @apply p-2;
+    }
+
+    .table-body-row {
+        @apply border-t border-gray-300 bg-white text-lg;        
+    }
+
+    .table-body-row td {
+        @apply p-2;
+    }
+
+    /* --------------------- Navigation Menu ----------------------- */
+
+    .nav-container {
+        @apply w-64 h-screen bg-sky-600 px-4 py-6 flex flex-col space-y-2 fixed left-0 top-0 overflow-y-auto;
+    }
+
+    .nav-item {
+        @apply flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold;
+    }
+
+    .nav-item-active {
+        @apply flex items-center space-x-3 px-4 py-3 rounded-lg bg-white text-black font-semibold;
+    }
+
+    .nav-item-inactive {
+        @apply text-white hover:text-gray-200;
+    }
+
+    /* --------------------- Button Styles ------------------------- */
+    .btn-blue {
+        @apply px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg bg-blue-600 hover:bg-blue-700 text-white;
+    }
+    
+    .icon-red {
+        @apply text-red-600 transform motion-safe:hover:scale-110;
+    }
+    
+    .icon-blue {
+        @apply text-blue-600 transform motion-safe:hover:scale-110; /* add mr-2 manually */
+    }
 }
     

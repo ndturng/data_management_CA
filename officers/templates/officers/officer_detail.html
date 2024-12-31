@@ -20,82 +20,86 @@
     </head>
     <body class="bg-blue-100">
         <div class="flex">
-            <nav class="w-64 h-screen bg-sky-600 px-4 py-6 flex flex-col space-y-2 fixed left-0 top-0 overflow-y-auto">
+            <nav class="nav-container">
                 <a href="{% url 'officer_list' %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                   class="nav-item">
                     <i class="fas fa-home"></i>
                     <span>Trang chủ</span>
                 </a>
                 <a href="{% url 'officer_detail' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-white text-black font-semibold">
+                   class="nav-item-active">
                     <i class="fas fa-info-circle"></i>
                     <span>Thông tin chung</span>
                 </a>
                 <a href="{% url 'url_title_view' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                   class="nav-item">
                     <i class="fas fa-user-tie"></i>
                     <span>Chức danh</span>
                 </a>
                 <a href="{% url 'url_position_plan' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                   class="nav-item">
                     <i class="fas fa-arrow-up-short-wide"></i>
                     <span>Quy hoạch</span>
                 </a>
                 <a href="{% url 'url_learning_path' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                   class="nav-item">
                     <i class="fas fa-graduation-cap"></i>
                     <span>Đào tạo</span>
                 </a>
                 <a href="{% url 'url_work_process' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold">
+                   class="nav-item">
                     <i class="fas fa-business-time"></i>
                     <span>Quá trình công tác</span>
                 </a>
                 <a href="{% url 'url_salary_process' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-file-invoice-dollar"></i>
                     <span>Quá trình lương</span>
                 </a>
                 <a href="{% url 'url_laudatory' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-medal"></i>
                     <span>Khen thưởng</span>
                 </a>
                 <a href="{% url 'url_discipline' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Kỷ luật</span>
                 </a>
                 <a href="{% url 'url_relative' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>Thân nhân</span>
                 </a>
                 <a href="{% url 'url_abroad' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-plane-departure"></i>
                     <span>Ra nước ngoài</span>
                 </a>
                 <a href="{% url 'url_army_join_history' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-person-military-rifle"></i>
                     <span>Tham gia quân đội</span>
                 </a>
                 <a href="{% url 'url_health' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-heartbeat"></i>
                     <span>Sức khoẻ</span>
                 </a>
                 <a href="{% url 'url_image' officer.pk %}"
-                   class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-200 font-semibold text-white">
+                   class="nav-item">
                     <i class="fas fa-image"></i>
                     <span>Ảnh</span>
                 </a>
             </nav>
             <main class="flex-1 ml-64 p-8 h-screen overflow-y-auto">
+                <h1 class="text-4xl text-center">
+                    Thông tin chung: <strong class="ml-3">{{ officer.birth_name }}</strong>
+                </h1>
+
                 <a href="{% url 'officer_update' officer.pk %}"
                    class="flex justify-end pb-10">
-                    <button class="btn px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg z-10 bg-blue-600 hover:bg-blue-700 text-white">
+                    <button class="btn btn-blue">
                         <i class="fas fa-edit"></i>
                         <span>Cập nhật</span>
                     </button>
