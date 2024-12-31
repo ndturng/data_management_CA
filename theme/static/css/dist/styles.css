@@ -3473,6 +3473,10 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 2rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -3539,6 +3543,38 @@ details.collapse summary::-webkit-details-marker {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[\] {
+  height: ;
+}
+
+.h-\[50\] {
+  height: 50;
+}
+
+.h-\[50px\] {
+  height: 50px;
+}
+
+.h-\[70px\] {
+  height: 70px;
+}
+
+.h-\[calc\(100vh-130px\)\] {
+  height: calc(100vh - 130px);
+}
+
+.h-\[calc\(100vh-110px\)\] {
+  height: calc(100vh - 110px);
+}
+
+.h-\[calc\(100vh-100px\)\] {
+  height: calc(100vh - 100px);
+}
+
+.h-\[calc\(100vh-101px\)\] {
+  height: calc(100vh - 101px);
 }
 
 .max-h-96 {
