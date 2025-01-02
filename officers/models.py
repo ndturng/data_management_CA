@@ -365,7 +365,7 @@ def image_upload_path(instance, filename):
     # Get the category and use it as the folder name
     category_folder = instance.category or "other"
     # Combine to make the full path
-    return os.path.join("officer_images", f"{officer_id}", category_folder, filename)
+    return f"officer_images/{officer_id}/{category_folder}/{filename}"
 
 
 class Image(models.Model):  # Hình ảnh
@@ -380,10 +380,13 @@ class Image(models.Model):  # Hình ảnh
 
     def save(self, *args, **kwargs):
         # If replacing an image, delete the old file
+        # This won't work if using storages backends other than the local filesystem
         try:
             this = Image.objects.get(id=self.id)
-            if this.image != self.image:
-                this.image.delete(save=False)
+            if this.image and this.image.path != self.image.path:
+                if os.path.isfile(this.image.path):
+                    os.remove(this.image.path)
+
         except Image.DoesNotExist:
             pass  # This is the first save, so no replacement needed
         super().save(*args, **kwargs)
@@ -396,5 +399,10 @@ class Image(models.Model):  # Hình ảnh
 def delete_image_file(sender, instance, **kwargs):
     # Check if the image file exists and delete it
     if instance.image:
-        if os.path.isfile(instance.image.path):
-            os.remove(instance.image.path)
+        try:
+            if os.path.isfile(instance.image.path):
+                os.remove(instance.image.path)
+        except Exception as e:
+            # Log the error instead of breaking
+            print(f"Error deleting file: {e}")
+

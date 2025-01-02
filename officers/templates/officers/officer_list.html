@@ -19,8 +19,8 @@
 
 <body class="bg-sky-100">
     <!-- Navigation Bar -->
-    <nav class="bg-sky-600 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+    <nav class="bg-sky-600 text-white shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center h-[70px]">
             <div class="flex flex-col items-center md:items-start">
                 <h1 class="text-2xl font-bold">CÔNG AN THỊ XÃ ĐÔNG HOÀ</h1>
                 <h2 class="text-xl font-bold">THÔNG TIN CÁN BỘ</h2>
@@ -47,19 +47,26 @@
                         onclick="logout()">
                     <i class="fas fa-sign-out-alt mr-2"></i>Log Out
                 </button>
+                <form id="logoutForm"
+                      class="hidden"
+                      method="POST"
+                      action="{% url 'logout' %}">
+                    {% csrf_token %}
+                </form>
+                    
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+    <div class="container mx-auto p-2 mt-2 flex flex-col lg:flex-row gap-6">
         <!-- Left section (Officer List) -->
-        <div class="lg:w-3/4 h-[calc(100vh-130px)]">
+        <div class="lg:w-3/4 h-[calc(100vh-101px)]">
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="overflow-x-auto overflow-y-auto h-full">
                     <table class="min-w-full divide-y divide-gray-200">
 
-                        {% for officer in officers %}
-                            <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for officer in officers %}
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-2 whitespace-nowrap max-w-25 text-center">
                                         {{ forloop.counter }}
@@ -80,8 +87,8 @@
                                         </a>
                                     </td>
                                 </tr>
-                            </tbody>
-                        {% endfor %}
+                            {% endfor %}
+                        </tbody>
 
                     </table>
                 </div>
@@ -90,7 +97,7 @@
         </div>
 
         <!-- Right Section (Filter Options) -->
-        <div class="lg:w-1/4 h-[calc(100vh-130px)]">
+        <div class="lg:w-1/4 h-[calc(100vh-101px)">
             <div class="bg-white py-3 rounded-lg shadow-md h-full flex flex-col">
                 <div class="px-4">
                     <h2 class="text-xl font-semibold mb-3 items-center text-center">
@@ -792,6 +799,11 @@
 </div>
 
 <script>
+    // Log out 
+    function logout() {
+        document.getElementById("logoutForm").submit();
+    }
+    
     const messages = [
         {% for message in messages %}
         {
@@ -805,7 +817,7 @@
     if (messages.length > 0) {
         showExcelErrorModal(messages);
     }
-    
+
     // Show the Excel Error Modal
     function showExcelErrorModal(messages) {
         // Check if messages exist and are non-empty
@@ -1153,17 +1165,5 @@
         const warningModal = document.getElementById("warningModal");
         warningModal.classList.add("hidden"); // Hide modal
     }
-
-    // Check if the reload count exists in sessionStorage
-    if (sessionStorage.getItem("reloadCount")) {
-        // Increment the reload count
-        sessionStorage.setItem("reloadCount", Number(sessionStorage.getItem("reloadCount")) + 1);
-    } else {
-        // Initialize the reload count
-        sessionStorage.setItem("reloadCount", 1);
-    }
-
-    // Display the reload count
-    console.log("Page has been reloaded", sessionStorage.getItem("reloadCount"), "times.");
     
 </script>
