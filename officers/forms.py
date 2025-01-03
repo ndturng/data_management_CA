@@ -239,9 +239,9 @@ class ImageForm(forms.ModelForm):
         fields = ["image", "description", "category"]  
 
         widgets = {
-            "description": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.TextInput(attrs={"class": "form-control rounded-lg w-full border-black"}),
             "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "category": forms.Select(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-control rounded-lg w-full border-black"}),
         }
 
     def __init__(self, *args, **kwargs):
