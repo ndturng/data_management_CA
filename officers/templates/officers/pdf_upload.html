@@ -1,0 +1,41 @@
+{% load static tailwind_tags %}
+<!-- Link to local Font Awesome CSS -->
+<link rel="stylesheet"
+href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
+
+<!-- templates/officers/image_upload.html -->
+<div class="mt-10">
+    {% tailwind_css %}
+    <h2 class="text-4xl font-semibold text-center">Tải file lên cho {{ officer.birth_name }}</h2>
+
+    <div class="flex justify-center mt-20">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group mb-6">
+                <span class="form-text">Chọn danh mục:</span>
+                {{ form.category }}
+            </div>
+            <div class="mb-6">
+                <span class="form-text">Thêm mô tả:</span>
+                {{ form.description }}
+            </div>
+            <div>
+                <span class="form-text ">Chọn một hoặc nhiều file để tải lên:</span>
+                <input type="file" name="pdf_file" multiple class="form-control">
+            </div>
+
+            <div class="space-x-48 mt-10">        
+                <!-- Back button to go to the officer's image list -->
+                <a href="{% url 'url_image' officer.pk %}" class="btn rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Quay lại</span>
+                </a>
+
+                <button type="submit" class="btn rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl">
+                    <i class="fa-solid fa-upload"></i>                    
+                    <span>Tải lên</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

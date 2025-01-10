@@ -14,7 +14,7 @@ from django.contrib.auth.views import LoginView
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
@@ -317,7 +317,7 @@ class CustomLoginView(LoginView):
         # Can set a custom URL based on user role
         # if self.request.user.is_superuser:
         #     return reverse("admin_dashboard")
-        return reverse("officer_list")
+        return super().get_success_url()
 
 
 ########################################################
@@ -1080,6 +1080,15 @@ class ImageDeleteView(LoginRequiredMixin, DeleteView):
         return reverse_lazy(
             "url_image", kwargs={"pk": self.kwargs[self.officer_url_kwarg]}
         )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["officer"] = self.get_object().officer
+        
+        category = self.get_object().category
+        context["category"] = dict(IMAGES_CATEGORY).get(category, category)
+
+        return context
 
 
 # Download selected images
@@ -1105,3 +1114,141 @@ def download_selected_images(request, officer_pk):
         return response
 
     return redirect("url_image", pk=officer_pk)
+
+def download_selected_pdfs(request, officer_pk):
+    if request.method == "POST":
+        selected_pdf_ids = request.POST.getlist("selected_pdfs")
+        # debug
+        print("selected_pdf_ids: ", selected_pdf_ids)
+        pdfs = m.PDF.objects.filter(
+            pk__in=selected_pdf_ids, officer_id=officer_pk
+        )
+
+        # Create a ZIP file in memory
+        response = HttpResponse(content_type="application/zip")
+        zip_filename = f"officer_{officer_pk}_pdfs.zip"
+        response["Content-Disposition"] = (
+            f'attachment; filename="{zip_filename}"'
+        )
+
+        with zipfile.ZipFile(response, "w") as zip_file:
+            for pdf in pdfs:
+                pdf_path = pdf.pdf_file.path
+                zip_file.write(pdf_path, os.path.basename(pdf_path))
+
+        return response
+
+def upload_pdf(request, officer_pk):
+    officer = get_object_or_404(m.Officer, pk=officer_pk)
+    if request.method == "POST":
+        form = f.PDFForm(request.POST, request.FILES)
+        if form.is_valid():
+            pdf_instance = form.save(commit=False)
+            pdf_instance.officer = officer
+            pdf_instance.save()
+            return redirect("url_image", pk=officer_pk)
+    else:
+        form = f.PDFForm()
+
+    return render(request, "officers/pdf_upload.html", {"form": form, "officer": officer})
+
+class MediaListView(LoginRequiredMixin, ListView):
+    template_name = "officers/image_list.html"  # Updated template name
+    context_object_name = "media"  # Renamed for generic use
+    pk_url_kwarg = "pk"  # Officer's pk
+
+    def get_queryset(self):
+        # Retrieve the officer
+        self.officer = get_object_or_404(
+            m.Officer, pk=self.kwargs[self.pk_url_kwarg]
+        )
+
+        # Fetch all images and PDFs for the officer
+        images_queryset = self.officer.images.all()
+        pdfs_queryset = self.officer.pdfs.all()
+
+        # Filter by category if specified in query parameters
+        category = self.request.GET.get("category")
+        if category in dict(IMAGES_CATEGORY):
+            images_queryset = images_queryset.filter(category=category)
+            pdfs_queryset = pdfs_queryset.filter(category=category)
+
+        # Combine both querysets into a list (return both as context)
+        return {"images": images_queryset, "pdfs": pdfs_queryset}
+
+    def get_context_data(self, **kwargs):
+        # Get the default context
+        context = super().get_context_data(**kwargs)
+
+        # Add officer object to context
+        context["officer"] = self.officer
+
+        # Add category labels for filtering
+        context["category_labels"] = {
+            choice[0]: choice[1] for choice in IMAGES_CATEGORY
+        }
+
+        media = self.get_queryset()
+        images = media["images"]
+        pdfs = media["pdfs"]
+
+        # Add separate images and PDFs to the context
+        context["images"] = images
+        context["pdfs"] = [{"pdf": pdf, "file_name": pdf.pdf_file.name.split("/")[-1]} for pdf in pdfs]
+
+        return context
+
+# Update PDF View
+class PDFUpdateView(LoginRequiredMixin, UpdateView):
+    model = m.PDF
+    form_class = f.PDFForm
+    template_name = "officers/pdf_update.html"  
+    pk_url_kwarg = 'pdf_pk'
+    context_object_name = 'pdf'
+
+    def get_object(self):
+        # Ensure the PDF belongs to the correct officer
+        officer = get_object_or_404(m.Officer, pk=self.kwargs["officer_pk"])
+        return get_object_or_404(m.PDF, pk=self.kwargs["pdf_pk"], officer=officer)
+    
+    def get_success_url(self):
+        return reverse_lazy(
+            "url_image", kwargs={"pk": self.kwargs["officer_pk"]}
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["officer"] = self.get_object().officer
+        context["file_name"] = self.get_object().pdf_file.name.split("/")[-1]
+        return context
+    
+# Delete PDF View
+class PDFDeleteView(LoginRequiredMixin, DeleteView):
+    model = m.PDF
+    template_name = "officers/pdf_confirm_delete.html"
+    pk_url_kwarg = "pdf_pk"  # PDF's pk
+    officer_url_kwarg = "officer_pk"  # Officer's pk
+
+    def get_object(self):
+        officer = get_object_or_404(
+            m.Officer, pk=self.kwargs[self.officer_url_kwarg]
+        )
+        return get_object_or_404(
+            m.PDF, pk=self.kwargs[self.pk_url_kwarg], officer=officer
+        )
+
+    def get_success_url(self):
+        # Use pk instead of officer_pk to match the URL pattern
+        return reverse_lazy(
+            "url_image", kwargs={"pk": self.kwargs[self.officer_url_kwarg]}
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["file_name"] = self.get_object().pdf_file.name.split("/")[-1]
+        category = self.get_object().category
+        context["category"] = dict(IMAGES_CATEGORY).get(category, category)
+        
+        context["officer"] = self.get_object().officer
+        
+        return context

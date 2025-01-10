@@ -406,3 +406,22 @@ def delete_image_file(sender, instance, **kwargs):
             # Log the error instead of breaking
             print(f"Error deleting file: {e}")
 
+
+def pdf_upload_path(instance, filename):
+    officer_id = instance.officer.pk
+    category_folder = instance.category or "other"
+    return f"officer_files/{officer_id}/{category_folder}/{filename}"
+
+class PDF(models.Model):  
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, related_name="pdfs"
+    )
+    pdf_file = models.FileField(
+        upload_to=pdf_upload_path, null=True, blank=True
+    )
+    description = models.CharField(max_length=255, null=True, blank=True, default="Chưa có mô tả")
+    category = models.CharField(max_length=255, choices=IMAGES_CATEGORY, default="other")
+
+    def __str__(self):
+        return self.description
+

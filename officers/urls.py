@@ -255,9 +255,10 @@ urlpatterns = [
     ),
     ############################################################
     # Hình ảnh
+    # List images and pfds
     path(
         "<int:pk>/images",
-        views.ImageListView.as_view(),
+        views.MediaListView.as_view(),
         name="url_image",
     ),
     path(
@@ -265,6 +266,7 @@ urlpatterns = [
         views.ImageCreateView.as_view(),
         name="url_image_create",
     ),
+    # Update image
     path(
         "<int:officer_pk>/images/update/<int:image_pk>",
         views.ImageUpdateView.as_view(),
@@ -279,5 +281,31 @@ urlpatterns = [
         "<int:officer_pk>/images/download_selected",
         views.download_selected_images,
         name="url_download_selected_images",
+    ),
+    ############################################################
+    # Tài liệu PDF
+    # Upload PDF
+    path(
+        "<int:officer_pk>/upload-pdf/", 
+        views.upload_pdf, 
+        name="url_upload_pdf"
+    ),
+    # Download selected PDFs
+    path(
+        "<int:officer_pk>/pdfs/download-selected",
+        views.download_selected_pdfs,
+        name="url_download_selected_pdfs",
+    ),
+    # Update PDF
+    path(
+        "<int:officer_pk>/pdfs/update/<int:pdf_pk>",
+        views.PDFUpdateView.as_view(),
+        name="url_update_pdf",
+    ),
+    # Delete PDF
+    path(
+        "<int:officer_pk>/pdfs/delete/<int:pdf_pk>",
+        views.PDFDeleteView.as_view(),
+        name="url_delete_pdf",
     ),
 ]

@@ -154,6 +154,10 @@
     .btn-blue {
         @apply px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg bg-blue-600 hover:bg-blue-700 text-white;
     }
+
+    .btn-red {
+        @apply px-4 py-2 rounded-lg shadow-inner drop-shadow-lg inline-flex items-center text-lg bg-red-600 hover:bg-red-700 text-white;
+    }
     
     .icon-red {
         @apply text-red-600 transform motion-safe:hover:scale-110;
@@ -161,6 +165,11 @@
     
     .icon-blue {
         @apply text-blue-600 transform motion-safe:hover:scale-110; /* add mr-2 manually */
+    }
+
+    /* --------------------- Checkbox Styles  ------------------------- */
+    input[type='checkbox'] {
+        @apply h-5 w-5 rounded border-black text-blue-600 focus:ring-blue-500;
     }
 }
     
