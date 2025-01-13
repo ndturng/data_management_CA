@@ -239,9 +239,9 @@ class ImageForm(forms.ModelForm):
         fields = ["image", "description", "category"]  
 
         widgets = {
-            "description": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.TextInput(attrs={"class": "form-control rounded-lg w-full border-black"}),
             "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
-            "category": forms.Select(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-control rounded-lg w-full border-black"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -249,3 +249,13 @@ class ImageForm(forms.ModelForm):
         self.fields["image"].label = "Tệp ảnh"
         self.fields["description"].label = "Mô tả"
         self.fields["category"].label = "Danh mục"
+
+class PDFForm(forms.ModelForm):
+    class Meta:
+        model = m.PDF
+        fields = ["pdf_file", "description", "category"]
+        widgets = {
+            "description": forms.TextInput(attrs={"class": "form-control rounded-lg w-full border-black"}),
+            "pdf_file": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "category": forms.Select(attrs={"class": "form-control rounded-lg w-full border-black"}),
+        }

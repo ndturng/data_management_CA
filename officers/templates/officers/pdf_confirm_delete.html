@@ -1,0 +1,55 @@
+{% load static tailwind_tags %}
+
+<div class="text-center mt-36 w-1/2 mx-auto">
+    {% tailwind_css %}
+    <h2 class="text-4xl font-medium text-red-500">Bạn đang muốn xoá file PDF?</h2>
+    <!-- Split into two columns -->
+    <div class="grid grid-cols-2 gap-4 mt-4 text-left text-lg">
+        <!-- Show PDF file name -->
+        <p class="text-right">Xoá file:</p>
+        <span class="text-red-500">
+            {{ file_name }}
+            <!-- Link to the PDF file -->
+            <a class="text-blue-600 underline"
+            href="{{ pdf.pdf_file.url }}"
+            target="_blank">Xem</a>
+        </span>
+
+        
+
+        <!-- Show PDF file description -->
+        <p class="text-right">
+            Mô tả: 
+        </p>
+        <span class="text-red-500">{{ pdf.description }}</span>
+
+        <!-- Show which officer the PDF file belongs to -->
+        <p class="text-right">
+            Của cán bộ: 
+        </p>
+        <span class="text-red-500">{{ object.officer }}</span>
+
+        <!-- Show which category the PDF file belongs to -->
+        <p class="text-right">
+            Danh mục: 
+        </p>
+        <span class="text-red-500">{{ category }}</span>
+    </div>
+
+    <p class="text-lg font-medium mt-4">
+        HÀNH ĐỘNG NÀY KHÔNG THỂ HOÀN TÁC!!!
+    </p>
+
+    <form method="post"
+          class="mt-10">
+        {% csrf_token %}
+        <div class="space-x-6">
+            <a href="{% url 'url_image' pk=object.officer.pk %}"
+               class="btn rounded-lg shadow-lg">HUỶ</a>
+            <button type="submit"
+                    class="btn btn-error rounded-lg text-white shadow-lg">
+                XOÁ
+            </button>
+        </div>
+    </form>
+</div>

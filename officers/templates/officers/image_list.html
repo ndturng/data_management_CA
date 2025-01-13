@@ -99,11 +99,7 @@
                 </a>
             </nav>
 
-            <form id="downloadForm"
-                  method="POST"
-                  action="{% url 'url_download_selected_images' officer.pk %}"
-                  class="flex-1 ml-64 p-8 overflow-y-auto bg-blue-100 mb-0">
-                {% csrf_token %}
+            <div class="flex-1 ml-64 p-8 overflow-y-auto bg-blue-100 mb-0">
 
                 <!-- Header Section -->
                 <h1 class="text-4xl text-center mb-10">
@@ -134,10 +130,11 @@
 
                     <!-- Action Buttons -->
                     <div class="flex gap-4">
-                        <!-- Download Selected button -->
+                        <!-- Download Selected Images button -->
                         <button type="submit"
+                                form="images"
                                 class="btn btn-blue">
-                            <span class="pr-2">Tải xuống ảnh đã chọn</span>
+                            <span class="pr-2">Tải ảnh đã chọn</span>
                             <i class="fa-solid fa-download"></i>
                         </button>
 
@@ -149,24 +146,51 @@
                                 <span>Tải ảnh lên</span>
                             </button>
                         </a>
+
+                        <!-- Download Selected PDFs button -->
+                        <button type="submit"
+                                form="pdfs"
+                                class="btn btn-blue">
+                            <span class="pr-2">Tải PDF đã chọn</span>
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+
+                        <!-- Upload PDF Button -->
+                        <a href="{% url 'url_upload_pdf' officer.pk %}">
+                            <button type="button"
+                                    class="btn btn-blue">
+                                <i class="fa-solid fa-upload pr-2"></i>
+                                <span>Tải PDF lên</span>
+                            </button>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Select All Checkbox -->
-                <div class="form-check form-switch mb-8">
-                    <input type="checkbox"
-                           id="selectAllCheckbox"
-                           class="form-check-input"
-                           onclick="toggleSelectAll(this)" />
-                    <label for="selectAllCheckbox"
-                           class="form-check-label text-lg font-semibold">
-                        Chọn tất cả ảnh trong danh mục
+                <div class="mb-5 flex items-center space-x-10">
+                    <!-- Show Images Checkbox -->
+                    <label for="showImages" class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox"
+                               id="showImages"
+                               onclick="toggleMedia('images')"
+                               checked />
+                        <span class="text-lg font-medium">Hiển thị ảnh</span>
+                    </label>
+                
+                    <!-- Select All Images Checkbox -->
+                    <label for="selectAllCheckbox" class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox"
+                               id="selectAllCheckbox"
+                               onclick="toggleSelectAll(this)" />
+                        <span class="text-lg font-medium">Chọn tất cả ảnh trong danh mục</span>
                     </label>
                 </div>
 
                 <!-- Image Gallery -->
-                <div id="images"
-                     class="grid grid-cols-4 gap-6">
+                <form id="images"
+                      method="POST"
+                      action="{% url 'url_download_selected_images' officer.pk %}"
+                      class="grid grid-cols-4 gap-6 mb-10">
+                    {% csrf_token %}
 
                     {% for image in images %}
                         <div class="card p-4 shadow-md rounded-lg overflow-hidden relative group bg-white">
@@ -175,7 +199,7 @@
                                 <input type="checkbox"
                                        name="selected_images"
                                        value="{{ image.pk }}"
-                                       class="image-checkbox absolute top-3 right-3" />
+                                       class="absolute top-3 right-3" />
                                 <p class="text-sm font-medium">{{ image.description }}</p>
                             </div>
 
@@ -216,8 +240,67 @@
                         </div>
                     {% endfor %}
 
-                </div>
-            </form>
+                </form>
+
+                <!-- PDF Gallery -->
+                <form id="pdfs"
+                      method="POST"
+                      action="{% url 'url_download_selected_pdfs' officer.pk %}"
+                      class="grid grid-cols-4 gap-6">
+                    {% csrf_token %}
+
+                    {% for pdf in pdfs %}
+                        <div class="media-pdfs card p-4 shadow-md rounded-lg overflow-hidden relative group bg-white media-pdfs">
+                            <!-- Checkbox for selection -->
+                            <div class="items-center mb-3">
+                                <input type="checkbox"
+                                       name="selected_pdfs"
+                                       value="{{ pdf.pdf.pk }}"
+                                       class="absolute top-3 right-3" />
+                                <p class="text-sm font-medium">{{ pdf.pdf.description }}</p>
+                                <p class="text-sm font-medium">{{ pdf.file_name }}</p>
+                            </div>
+
+                            <div class="card w-full rounded-lg overflow-hidden relative group">
+                                <!-- PDF Display -->
+                                <a href="{{ pdf.pdf.pdf_file.url }}"
+                                   target="_blank"
+                                   class="flex flex-col items-center">
+                                    <i class="fa-solid fa-file-pdf text-5xl text-red-600"></i>
+                                    <p class="text-gray-600 text-sm mt-2 font-semibold underline text-blue-700">
+                                        Xem
+                                    </p>
+                                </a>
+                                <!-- Small Overlay in the Top-Right -->
+                                <div class="absolute top-2 right-2 flex gap-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Download"
+                                       href="{{ pdf.pdf.pdf_file.url }}"
+                                       download>
+                                        <i class="fas fa-download text-green-700"></i>
+                                    </a>
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Edit"
+                                       href="{% url 'url_update_pdf' officer.pk pdf.pdf.pk %}">
+                                        <i class="fas fa-edit text-blue-700"></i>
+                                    </a>
+                                    <a class="tooltip tooltip-bottom"
+                                       data-tip="Delete"
+                                       href="{% url 'url_delete_pdf' officer.pk pdf.pdf.pk %}">
+                                        <i class="fas fa-trash text-red-500"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-span-4 text-center text-lg italic">
+                            No PDFs in this category.
+                        </div>
+                    {% endfor %}
+
+                </form>
+
+            </div>
 
             <!-- Full Image View -->
             <div id="FullImageView"
@@ -287,6 +370,13 @@
 </html>
 
 <script>
+    // Function to toggle the visibility of media sections
+    function toggleMedia(mediaType) {
+        const mediaSection = document.getElementById(mediaType);
+        const checkbox = document.getElementById(`show${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}`);
+        mediaSection.style.display = checkbox.checked ? 'grid' : 'none';
+    }
+    
     function filterCategory() {
         const category = document.getElementById("categoryDropdown").value;
         const url = new URL(window.location.href);
