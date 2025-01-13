@@ -1,5 +1,7 @@
 *cpython-310.pyc
 *venv*
+.env
+*.sql
 
 # migrations # check later
 officers/migrations/*.py
@@ -7,8 +9,8 @@ officers/migrations/*.py
 **/__pycache__/
 
 # ignore all image files
-# *.png
+*.png
 *.jpg
 *.jpeg
-
+*.pdf
 node_modules/

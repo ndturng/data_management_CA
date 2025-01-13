@@ -102,14 +102,16 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+from decouple import config
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "OFFICERS_TABLE",
-        "USER": "manager",
-        "PASSWORD": "manager@123",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "NAME": config("DB_NAME", default="default_db"),
+        "USER": config("DB_USER", default="default_user"),
+        "PASSWORD": config("DB_PASSWORD", default="default_password"),
+        "HOST": config("DB_HOST", default="localhost"),
+        "PORT": config("DB_PORT", default="3306"),
     }
 }
 
