@@ -133,6 +133,7 @@
                         <!-- Download Selected Images button -->
                         <button type="submit"
                                 form="images"
+                                onclick="return validateSelection('images', 'warningModal')"
                                 class="btn btn-blue">
                             <span class="pr-2">Tải ảnh đã chọn</span>
                             <i class="fa-solid fa-download"></i>
@@ -150,6 +151,7 @@
                         <!-- Download Selected PDFs button -->
                         <button type="submit"
                                 form="pdfs"
+                                onclick="return validateSelection('pdfs', 'warningModal')"
                                 class="btn btn-blue">
                             <span class="pr-2">Tải PDF đã chọn</span>
                             <i class="fa-solid fa-download"></i>
@@ -366,10 +368,52 @@
             </div>
 
         </div>
+
+        <div id="warningModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                <h2 class="text-xl font-semibold mb-4">Warning</h2>
+                <p class="text-gray-600 mb-4">Please select at least one file to download.</p>
+                <button onclick="document.getElementById('warningModal').classList.add('hidden')"
+                        class="btn btn-blue">
+                    OK
+                </button>
+            </div>
+        </div>
+        
     </body>
 </html>
 
 <script>
+    // Function to validate the selection of checkboxes
+    function validateSelection(formId, warningModalId) {
+        // Get the form element by ID
+        const form = document.getElementById(formId);
+    
+        // Find all checkboxes within the form
+        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+    
+        // Check if at least one checkbox is selected
+        const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+    
+        if (!isChecked) {
+            // If no checkbox is selected, show the warning modal
+            const modal = document.getElementById(warningModalId);
+            // make detail warning message
+            if (formId === "images") {
+                modal.querySelector("p").textContent = "Vui lòng chọn ít nhất một ảnh để tải xuống.";
+            } else {
+                modal.querySelector("p").textContent = "Vui lòng chọn ít nhất một file PDF để tải xuống.";
+            }
+
+            if (modal) {
+                modal.classList.remove('hidden'); // Show the modal
+            }
+            return false; // Prevent form submission
+        }
+    
+        return true; // Allow form submission
+    }
+    
     // Function to toggle the visibility of media sections
     function toggleMedia(mediaType) {
         const mediaSection = document.getElementById(mediaType);

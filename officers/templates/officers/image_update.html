@@ -35,15 +35,14 @@ href="{% static 'fonts/font-awesome/css/all.min.css' %}" />
 
             <div class="space-x-40 mt-10">
                 <!-- Back button to go to the officer's image list -->
-                <a href="{% url 'url_image' officer.pk %}" class="btn rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl">
+                <a href="{% url 'url_image' officer.pk %}" class="btn btn-blue">
                     <i class="fa-solid fa-arrow-left"></i>
-
                     <span>Quay lại</span>
                 </a>
 
-                <button type="submit" class="btn rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xl">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span>Cập nhật</span>
+                <button type="submit" class="btn btn-blue">
+                    <i class="fa-solid fa-floppy-disk"></i>                  
+                    <span>Lưu</span>
                 </button>
             </div>
         </form>

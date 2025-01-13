@@ -1,16 +1,52 @@
 {% load static tailwind_tags %}
 
-{% block content %}
-  <div class="text-center mt-36">
-  {% tailwind_css %}
-   <h2 class="text-4xl font-medium text-red-500">Bạn đang muốn xoá ảnh này?</h2>
+<div class="text-center mt-36">
+    {% tailwind_css %}
+    <h2 class="text-4xl font-medium text-red-500 mb-5">
+        Bạn đang muốn xoá ảnh này?
+    </h2>
+    <div class="flex space-x-60 justify-center">
+        <div class="mb-3">
+            <img src="{{ image.image.url }}"
+                 alt="{{ image.description }}"
+                 class="img-thumbnail w-56 ml-5" />
+        </div>
+    </div>
 
-    <form method="post" class="mt-10">
-      {% csrf_token %}
-      <div class="space-x-6">
-        <a href="{% url 'url_image' pk=object.officer.pk %}" class="btn rounded-lg shadow-lg">HUỶ</a>
-        <button type="submit" class="btn btn-error rounded-lg text-white shadow-lg">XOÁ</button>
-      </div>
+    <!-- Split into two columns -->
+    <div class="grid grid-cols-2 gap-4 text-left text-lg font-medium">
+        <!-- Show the description of the image -->
+        <p class="text-right">
+            Mô tả:
+        </p>
+        <span class="text-red-500">{{ image.description }}</span>
+
+        <!-- Show which category the image belongs to -->
+        <p class="text-right">
+            Thuộc danh mục:            
+        </p>
+        <span class="text-red-500">{{ category }}</span>
+
+        <!-- Show which officer the image belongs to -->
+        <p class="text-right">
+            Của cán bộ:
+        </p>
+        <span class="text-red-500">{{ object.officer }}</span>
+    </div>
+
+
+    <p class="text-lg mt-4 font-medium">
+        HÀNH ĐỘNG NÀY KHÔNG THỂ HOÀN TÁC!!!
+    </p>
+
+    <form method="post"
+          class="mt-10">
+        {% csrf_token %}
+        <div class="space-x-6">
+            <a href="{% url 'url_image' pk=object.officer.pk %}"
+               class="btn btn-blue">HUỶ</a>
+            <button type="submit"
+                    class="btn btn-red">XOÁ</button>
+        </div>
     </form>
-  </div>
-{% endblock %}
+</div>
