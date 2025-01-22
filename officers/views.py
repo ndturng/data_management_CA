@@ -1118,8 +1118,6 @@ def download_selected_images(request, officer_pk):
 def download_selected_pdfs(request, officer_pk):
     if request.method == "POST":
         selected_pdf_ids = request.POST.getlist("selected_pdfs")
-        # debug
-        print("selected_pdf_ids: ", selected_pdf_ids)
         pdfs = m.PDF.objects.filter(
             pk__in=selected_pdf_ids, officer_id=officer_pk
         )
