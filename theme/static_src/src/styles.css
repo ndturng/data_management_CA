@@ -171,5 +171,11 @@
     input[type='checkbox'] {
         @apply h-5 w-5 rounded border-black text-blue-600 focus:ring-blue-500;
     }
+
+    /* --------------------- Label Styles  ------------------------- */
+    label.cursor-pointer:hover {
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }    
 }
     
