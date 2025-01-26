@@ -5,6 +5,7 @@ IMAGES_CATEGORY = (
     ("learn_review", "Học tập - Kiểm thảo"),
     ("laudatory_discipline", "Khen thưởng - Kỷ luật"),
     ("other", "Các tài liệu khác"),
+    ("avatar", "Ảnh đại diện"),
 )
 
 SEARCH_FIELDS = [

@@ -36,6 +36,13 @@ class OfficerInfoForm(forms.ModelForm):
         if not self.initial.get("date_update"):
             self.initial["date_update"] = datetime.now().strftime("%d/%m/%Y")
 
+        # Add avatar field dynamically
+        self.fields["avatar"] = forms.ImageField(
+            required=False,
+            label="Avatar",
+            widget=forms.ClearableFileInput(attrs={"class": "custom-file-input"})
+        )
+        
     def clean_month_year(self, field_name):
         value = self.cleaned_data.get(field_name)
         if value:
@@ -54,6 +61,19 @@ class OfficerInfoForm(forms.ModelForm):
         for field in c.GENERAL_INFO_MONTH_FIELDS:
             cleaned_data[field] = self.clean_month_year(field)
         return cleaned_data
+    
+    def save(self, commit=True):
+        # Save officer info first
+        officer = super().save(commit=commit)
+
+        # Handle avatar upload
+        avatar_file = self.cleaned_data.get("avatar")
+        if avatar_file:
+            # Delete the old avatar (if exists) and upload the new one
+            m.Image.objects.filter(officer=officer, category="avatar").delete()
+            m.Image.objects.create(officer=officer, image=avatar_file, category="avatar")
+
+        return officer
 
 
 class MultipleFileInput(forms.ClearableFileInput):

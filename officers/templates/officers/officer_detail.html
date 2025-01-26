@@ -106,9 +106,16 @@
                 </a>
                 <div class="flex space-x-1">
                     <div class="avatar w-40">
-                        <div class="w-40 h-48 rounded bg-white">
-                            <img src="{% static 'src/army-avatar.png' %}"
-                                 alt="Army avatar" />
+                        <div class="w-40 h-48 rounded bg-base-200 fixed relative">
+                            <!-- Avatar Image -->
+                            <label for="id_avatar" class="cursor-pointer">
+                                <img 
+                                    id="avatar-preview" 
+                                    src="{% if avatar %}{{ avatar.image.url }}{% else %}{% static 'src/army-avatar.png' %}{% endif %}" 
+                                    alt="Army Avatar" 
+                                    class="object-cover w-full h-full rounded"
+                                />
+                            </label>
                         </div>
                     </div>
                     <div class="w-2/3">
