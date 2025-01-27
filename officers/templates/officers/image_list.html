@@ -179,11 +179,19 @@
                     </label>
                 
                     <!-- Select All Images Checkbox -->
-                    <label for="selectAllCheckbox" class="flex items-center space-x-3 cursor-pointer">
+                    <label for="selectAllImage" class="flex items-center space-x-3 cursor-pointer">
                         <input type="checkbox"
-                               id="selectAllCheckbox"
-                               onclick="toggleSelectAll(this)" />
-                        <span class="text-lg font-medium">Chọn tất cả ảnh trong danh mục</span>
+                               id="selectAllImage"
+                               onclick="toggleSelectAll(this, '.image-checkbox')" />
+                        <span class="text-lg font-medium">Chọn tất cả ảnh</span>
+                    </label>
+
+                    <!-- Select All PDFs Checkbox -->
+                    <label for="selectAllPDFs" class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox"
+                               id="selectAllPDFs"
+                               onclick="toggleSelectAll(this, '.pdf-checkbox')" />
+                        <span class="text-lg font-medium">Chọn tất cả PDF</span>
                     </label>
                 </div>
 
@@ -201,7 +209,7 @@
                                 <input type="checkbox"
                                        name="selected_images"
                                        value="{{ image.pk }}"
-                                       class="absolute top-3 right-3" />
+                                       class="image-checkbox absolute top-3 right-3" />
                                 <p class="text-sm font-medium">{{ image.description }}</p>
                             </div>
 
@@ -258,7 +266,7 @@
                                 <input type="checkbox"
                                        name="selected_pdfs"
                                        value="{{ pdf.pdf.pk }}"
-                                       class="absolute top-3 right-3" />
+                                       class="pdf-checkbox absolute top-3 right-3" />
                                 <p class="text-sm font-medium">{{ pdf.pdf.description }}</p>
                                 <p class="text-sm font-medium">{{ pdf.file_name }}</p>
                             </div>
@@ -428,13 +436,13 @@
         window.location.href = url.toString();
     }
 
-    function toggleSelectAll(selectAllCheckbox) {
-        const imageCheckboxes = document.querySelectorAll(".image-checkbox");
-        imageCheckboxes.forEach(checkbox => {
+    function toggleSelectAll(selectAllCheckbox, checkboxClass) {
+        const checkboxes = document.querySelectorAll(checkboxClass);
+        checkboxes.forEach(checkbox => {
             checkbox.checked = selectAllCheckbox.checked;
         });
     }
-
+    
   
     let zoomLevel = 1;
     const zoomStep = 0.1;

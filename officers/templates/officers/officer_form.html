@@ -25,7 +25,7 @@
     {% endif %}
 </h2>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% tailwind_css %}
     <div class="mx-10 p-5 bg-blue-100 rounded-lg shadow-lg">
@@ -53,9 +53,24 @@
 
         <div class="flex space-x-1">
             <div class="avatar w-40">
-                <div class="w-40 h-48 rounded bg-base-200 fixed">
-                    <img src="{% static 'src/army-avatar.png' %}"
-                         alt="Army avatar" />
+                <div class="w-40 h-48 rounded bg-base-200 fixed relative">
+                    <!-- Avatar Image -->
+                    <label for="id_avatar" class="cursor-pointer">
+                        <img 
+                            id="avatar-preview" 
+                            src="{% if avatar %}{{ avatar.image.url }}{% else %}{% static 'src/army-avatar.png' %}{% endif %}" 
+                            alt="Army Avatar" 
+                            class="object-cover w-full h-full rounded"
+                        />
+                    </label>
+                    <!-- Hidden File Input -->
+                    <input 
+                        type="file" 
+                        name="avatar" 
+                        id="id_avatar" 
+                        class="hidden" 
+                        onchange="previewAvatar(event)"
+                    />
                 </div>
             </div>
 
@@ -363,4 +378,18 @@
         </div>
     </div>
 </form>
+
+<script>
+    function previewAvatar(event) {
+        const input = event.target;
+        const preview = document.getElementById("avatar-preview");
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]); // Read the file as a DataURL
+        }
+    }
+</script>
 

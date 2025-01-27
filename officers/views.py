@@ -268,22 +268,36 @@ def excel_upload(request):
 def officer_update(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
 
+    avatar = officer.images.filter(category="avatar").last()
+
     if request.method == "POST":
-        form = f.OfficerInfoForm(request.POST, instance=officer)
+        form = f.OfficerInfoForm(request.POST, request.FILES, instance=officer)
         if form.is_valid():
             form.save()
             return redirect("officer_detail", pk=pk)
     else:
         form = f.OfficerInfoForm(instance=officer)
 
-    return render(request, "officers/officer_form.html", {"form": form})
+    return render(
+        request, 
+        "officers/officer_form.html", 
+        {"form": form, "avatar": avatar}  # Pass the avatar to the template
+    )
 
 
 @login_required
 def officer_detail(request, pk):
     officer = get_object_or_404(m.Officer, pk=pk)
     disciplines = officer.disciplines.all()
-    context = {"officer": officer, "disciplines": disciplines}
+
+    # Fetch the avatar for the officer (filter by category "avatar")
+    avatar = officer.images.filter(category="avatar").last()
+
+    context = {
+        "officer": officer,
+        "disciplines": disciplines,
+        "avatar": avatar,  # Pass the avatar object to the template
+    }
     return render(request, "officers/officer_detail.html", context)
 
 
@@ -1118,8 +1132,6 @@ def download_selected_images(request, officer_pk):
 def download_selected_pdfs(request, officer_pk):
     if request.method == "POST":
         selected_pdf_ids = request.POST.getlist("selected_pdfs")
-        # debug
-        print("selected_pdf_ids: ", selected_pdf_ids)
         pdfs = m.PDF.objects.filter(
             pk__in=selected_pdf_ids, officer_id=officer_pk
         )
