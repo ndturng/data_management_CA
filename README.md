@@ -1,5 +1,5 @@
 # data_management_CA
- This project aim to create a web application that allows users to manage the data of police officers. The application will <br> allow users to view, add, update, and delete the data of police officers. The application will also provide a search functionality <br> to search for police officers based on different criteria. Besides, the application also stores the images, PDFs related to the <br> specific police officer.
+ This project aim to create a web application that allows users to manage the data of police officers. The application will allow users to view, add, update, and delete the data of police officers. The application will also provide a search functionality to search for police officers based on different criteria. Besides, the application also stores the images, PDFs related to the specific police officer.
 
 ## I. Setup Development Environment (with Internet Connection)
 ### 1. Install Python
